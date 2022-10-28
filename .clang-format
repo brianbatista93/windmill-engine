@@ -1,0 +1,43 @@
+BasedOnStyle: LLVM
+
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveBitFields: Consecutive
+AlignEscapedNewlines: Right
+AlignOperands: AlignAfterOperator
+AlignTrailingComments: true
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortFunctionsOnASingleLine: true
+AllowShortLambdasOnASingleLine: All
+AttributeMacros: ['FINLINE',
+                  'CEXPR'
+                 ]
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeConceptDeclarations: true
+BreakInheritanceList: BeforeColon
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: Always
+IndentWrappedFunctionNames: false
+IndentRequires: true
+InsertTrailingCommas: Wrapped
+KeepEmptyLinesAtTheStartOfBlocks: true
+MaxEmptyLinesToKeep: 1
+PackConstructorInitializers: NextLine
+
+PenaltyIndentedWhitespace: 2
+
+Language: Cpp
+Standard: c++20
+SpacesInAngles: Leave
+
+AlwaysBreakTemplateDeclarations: true
+PointerAlignment: Left
+
+SortIncludes: false
+ReflowComments: false
+
+IndentPPDirectives: AfterHash
+
+ColumnLimit: 120

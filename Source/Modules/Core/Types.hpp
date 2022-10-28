@@ -1,0 +1,59 @@
+/*
+Copyright (C) 2021-2022 Bull Technology, Ltd.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+#pragma once
+
+using u8  = unsigned char;
+using u16 = unsigned short;
+using u32 = unsigned int;
+using u64 = unsigned long long;
+
+using i8  = char;
+using i16 = short;
+using i32 = int;
+using i64 = long long;
+
+using f32 = float;
+using f64 = double;
+
+template <class T>
+class TType {};
+
+#define DECLARE_TYPE(type, name, shortName)                                                                            \
+  template <>                                                                                                          \
+  class TType<type> {                                                                                                  \
+  public:                                                                                                              \
+    const char* GetName() const { return name; }                                                                       \
+    const char* GetShortName() const { return shortName; }                                                             \
+    size_t GetSize() const { return sizeof(type); }                                                                    \
+    size_t GetAlign() const { return alignof(type); }                                                                  \
+  }
+
+DECLARE_TYPE(u8, "uint8", "u8");
+DECLARE_TYPE(u16, "uint16", "u16");
+DECLARE_TYPE(u32, "uint32", "u32");
+DECLARE_TYPE(u64, "uint64", "u64");
+
+DECLARE_TYPE(i8, "int8", "i8");
+DECLARE_TYPE(i16, "int16", "i16");
+DECLARE_TYPE(i32, "int32", "i32");
+DECLARE_TYPE(i64, "int64", "i64");
+
+DECLARE_TYPE(f32, "float", "f32");
+DECLARE_TYPE(f64, "double", "f64");
