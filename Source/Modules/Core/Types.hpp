@@ -32,12 +32,15 @@ using i64 = long long;
 using f32 = float;
 using f64 = double;
 
-template <class T>
-class TType {};
+template<class T>
+class TType
+{
+};
 
 #define DECLARE_TYPE(type, name, shortName)                                                                            \
-  template <>                                                                                                          \
-  class TType<type> {                                                                                                  \
+  template<>                                                                                                           \
+  class TType<type>                                                                                                    \
+  {                                                                                                                    \
   public:                                                                                                              \
     inline static const char* GetName() { return name; }                                                               \
     inline static const char* GetShortName() { return shortName; }                                                     \

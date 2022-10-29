@@ -17,47 +17,65 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+//--------------------------------------------------------------------------------------------
+// NOTE: Please avoid including this header file, use Memory.hpp instead
+//--------------------------------------------------------------------------------------------
+
 #pragma once
 
 #include <map>
+#include <utility>
 
 #include "Types.hpp"
 
 /**
  * @brief Manager responsible for allocating, freeing and managing memory.
  */
-class CMemoryManager {
+class CMemoryManager
+{
 public:
   static CMemoryManager& Get();
 
   ~CMemoryManager();
 
   void* Reallocate(
-      void* pMemory, size_t nSize, size_t nAlignment, const char* pFilename, i32 nLine, const char* pFunctionName);
+    void* pMemory, size_t nSize, size_t nAlign, const char* pFilename, i32 nLine, const char* pFunctionName);
   void Free(void* pMemory);
 
+  template<class T, class... Args>
+  static T* New(const char* pFilename, i32 nLine, const char* pFunctionName, Args&&... args)
+  {
+    T* ptr = (T*)Reallocate(nullptr, sizeof(T), alignof(T), pFilename, nLine, pFunctionName);
+    return new (ptr) T(std::forward<Args>(args)...);
+  }
+
+  template<class T>
+  static void Delete(T* ptr, const char* pFilename, i32 nLine, const char* pFunctionName)
+  {
+    if (ptr) {
+      ptr->~T();
+      Free(ptr);
+    }
+  }
+
 private:
-  struct CMemoryAllocationDesc {
+  struct CMemoryAllocationDesc
+  {
     mutable void* m_pMemory;
+    mutable void* m_pRawMemory;
     size_t m_nSize;
     size_t m_nAlignment;
     const char* m_pFilename;
-    i32 m_nLine;
     const char* m_pFunctionName;
+    i32 m_nLine;
+    u32 m_nID;
   };
 
-  void* ReallocateInternal(const CMemoryAllocationDesc* desc);
+  void* ReallocateInternal(const CMemoryAllocationDesc* pDesc);
 
-  void FreeInternal(size_t memoryAddress);
+  void FreeInternal(size_t nMemoryAddress);
 
   std::map<size_t, CMemoryAllocationDesc> m_AllocatedMemory;
+
+  static u32 sLastAllocationID;
 };
-
-#ifndef we_calloc
-#  define we_calloc(size)                                                                                              \
-    CMemoryManager::Get().Reallocate(nullptr, size, WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
-#endif // !we_calloc
-
-#ifndef we_free
-#  define we_free(mem) CMemoryManager::Get().Free(mem)
-#endif // !we_free

@@ -1,9 +1,10 @@
 project ("Core")
 
-add_executable (${PROJECT_NAME}
+add_library (${PROJECT_NAME} STATIC
     "Types.hpp"
 	"Memory/MemoryManager.hpp"
 	"Memory/MemoryManager.cpp"
+	"Memory/Memory.hpp"
 	"Math/MathUtils.hpp"
 )
 

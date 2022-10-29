@@ -19,7 +19,14 @@ SOFTWARE.
 
 #pragma once
 
-class CMath {
+/**
+ * @brief Collection of math functions
+*/
+class CMath
+{
 public:
+  /**
+   * @brief Checks if a number is a power of two
+  */
   static constexpr bool IsPowerOfTwo(auto val) { return (val & (val - 1)) == 0; }
 };
