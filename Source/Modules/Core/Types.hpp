@@ -32,17 +32,20 @@ using i64 = long long;
 using f32 = float;
 using f64 = double;
 
-template <class T>
-class TType {};
+template<class T>
+class TType
+{
+};
 
 #define DECLARE_TYPE(type, name, shortName)                                                                            \
-  template <>                                                                                                          \
-  class TType<type> {                                                                                                  \
+  template<>                                                                                                           \
+  class TType<type>                                                                                                    \
+  {                                                                                                                    \
   public:                                                                                                              \
-    const char* GetName() const { return name; }                                                                       \
-    const char* GetShortName() const { return shortName; }                                                             \
-    size_t GetSize() const { return sizeof(type); }                                                                    \
-    size_t GetAlign() const { return alignof(type); }                                                                  \
+    inline static const char* GetName() { return name; }                                                               \
+    inline static const char* GetShortName() { return shortName; }                                                     \
+    inline static size_t GetSize() { return sizeof(type); }                                                            \
+    inline static size_t GetAlign() { return alignof(type); }                                                          \
   }
 
 DECLARE_TYPE(u8, "uint8", "u8");
@@ -57,3 +60,9 @@ DECLARE_TYPE(i64, "int64", "i64");
 
 DECLARE_TYPE(f32, "float", "f32");
 DECLARE_TYPE(f64, "double", "f64");
+
+#include <assert.h>
+
+#ifndef we_assert
+#  define we_assert(x) assert((x))
+#endif // !we_assert
