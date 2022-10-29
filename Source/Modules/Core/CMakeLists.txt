@@ -6,6 +6,7 @@ add_library (${PROJECT_NAME} STATIC
 	"Memory/MemoryManager.cpp"
 	"Memory/Memory.hpp"
 	"Math/MathUtils.hpp"
+	"Containers/Allocator.hpp"
 )
 
 target_include_directories (${PROJECT_NAME}
