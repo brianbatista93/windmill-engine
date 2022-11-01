@@ -32,7 +32,7 @@ class CMemoryUtils
         }
     }
 
-    template <class T> static void Destruct(T *pData, size_t nCount)
+    template <class T> static void Destroy(T *pData, size_t nCount)
     {
         for (size_t i = 0; i < nCount; ++i)
         {

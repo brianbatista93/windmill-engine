@@ -1,5 +1,6 @@
 #include <benchmark/benchmark.h>
 #include <gtest/gtest.h>
+#include <iostream>
 
 template <class T, typename AllocType = TAllocator<u64>> class TArray;
 
@@ -10,6 +11,27 @@ class CObject
   public:
     CObject() : m_nDummy(1) {}
     CObject(int val) : m_nDummy(val) {}
+    CObject(const CObject &other) : m_nDummy(other.m_nDummy) {}
+    CObject(CObject &&other) noexcept : m_nDummy(other.m_nDummy) {}
+    CObject &operator=(const CObject &other)
+    {
+        if (this != &other)
+        {
+            m_nDummy = other.m_nDummy;
+        }
+
+        return *this;
+    }
+
+    CObject &operator=(CObject &&other) noexcept
+    {
+        if (this != &other)
+        {
+            m_nDummy = other.m_nDummy;
+            other.m_nDummy = 0;
+        }
+        return *this;
+    }
 
   private:
     int m_nDummy;
