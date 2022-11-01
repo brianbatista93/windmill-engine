@@ -76,3 +76,24 @@ TEST(String, AppendCString)
     EXPECT_FALSE(lit.IsEmpty());
     EXPECT_EQ(lit.GetLength(), 44);
 }
+
+TEST(String, StartsWith)
+{
+    CString lit = WTL("The quick brown fox jumps over the lazy dog.");
+    EXPECT_TRUE(lit.StartsWith(WT("The")));
+    EXPECT_FALSE(lit.StartsWith(WT("the")));
+}
+
+TEST(String, EndsWith)
+{
+    CString lit = WTL("The quick brown fox jumps over the lazy dog.");
+    EXPECT_TRUE(lit.EndsWith(WT("dog.")));
+    EXPECT_FALSE(lit.EndsWith(WT("Dog.")));
+}
+
+TEST(String, Substring)
+{
+    CString lit = WTL("The quick brown fox jumps over the lazy dog.");
+    CString sub = lit.Substring(10, 5);
+    EXPECT_EQ(sub, WTL("brown"));
+}

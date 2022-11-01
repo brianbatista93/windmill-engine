@@ -33,7 +33,6 @@ using f32 = float;
 using f64 = double;
 
 using usize = size_t;
-using isize = ptrdiff_t;
 
 using ansi = char;
 using wide = wchar_t;

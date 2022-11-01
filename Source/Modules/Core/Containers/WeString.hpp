@@ -21,6 +21,7 @@ SOFTWARE.
 
 #include "Allocator.hpp"
 #include "Array.hpp"
+#include "StringUtils.hpp"
 
 #include <string>
 
@@ -29,6 +30,11 @@ class CString
   public:
     using CharType = tchar;
     using ArrayType = TArray<CharType, TAllocator<i32>>;
+
+    enum
+    {
+        INVALID_INDEX = -1
+    };
 
     CString() = default;
     CString(CString &&) = default;
@@ -63,7 +69,11 @@ class CString
     inline CString &operator+=(tchar chr) { return Append(chr); }
     inline CString &operator+=(const tchar *pStr) { return Append(pStr); }
 
-    template <class TStr> inline CString &operator+=(TStr &&rhs) noexcept { return Append(std::forward<TStr>(rhs)); }
+    template <class TStr>
+    inline CString &operator+=(TStr &&rhs) noexcept
+    {
+        return Append(std::forward<TStr>(rhs));
+    }
 
     friend inline CString operator+(CString &&lhs, CString &&rhs) noexcept { return ConcatSS(std::move(lhs), std::move(rhs)); }
     friend inline CString operator+(CString &lhs, const CString &&rhs) noexcept { return ConcatSS(std::move(lhs), rhs); }
@@ -83,12 +93,34 @@ class CString
 
     inline ArrayType GetArray() const { return m_Data; }
 
+    inline bool StartsWith(const tchar *pStart, i32 nOffset = 0)
+    {
+        we_assert(nOffset < GetLength());
+        return CStringUtils::StartsWith(GetArray().GetData() + nOffset, pStart);
+    }
+
+    inline bool EndsWith(const tchar *pEnd, i32 nOffset = 0)
+    {
+        we_assert(nOffset < GetLength());
+        return CStringUtils::EndsWith(GetArray().GetData() + nOffset, pEnd, GetLength());
+    }
+
+    inline CString Substring(i32 nStart, i32 nCount = INVALID_INDEX)
+    {
+        we_assert(nStart < GetLength() and (nCount == INVALID_INDEX or nCount <= GetLength()));
+        nCount = nCount == INVALID_INDEX ? GetLength() : nCount;
+        return CString(GetArray().GetData() + nStart, nCount);
+    }
+
+    inline bool operator==(const CString &other) const { return CStringUtils::Compare(GetArray().GetData(), *other) == 0; }
+
   private:
     inline void Init(const tchar *pStr, usize nLength)
     {
         if (nLength > 0)
         {
             memcpy(m_Data.GetData(), pStr, nLength * sizeof(CharType));
+            m_Data[i32(nLength) - 1] = tchar(0);
         }
     }
 
