@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+	<Type Name="TArray&lt;*,*&gt;">
+		<DisplayString>{{ Size={m_nSize} }}</DisplayString>
+		<Expand>
+			<Item Name="[Capacity]" ExcludeView="simple">m_nCapacity</Item>
+			<Item Name="[Allocator]" ExcludeView="simple">m_Allocator</Item>
+			<ArrayItems>
+				<Size>m_nSize</Size>
+				<ValuePointer>($T1*)m_Allocator.m_pData</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
+
+</AutoVisualizer>

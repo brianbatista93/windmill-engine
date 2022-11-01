@@ -1,103 +1,126 @@
 #include <malloc.h>
 
-#include "MemoryManager.hpp"
 #include "Math/MathUtils.hpp"
+#include "MemoryManager.hpp"
 
-namespace WE::Internal {
-inline size_t
-AlignAddress(size_t nAddress, size_t nAlign)
+namespace WE::Internal
 {
-  const size_t mask = nAlign - 1;
-  return (nAddress + mask) & ~mask;
-}
-
-inline u8*
-AlignPointer(u8* pAddress, size_t nAlign)
+inline void CheckAllocationInput(size_t nSize, size_t nAlignment)
 {
-  const size_t address = reinterpret_cast<size_t>(pAddress);
-  return reinterpret_cast<u8*>(AlignAddress(address, nAlign));
+    we_assert(nSize > 0 && "Size must be greater than 0.");
+    we_assert(CMath::IsPowerOfTwo(nAlignment) && "Alignment must be a power of 2.");
 }
 } // namespace WE::Internal
 
-CMemoryManager&
-CMemoryManager::Get()
+CMemoryManager &CMemoryManager::Get()
 {
-  static CMemoryManager sInstance;
-  return sInstance;
+    static CMemoryManager sInstance;
+    return sInstance;
 }
-
-u32 CMemoryManager::sLastAllocationID = 1;
 
 CMemoryManager::~CMemoryManager()
 {
-  for (const auto& [address, desc] : m_AllocatedMemory) {
-    printf("Memory leak detected: %s(%d): %s\n", desc.m_pFilename, desc.m_nLine, desc.m_pFunctionName);
-    printf("Memory address: %p\n", desc.m_pMemory);
-    printf("Memory size: %zu\n", desc.m_nSize);
-    printf("Memory alignment: %zu\n", desc.m_nAlignment);
-  }
+    // we_assert(m_CurrentAllocations.empty() && "There are still allocations that have not been freed.");
+    for (auto [memory, info] : m_CurrentAllocations)
+    {
+        printf("0x%08llx (%zx|%d) - %s:%d (%s)\n", size_t(memory), info.nSize, info.nAlignment, info.pFilename, info.nLine,
+               info.pFunctionName);
+    }
 }
 
-void*
-CMemoryManager::Reallocate(
-  void* pMemory, size_t nSize, size_t nAlignment, const char* pFilename, i32 nLine, const char* pFunctionName)
+static i32 lastOrder = 1;
+
+void *CMemoryManager::Allocate(size_t nSize, size_t nAlignment, const char *pFilename, i32 nLine,
+                               const char *pFunctionName)
 {
+    WE::Internal::CheckAllocationInput(nSize, nAlignment);
 
-  we_assert(nSize > 0 && "Size must be greater than 0.");
-  we_assert(CMath::IsPowerOfTwo(nAlignment) && "Alignment must be a power of 2.");
+    SAllocationInfo info = {};
+    info.pFilename = pFilename;
+    info.pFunctionName = pFunctionName;
+    info.nSize = nSize;
+    info.nLine = nLine;
+    info.nAlignment = i32(nAlignment);
+    info.nOrder = lastOrder++;
 
-  CMemoryAllocationDesc desc = {
-    .m_pMemory       = pMemory,
-    .m_nSize         = nSize,
-    .m_nAlignment    = nAlignment,
-    .m_pFilename     = pFilename,
-    .m_pFunctionName = pFunctionName,
-    .m_nLine         = nLine,
-    .m_nID           = sLastAllocationID++
-  };
+    void *pointer = MallocInternal(nSize, nAlignment);
 
-  return ReallocateInternal(&desc);
+    AddAllocationInfo(pointer, &info);
+
+    return pointer;
 }
 
-void
-CMemoryManager::Free(void* pMemory)
+void *CMemoryManager::Reallocate(void *pMemory, size_t nSize, size_t nAlignment, const char *pFilename, i32 nLine,
+                                 const char *pFunctionName)
 {
-  if (pMemory) {
-    FreeInternal((size_t)pMemory);
-  }
+    WE::Internal::CheckAllocationInput(nSize, nAlignment);
+
+    SAllocationInfo info = {};
+    info.pFilename = pFilename;
+    info.pFunctionName = pFunctionName;
+    info.nSize = nSize;
+    info.nLine = nLine;
+    info.nAlignment = i32(nAlignment);
+    info.nOrder = lastOrder++;
+
+    void *newPointer = ReallocInternal(pMemory, nSize, nAlignment);
+
+    EditAllocationInfo(pMemory, newPointer, &info);
+
+    return newPointer;
 }
 
-void*
-CMemoryManager::ReallocateInternal(const CMemoryAllocationDesc* pDesc)
+void CMemoryManager::Free(void *pMemory)
 {
-  we_assert(pDesc != nullptr && "Allocation descriptor must not be null.");
-
-  size_t realSize = pDesc->m_nSize + pDesc->m_nAlignment;
-
-  u8* rawMemory       = (u8*)realloc(pDesc->m_pRawMemory, realSize);
-  pDesc->m_pRawMemory = rawMemory;
-
-  u8* alignedMemory = WE::Internal::AlignPointer(rawMemory, pDesc->m_nAlignment);
-  if (alignedMemory == rawMemory) {
-    alignedMemory += pDesc->m_nAlignment;
-  }
-
-  m_AllocatedMemory.emplace(std::make_pair((size_t)alignedMemory, *pDesc));
-  pDesc->m_pMemory = alignedMemory;
-
-  return alignedMemory;
+    if (pMemory != nullptr)
+    {
+        RemoveAllocationInfo(pMemory);
+    }
 }
 
-void
-CMemoryManager::FreeInternal(size_t nMemoryAddress)
+void *CMemoryManager::MallocInternal(size_t nSize, size_t nAlignment)
 {
-  auto it = m_AllocatedMemory.find(nMemoryAddress);
+#if defined(WE_OS_WINDOWS)
+    return _aligned_malloc(nSize, nAlignment);
+#else
+    return malloc(nSize);
+#endif // defined(WE_OS_WINDOWS)
+}
 
-  we_assert(it != m_AllocatedMemory.end() && "Memory address must be allocated.");
+void *CMemoryManager::ReallocInternal(void *pMemory, size_t nSize, size_t nAlignment)
+{
+#if defined(WE_OS_WINDOWS)
+    return _aligned_realloc(pMemory, nSize, nAlignment);
+#else
+    return realloc(nSize);
+#endif // defined(WE_OS_WINDOWS)
+}
 
-  const CMemoryAllocationDesc* desc = &it->second;
+void CMemoryManager::FreeInternal(void *pMemory)
+{
+#if defined(WE_OS_WINDOWS)
+    return _aligned_free(pMemory);
+#else
+    return free(pMemory);
+#endif // defined(WE_OS_WINDOWS)
+}
 
-  free(desc->m_pRawMemory);
+void CMemoryManager::AddAllocationInfo(void *pMemory, const SAllocationInfo *pInfo)
+{
+    m_CurrentAllocations.emplace(std::make_pair(pMemory, *pInfo));
+}
 
-  m_AllocatedMemory.erase(it);
+void CMemoryManager::EditAllocationInfo(void *pOldMemory, void *pNewMemory, const SAllocationInfo *pInfo)
+{
+    if (pOldMemory != nullptr)
+    {
+        RemoveAllocationInfo(pOldMemory);
+    }
+
+    AddAllocationInfo(pNewMemory, pInfo);
+}
+
+void CMemoryManager::RemoveAllocationInfo(void *pMemory)
+{
+    m_CurrentAllocations.erase(pMemory);
 }

@@ -33,49 +33,56 @@ SOFTWARE.
  */
 class CMemoryManager
 {
-public:
-  static CMemoryManager& Get();
+  public:
+    static CMemoryManager &Get();
 
-  ~CMemoryManager();
+    ~CMemoryManager();
 
-  void* Reallocate(
-    void* pMemory, size_t nSize, size_t nAlign, const char* pFilename, i32 nLine, const char* pFunctionName);
-  void Free(void* pMemory);
+    void *Allocate(size_t nSize, size_t nAlign, const char *pFilename, i32 nLine, const char *pFunctionName);
+    void *Reallocate(void *pMemory, size_t nSize, size_t nAlign, const char *pFilename, i32 nLine,
+                     const char *pFunctionName);
+    void Free(void *pMemory);
 
-  template<class T, class... Args>
-  static T* New(const char* pFilename, i32 nLine, const char* pFunctionName, Args&&... args)
-  {
-    T* ptr = (T*)Reallocate(nullptr, sizeof(T), alignof(T), pFilename, nLine, pFunctionName);
-    return new (ptr) T(std::forward<Args>(args)...);
-  }
-
-  template<class T>
-  static void Delete(T* ptr, const char* pFilename, i32 nLine, const char* pFunctionName)
-  {
-    if (ptr) {
-      ptr->~T();
-      Free(ptr);
+    template <class T, class... Args>
+    static T *New(const char *pFilename, i32 nLine, const char *pFunctionName, Args &&...args)
+    {
+        T *ptr = (T *)Allocate(sizeof(T), alignof(T), pFilename, nLine, pFunctionName);
+        return new (ptr) T(std::forward<Args>(args)...);
     }
-  }
 
-private:
-  struct CMemoryAllocationDesc
-  {
-    mutable void* m_pMemory;
-    mutable void* m_pRawMemory;
-    size_t m_nSize;
-    size_t m_nAlignment;
-    const char* m_pFilename;
-    const char* m_pFunctionName;
-    i32 m_nLine;
-    u32 m_nID;
-  };
+    template <class T> static void Delete(T *ptr, const char *pFilename, i32 nLine, const char *pFunctionName)
+    {
+        if (ptr)
+        {
+            ptr->~T();
+            Free(ptr);
+        }
+    }
 
-  void* ReallocateInternal(const CMemoryAllocationDesc* pDesc);
+  private:
+    struct SAllocationInfo
+    {
+        const char *pFilename;
+        const char *pFunctionName;
+        size_t nSize;
+        i32 nLine;
+        i32 nAlignment;
+        i32 nOrder;
+    };
 
-  void FreeInternal(size_t nMemoryAddress);
+    std::map<void *, SAllocationInfo> m_CurrentAllocations;
 
-  std::map<size_t, CMemoryAllocationDesc> m_AllocatedMemory;
+    CMemoryManager() {}
 
-  static u32 sLastAllocationID;
+    void *MallocInternal(size_t nSize, size_t nAlignment);
+
+    void *ReallocInternal(void *pMemory, size_t nSize, size_t nAlignment);
+
+    void FreeInternal(void *pMemory);
+
+    void AddAllocationInfo(void *pMemory, const SAllocationInfo *pInfo);
+
+    void EditAllocationInfo(void *pOldMemory, void *pNewMemory, const SAllocationInfo *pInfo);
+
+    void RemoveAllocationInfo(void *pMemory);
 };
