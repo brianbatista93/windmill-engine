@@ -46,18 +46,20 @@ using tchar = wide;
 #define WT(x) L##x
 #define WTL(x) WT(x)##_s
 
-template <class T> class TType
+template <class T>
+class TType
 {
 };
 
-#define DECLARE_TYPE(type, name, shortName)                                                                            \
-    template <> class TType<type>                                                                                      \
-    {                                                                                                                  \
-      public:                                                                                                          \
-        inline static const char *GetName() { return name; }                                                           \
-        inline static const char *GetShortName() { return shortName; }                                                 \
-        inline static usize GetSize() { return sizeof(type); }                                                         \
-        inline static usize GetAlign() { return alignof(type); }                                                       \
+#define DECLARE_TYPE(type, name, shortName)                                                                                                          \
+    template <>                                                                                                                                      \
+    class TType<type>                                                                                                                                \
+    {                                                                                                                                                \
+      public:                                                                                                                                        \
+        inline static const char *GetName() { return name; }                                                                                         \
+        inline static const char *GetShortName() { return shortName; }                                                                               \
+        inline static usize GetSize() { return sizeof(type); }                                                                                       \
+        inline static usize GetAlign() { return alignof(type); }                                                                                     \
     }
 
 DECLARE_TYPE(u8, "uint8", "u8");

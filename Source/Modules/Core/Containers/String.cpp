@@ -2,7 +2,8 @@
 
 namespace WE::Internal
 {
-template <class TLhs, class TRhs> inline CString ConcatStrings(TLhs &&lhs, TRhs &&rhs) noexcept
+template <class TLhs, class TRhs>
+inline CString ConcatStrings(TLhs &&lhs, TRhs &&rhs) noexcept
 {
     if (lhs.IsEmpty())
     {
@@ -17,7 +18,8 @@ template <class TLhs, class TRhs> inline CString ConcatStrings(TLhs &&lhs, TRhs 
     return result;
 }
 
-template <class TLhs> inline CString ConcatStringRange(TLhs &&lhs, const tchar *pRhs, i32 nRhsLength) noexcept
+template <class TLhs>
+inline CString ConcatStringRange(TLhs &&lhs, const tchar *pRhs, i32 nRhsLength) noexcept
 {
     if (nRhsLength == 0)
     {
@@ -30,7 +32,8 @@ template <class TLhs> inline CString ConcatStringRange(TLhs &&lhs, const tchar *
     return result;
 }
 
-template <class TRhs> inline CString ConcatCStringRange(const tchar *pLhs, i32 nLhsLength, TRhs &&rhs) noexcept
+template <class TRhs>
+inline CString ConcatCStringRange(const tchar *pLhs, i32 nLhsLength, TRhs &&rhs) noexcept
 {
     if (nLhsLength == 0)
     {
@@ -49,7 +52,8 @@ template <class TRhs> inline CString ConcatCStringRange(const tchar *pLhs, i32 n
     return result;
 }
 
-template <class TLhs> inline CString ConcatStringsToCString(TLhs &&lhs, const tchar *pRhs) noexcept
+template <class TLhs>
+inline CString ConcatStringsToCString(TLhs &&lhs, const tchar *pRhs) noexcept
 {
     if (pRhs == nullptr)
     {
@@ -58,7 +62,8 @@ template <class TLhs> inline CString ConcatStringsToCString(TLhs &&lhs, const tc
     return ConcatStringRange(std::forward<TLhs>(lhs), pRhs, i32(std::char_traits<tchar>::length(pRhs)));
 }
 
-template <class TRhs> inline CString ConcatCStringToStrings(const tchar *pLhs, TRhs &&rhs) noexcept
+template <class TRhs>
+inline CString ConcatCStringToStrings(const tchar *pLhs, TRhs &&rhs) noexcept
 {
     if (pLhs == nullptr)
     {

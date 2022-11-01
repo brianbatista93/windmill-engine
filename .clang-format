@@ -5,7 +5,7 @@ AllowAllArgumentsOnNextLine: 'false'
 AllowShortFunctionsOnASingleLine: InlineOnly
 AllowShortLambdasOnASingleLine: Inline
 AlwaysBreakBeforeMultilineStrings: 'false'
-AlwaysBreakTemplateDeclarations: MultiLine
+AlwaysBreakTemplateDeclarations: Yes
 IndentPPDirectives: BeforeHash
 UseTab: Never
 

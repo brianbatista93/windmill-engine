@@ -25,7 +25,8 @@ SOFTWARE.
 #include "Allocator.hpp"
 #include "Math/MathUtils.hpp"
 
-template <class T, class Alloc> class TArray
+template <class T, class Alloc>
+class TArray
 {
   public:
     using ElementType = T;
@@ -37,7 +38,11 @@ template <class T, class Alloc> class TArray
     inline TArray() : m_Allocator(), m_nSize(0), m_nCapacity(0) {}
     inline TArray(IndexType nInitialSize) { InitializeWithSize(nInitialSize); }
     inline TArray(std::initializer_list<ElementType> list) noexcept { InitializeWithRange(list.begin(), list.end()); }
-    template <typename ItType> inline TArray(ItType first, ItType last) { InitializeWithRange(first, last); }
+    template <typename ItType>
+    inline TArray(ItType first, ItType last)
+    {
+        InitializeWithRange(first, last);
+    }
 
     inline TArray(const TArray &other) { CopyFromOther(other); }
     inline TArray(TArray &&other) noexcept { MoveFromOther(std::move(other)); }
@@ -142,7 +147,8 @@ template <class T, class Alloc> class TArray
     inline ElementType *GetData() { return (ElementType *)m_Allocator.GetData(); }
     inline const ElementType *GetData() const { return (const ElementType *)m_Allocator.GetData(); }
 
-    template <class... Args> inline IndexType Emplace(IndexType nIndex, Args &&...vArgs) noexcept
+    template <class... Args>
+    inline IndexType Emplace(IndexType nIndex, Args &&...vArgs) noexcept
     {
         we_assert(nIndex <= m_nSize && "Index out of bound");
 
@@ -169,7 +175,7 @@ template <class T, class Alloc> class TArray
     inline IndexType InsertAt(IndexType nIndex, ElementType &&element) { return Emplace(nIndex, std::move(element)); }
     inline IndexType InsertAt(IndexType nIndex, const ElementType &element) { return Emplace(nIndex, element); }
 
-    inline IndexType AddSlots(IndexType nCount=1)
+    inline IndexType AddSlots(IndexType nCount = 1)
     {
         const IndexType newSize = m_nSize + nCount;
         const IndexType oldSize = m_nSize;
