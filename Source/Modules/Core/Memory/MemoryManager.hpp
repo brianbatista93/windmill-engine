@@ -38,8 +38,8 @@ class CMemoryManager
 
     ~CMemoryManager();
 
-    void *Allocate(size_t nSize, size_t nAlign, const char *pFilename, i32 nLine, const char *pFunctionName);
-    void *Reallocate(void *pMemory, size_t nSize, size_t nAlign, const char *pFilename, i32 nLine,
+    void *Allocate(usize nSize, usize nAlign, const char *pFilename, i32 nLine, const char *pFunctionName);
+    void *Reallocate(void *pMemory, usize nSize, usize nAlign, const char *pFilename, i32 nLine,
                      const char *pFunctionName);
     void Free(void *pMemory);
 
@@ -64,7 +64,7 @@ class CMemoryManager
     {
         const char *pFilename;
         const char *pFunctionName;
-        size_t nSize;
+        usize nSize;
         i32 nLine;
         i32 nAlignment;
         i32 nOrder;
@@ -74,9 +74,9 @@ class CMemoryManager
 
     CMemoryManager() {}
 
-    void *MallocInternal(size_t nSize, size_t nAlignment);
+    void *MallocInternal(usize nSize, usize nAlignment);
 
-    void *ReallocInternal(void *pMemory, size_t nSize, size_t nAlignment);
+    void *ReallocInternal(void *pMemory, usize nSize, usize nAlignment);
 
     void FreeInternal(void *pMemory);
 

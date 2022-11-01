@@ -19,6 +19,24 @@ SOFTWARE.
 
 #pragma once
 
+#include "Allocator.hpp"
+#include "Array.hpp"
+
 class CString
 {
+  public:
+    using CharType = char;
+    using ArrayType = TArray<CharType, TAllocator<i32>>;
+
+    CString() = default;
+    CString(CString &&) = default;
+    CString(const CString &) = default;
+    CString &operator=(CString &&) = default;
+    CString &operator=(const CString &) = default;
+
+    inline i32 GetLength() const { return m_Data.GetSize() > 0 ? (m_Data.GetSize() - 1) : 0; }
+    inline bool IsEmpty() const { return GetLength() == 0; }
+
+  private:
+    ArrayType m_Data;
 };

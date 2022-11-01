@@ -32,6 +32,15 @@ using i64 = long long;
 using f32 = float;
 using f64 = double;
 
+using usize = usize;
+using isize = ptrdiff_t;
+
+using ansi = char;
+using wide = wchar_t;
+using utf8 = char8_t;
+using utf16 = char16_t;
+using utf32 = char32_t;
+
 template<class T>
 class TType
 {
@@ -44,8 +53,8 @@ class TType
   public:                                                                                                              \
     inline static const char* GetName() { return name; }                                                               \
     inline static const char* GetShortName() { return shortName; }                                                     \
-    inline static size_t GetSize() { return sizeof(type); }                                                            \
-    inline static size_t GetAlign() { return alignof(type); }                                                          \
+    inline static usize GetSize() { return sizeof(type); }                                                            \
+    inline static usize GetAlign() { return alignof(type); }                                                          \
   }
 
 DECLARE_TYPE(u8, "uint8", "u8");

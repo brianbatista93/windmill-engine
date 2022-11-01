@@ -49,7 +49,7 @@ template <class T, class Alloc> class TArray
             const auto nDifference = CMath::Abs(m_nSize - other.m_nSize);
             CMemoryUtils::Destroy(GetData() + other.m_nSize, nDifference);
 
-            const size_t sizeInBytes = other.m_nSize * sizeof(ElementType);
+            const IndexType sizeInBytes = other.m_nSize * sizeof(ElementType);
             m_Allocator.Reallocate(sizeInBytes);
             m_nSize = other.m_nSize;
             m_nCapacity = other.m_nSize;
@@ -203,7 +203,7 @@ template <class T, class Alloc> class TArray
 
     // Global container functions
     friend inline ElementType *GetData(TArray arr) { return arr.GetData(); }
-    friend inline size_t GetSize(TArray arr) { return size_t(arr.GetSize()); }
+    friend inline usize GetSize(TArray arr) { return usize(arr.GetSize()); }
 
     friend inline bool operator==(const TArray& lhs, const TArray& rhs)
     {
@@ -212,7 +212,7 @@ template <class T, class Alloc> class TArray
             return false;
         }
 
-        for (size_t i = 0; i < lhs.GetSize(); ++i)
+        for (IndexType i = 0; i < lhs.GetSize(); ++i)
         {
             if (lhs[i] != rhs[i])
             {
@@ -234,7 +234,7 @@ template <class T, class Alloc> class TArray
 
     inline void InitializeWithRange(const ElementType *pBegin, const ElementType *pEnd)
     {
-        const size_t size = pEnd - pBegin;
+        const usize size = pEnd - pBegin;
         m_nSize = size;
         m_nCapacity = size;
         m_Allocator.Reallocate(size * sizeof(ElementType));

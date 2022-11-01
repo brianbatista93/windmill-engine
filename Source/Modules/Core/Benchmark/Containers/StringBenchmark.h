@@ -19,39 +19,14 @@ SOFTWARE.
 
 #pragma once
 
-#include <concepts>
+#include <benchmark/benchmark.h>
+#include <gtest/gtest.h>
 
-class CMemoryUtils
+#include "Containers/WeString.hpp"
+
+TEST(String, EmptyInit)
 {
-  public:
-    template <class T> static void Construct(T *pData, usize nCount)
-    {
-        for (usize i = 0; i < nCount; ++i)
-        {
-            new (pData + i) T();
-        }
-    }
-
-    template <class T> static void Destroy(T *pData, usize nCount)
-    {
-        for (usize i = 0; i < nCount; ++i)
-        {
-            pData[i].~T();
-        }
-    }
-
-    template <class T> static void Copy(T *pDest, const T *pSrc, usize nCount)
-    {
-        if constexpr (std::is_trivially_copyable_v<T>)
-        {
-            memcpy(pDest, pSrc, nCount * sizeof(T));
-        }
-        else
-        {
-            for (usize i = 0; i < nCount; ++i)
-            {
-                new (pDest + i) T(*(pSrc + i));
-            }
-        }
-    }
-};
+    CString empty;
+    EXPECT_TRUE(empty.IsEmpty());
+    EXPECT_EQ(empty.GetLength(), 0);
+}
