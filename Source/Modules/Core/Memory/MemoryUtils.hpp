@@ -21,6 +21,8 @@ SOFTWARE.
 
 #include <concepts>
 
+#include "Types.hpp"
+
 class CMemoryUtils
 {
   public:

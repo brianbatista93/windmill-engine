@@ -24,9 +24,55 @@ SOFTWARE.
 
 #include "Containers/WeString.hpp"
 
+static void BM_StringEmptyCreation(benchmark::State &rState)
+{
+    for (auto _ : rState)
+    {
+        CString empty;
+    }
+}
+BENCHMARK(BM_StringEmptyCreation);
+
+static void BM_StringLiteralCreation(benchmark::State &rState)
+{
+    for (auto _ : rState)
+    {
+        CString lit = WTL("The quick brown fox jumps over the lazy dog");
+        benchmark::DoNotOptimize(lit);
+    }
+}
+BENCHMARK(BM_StringLiteralCreation);
+
 TEST(String, EmptyInit)
 {
     CString empty;
     EXPECT_TRUE(empty.IsEmpty());
     EXPECT_EQ(empty.GetLength(), 0);
+}
+
+TEST(String, Literals)
+{
+    CString lit = WTL("The quick brown fox jumps over the lazy dog.");
+    EXPECT_FALSE(lit.IsEmpty());
+    EXPECT_EQ(lit.GetLength(), 44);
+}
+
+TEST(String, AppendChar)
+{
+    CString lit = WTL("The quick brown fox jumps over the lazy do");
+    lit = lit + WT('g');
+    lit += WT('.');
+
+    EXPECT_FALSE(lit.IsEmpty());
+    EXPECT_EQ(lit.GetLength(), 44);
+}
+
+TEST(String, AppendCString)
+{
+    CString lit = WTL("The quick brown fox");
+    lit = lit + WT(" jumps over");
+    lit += WT(" the lazy dog.");
+
+    EXPECT_FALSE(lit.IsEmpty());
+    EXPECT_EQ(lit.GetLength(), 44);
 }

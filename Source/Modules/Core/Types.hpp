@@ -19,12 +19,12 @@ SOFTWARE.
 
 #pragma once
 
-using u8  = unsigned char;
+using u8 = unsigned char;
 using u16 = unsigned short;
 using u32 = unsigned int;
 using u64 = unsigned long long;
 
-using i8  = char;
+using i8 = char;
 using i16 = short;
 using i32 = int;
 using i64 = long long;
@@ -32,7 +32,7 @@ using i64 = long long;
 using f32 = float;
 using f64 = double;
 
-using usize = usize;
+using usize = size_t;
 using isize = ptrdiff_t;
 
 using ansi = char;
@@ -41,21 +41,24 @@ using utf8 = char8_t;
 using utf16 = char16_t;
 using utf32 = char32_t;
 
-template<class T>
-class TType
+using tchar = wide;
+
+#define WT(x) L##x
+#define WTL(x) WT(x)##_s
+
+template <class T> class TType
 {
 };
 
 #define DECLARE_TYPE(type, name, shortName)                                                                            \
-  template<>                                                                                                           \
-  class TType<type>                                                                                                    \
-  {                                                                                                                    \
-  public:                                                                                                              \
-    inline static const char* GetName() { return name; }                                                               \
-    inline static const char* GetShortName() { return shortName; }                                                     \
-    inline static usize GetSize() { return sizeof(type); }                                                            \
-    inline static usize GetAlign() { return alignof(type); }                                                          \
-  }
+    template <> class TType<type>                                                                                      \
+    {                                                                                                                  \
+      public:                                                                                                          \
+        inline static const char *GetName() { return name; }                                                           \
+        inline static const char *GetShortName() { return shortName; }                                                 \
+        inline static usize GetSize() { return sizeof(type); }                                                         \
+        inline static usize GetAlign() { return alignof(type); }                                                       \
+    }
 
 DECLARE_TYPE(u8, "uint8", "u8");
 DECLARE_TYPE(u16, "uint16", "u16");
@@ -70,8 +73,13 @@ DECLARE_TYPE(i64, "int64", "i64");
 DECLARE_TYPE(f32, "float", "f32");
 DECLARE_TYPE(f64, "double", "f64");
 
+DECLARE_TYPE(wide, "wide", "wide");
+DECLARE_TYPE(utf8, "utf8", "utf8");
+DECLARE_TYPE(utf16, "utf16", "utf16");
+DECLARE_TYPE(utf32, "utf32", "utf32");
+
 #include <assert.h>
 
 #ifndef we_assert
-#  define we_assert(x) assert((x))
+    #define we_assert(x) assert((x))
 #endif // !we_assert

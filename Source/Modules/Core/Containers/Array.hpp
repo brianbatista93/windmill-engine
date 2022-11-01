@@ -145,7 +145,7 @@ template <class T, class Alloc> class TArray
     template <class... Args> inline IndexType Emplace(IndexType nIndex, Args &&...vArgs) noexcept
     {
         we_assert(nIndex <= m_nSize && "Index out of bound");
-        
+
         const IndexType newSize = m_nSize + 1;
         if (newSize > m_nCapacity)
         {
@@ -168,6 +168,16 @@ template <class T, class Alloc> class TArray
 
     inline IndexType InsertAt(IndexType nIndex, ElementType &&element) { return Emplace(nIndex, std::move(element)); }
     inline IndexType InsertAt(IndexType nIndex, const ElementType &element) { return Emplace(nIndex, element); }
+
+    inline IndexType AddSlots(IndexType nCount=1)
+    {
+        const IndexType newSize = m_nSize + nCount;
+        const IndexType oldSize = m_nSize;
+
+        Resize(newSize);
+
+        return oldSize;
+    }
 
     inline void Resize(IndexType nNewSize)
     {
@@ -205,7 +215,7 @@ template <class T, class Alloc> class TArray
     friend inline ElementType *GetData(TArray arr) { return arr.GetData(); }
     friend inline usize GetSize(TArray arr) { return usize(arr.GetSize()); }
 
-    friend inline bool operator==(const TArray& lhs, const TArray& rhs)
+    friend inline bool operator==(const TArray &lhs, const TArray &rhs)
     {
         if (lhs.GetSize() != rhs.GetSize())
         {
