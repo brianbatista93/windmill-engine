@@ -1,12 +1,15 @@
 project ("Core")
 
 add_library (${PROJECT_NAME} STATIC
-    "Types.hpp"
-	"Memory/MemoryManager.hpp"
-	"Memory/MemoryManager.cpp"
-	"Memory/Memory.hpp"
-	"Math/MathUtils.hpp"
-	"Containers/Allocator.hpp")
+ "Types.hpp"
+ "Memory/MemoryManager.hpp"
+ "Memory/MemoryManager.cpp"
+ "Memory/Memory.hpp"
+ "Math/MathUtils.hpp"
+ "Containers/Allocator.hpp"
+ "Containers/Array.hpp"
+ "Containers/WeString.hpp" 
+)
 
 target_include_directories (${PROJECT_NAME}
 	PUBLIC
