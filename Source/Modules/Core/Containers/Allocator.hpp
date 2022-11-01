@@ -19,31 +19,40 @@ SOFTWARE.
 
 #pragma once
 
+#define MEMORY_MANAGER_FROM_HEADER
 #include "Memory/Memory.hpp"
 
-template<class IndexSize>
-class TAllocator
+template <class TIndexType> class TAllocator
 {
-public:
-  ~TAllocator() { we_free(m_pData); }
+  public:
+    using IndexType = TIndexType;
 
-  void* Reallocate(size_t nSize)
-  {
-    if (m_pData != nullptr or size != 0) {
-      m_pData = we_realloc(m_pData, nSize);
+    ~TAllocator() { ReleaseData(); }
+
+    void *Reallocate(size_t nSize)
+    {
+        if (m_pData != nullptr or nSize != 0)
+        {
+            m_pData = we_realloc(m_pData, nSize);
+        }
+
+        return m_pData;
     }
 
-    return m_pData;
-  }
+    void *GetData() const { return m_pData; }
 
-  void* GetData() const { return mData; }
+    void MoveTo(TAllocator &rOther) noexcept
+    {
+        rOther.m_pData = m_pData;
+        m_pData = nullptr;
+    }
 
-  void MoveTo(TAllocator& other) noexcept
-  {
-    other.m_pData = m_pData;
-    m_pData       = nullptr;
-  }
+    void ReleaseData()
+    {
+        we_free(m_pData);
+        m_pData = nullptr;
+    }
 
-private:
-  void* m_pData{ nullptr };
+  private:
+    void *m_pData{nullptr};
 };

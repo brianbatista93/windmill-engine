@@ -21,20 +21,37 @@ SOFTWARE.
 
 #include <concepts>
 
-/**
- * @brief Collection of math functions
- */
-class CMath
+class CMemoryUtils
 {
   public:
-    /**
-     * @brief Checks if a number is a power of two
-     */
-    static constexpr bool IsPowerOfTwo(auto value) { return (value & (value - 1)) == 0; }
-
-    template <class T> static constexpr std::make_signed_t<T> Abs(T value)
+    template <class T> static void Construct(T *pData, size_t nCount)
     {
-        const std::make_signed_t<T> sign = value;
-        return sign < 0 ? -sign : sign;
+        for (size_t i = 0; i < nCount; ++i)
+        {
+            new (pData + i) T();
+        }
+    }
+
+    template <class T> static void Destroy(T *pData, size_t nCount)
+    {
+        for (size_t i = 0; i < nCount; ++i)
+        {
+            pData[i].~T();
+        }
+    }
+
+    template <class T> static void Copy(T *pDest, const T *pSrc, size_t nCount)
+    {
+        if constexpr (std::is_trivially_copyable_v<T>)
+        {
+            memcpy(pDest, pSrc, nCount * sizeof(T));
+        }
+        else
+        {
+            for (size_t i = 0; i < nCount; ++i)
+            {
+                new (pDest + i) T(*(pSrc + i));
+            }
+        }
     }
 };

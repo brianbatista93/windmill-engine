@@ -20,58 +20,58 @@ SOFTWARE.
 #pragma once
 
 #include "MemoryManager.hpp"
+#include "MemoryUtils.hpp"
 
 #ifndef we_malloc
-#  define we_malloc(size)                                                                                              \
-    CMemoryManager::Get().Reallocate(nullptr, (size), WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
+    #define we_malloc(size)                                                                                            \
+        CMemoryManager::Get().Allocate((size), WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
 #endif // !we_malloc
 
 #ifndef we_calloc
-#  define we_calloc(count, size)                                                                                       \
-    CMemoryManager::Get().Reallocate(                                                                                  \
-      nullptr, (count) * (size), WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
+    #define we_calloc(count, size)                                                                                     \
+        CMemoryManager::Get().Allocate((count) * (size), WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
 #endif // !we_calloc
 
 #ifndef we_realloc
-#  define we_realloc(data, size)                                                                                       \
-    CMemoryManager::Get().Reallocate((data), (size), WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
+    #define we_realloc(data, size)                                                                                     \
+        CMemoryManager::Get().Reallocate((data), (size), WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
 #endif // !we_realloc
 
 #ifndef we_free
-#  define we_free(mem) CMemoryManager::Get().Free((mem))
+    #define we_free(mem) CMemoryManager::Get().Free((mem))
 #endif // !we_free
 
 #ifndef we_new
-#  define we_new(type, ...) CMemoryManager::Get().New<type>(__FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+    #define we_new(type, ...) CMemoryManager::Get().New<type>(__FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #endif // !we_new
 
 #ifndef we_delete
-#  define we_delete(ptr) CMemoryManager::Get().Delete(ptr, __FILE__, __LINE__, __FUNCTION__)
+    #define we_delete(ptr) CMemoryManager::Get().Delete(ptr, __FILE__, __LINE__, __FUNCTION__)
 #endif // !we_delete
 
 #ifndef MEMORY_MANAGER_FROM_HEADER
-#  ifndef malloc
-#    define malloc(size) static_assert(false, "Please use we_malloc");
-#  endif
-#  ifndef calloc
-#    define calloc(count, size) static_assert(false, "Please use we_calloc");
-#  endif
-#  ifndef realloc
-#    define realloc(ptr, size) static_assert(false, "Please use we_realloc");
-#  endif
-#  ifndef free
-#    define free(ptr) static_assert(false, "Please use we_free");
-#  endif
+    #ifndef malloc
+        #define malloc(size) static_assert(false, "Please use we_malloc");
+    #endif
+    #ifndef calloc
+        #define calloc(count, size) static_assert(false, "Please use we_calloc");
+    #endif
+    #ifndef realloc
+        #define realloc(ptr, size) static_assert(false, "Please use we_realloc");
+    #endif
+    #ifndef free
+        #define free(ptr) static_assert(false, "Please use we_free");
+    #endif
 
-#  ifndef new
-#    define new static_assert(false, "Please use we_placement_new");
-#  endif
-#  ifndef delete
-#    define delete static_assert(false, "Please use we_free with explicit destructor call");
-#  endif
+    #ifndef new
+        #define new static_assert(false, "Please use we_placement_new");
+    #endif
+    #ifndef delete
+        #define delete static_assert(false, "Please use we_free with explicit destructor call");
+    #endif
 
 #endif //! MEMORY_MANAGER_FROM_HEADER
 
 #ifdef MEMORY_MANAGER_FROM_HEADER
-#  undef MEMORY_MANAGER_FROM_HEADER
+    #undef MEMORY_MANAGER_FROM_HEADER
 #endif // MEMORY_MANAGER_FROM_HEADER
