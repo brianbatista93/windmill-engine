@@ -19,18 +19,16 @@ SOFTWARE.
 
 #pragma once
 
-#include "Types.hpp"
+#include <concepts>
 
-class CStringUtils
+namespace WE::Concept
 {
-  public:
-    static bool StartsWith(const tchar *__restrict pStr, const tchar *__restrict pStart);
-    static bool EndsWith(const tchar *__restrict pStr, const tchar *__restrict pEnd, i32 nLength);
-    static bool EndsWith(const tchar *__restrict pStr, const tchar *__restrict pEnd);
-
-    static i32 Compare(const tchar *__restrict pLhsStr, const tchar *__restrict pRhsStr);
-    static i32 Compare(const tchar *__restrict pLhsStr, i32 nLength, const tchar *__restrict pRhsStr);
-
-    static i32 Find(const tchar *__restrict pStr, const tchar *__restrict pFind, i32 nOffset = 0);
-    static i32 Find(const tchar *__restrict pStr, i32 nStrLength, const tchar *__restrict pFind, i32 nFindLength, i32 nOffset = 0);
+template <class T>
+concept IsContainer = requires(T a, const T& b)
+{
+    { a.begin() } -> std::same_as<typename T::iterator>;
+    { a.end() } -> std::same_as<typename T::iterator>;
+    { b.begin() } -> std::same_as<typename T::const_iterator>;
+    { b.end() } -> std::same_as<typename T::const_iterator>;
 };
+} // namespace WE::Concept

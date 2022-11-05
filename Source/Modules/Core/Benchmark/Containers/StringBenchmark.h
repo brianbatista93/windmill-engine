@@ -97,3 +97,36 @@ TEST(String, Substring)
     CString sub = lit.Substring(10, 5);
     EXPECT_EQ(sub, WTL("brown"));
 }
+
+TEST(String, Find)
+{
+    CString lit = WTL("The quick brown fox jumps over the lazy dog.");
+    EXPECT_EQ(lit.Find(WT("brown")), 10);
+    EXPECT_EQ(lit.Find(WT("dog")), 40);
+    EXPECT_EQ(lit.Find(WT("fox")), 16);
+    EXPECT_EQ(lit.Find(WT("fox"), 17), -1);
+}
+
+TEST(String, Split)
+{
+    CString lit = WTL("The quick brown fox jumps over the lazy dog.");
+    auto parts = lit.Split(WT(" "));
+    EXPECT_EQ(parts.GetSize(), 9);
+    EXPECT_EQ(parts[0], WTL("The"));
+    EXPECT_EQ(parts[1], WTL("quick"));
+    EXPECT_EQ(parts[2], WTL("brown"));
+    EXPECT_EQ(parts[3], WTL("fox"));
+    EXPECT_EQ(parts[4], WTL("jumps"));
+    EXPECT_EQ(parts[5], WTL("over"));
+    EXPECT_EQ(parts[6], WTL("the"));
+    EXPECT_EQ(parts[7], WTL("lazy"));
+    EXPECT_EQ(parts[8], WTL("dog."));
+}
+
+TEST(String, Join)
+{
+    auto cart = {WTL("Orange"), WTL("Apple"), WTL("Pear"), WTL("Melon"), WTL("Grape")};
+
+    CString joined = CString::Join(WT(";\n"), cart);
+    EXPECT_EQ(joined, WTL("Orange;\nApple;\nPear;\nMelon;\nGrape"));
+}

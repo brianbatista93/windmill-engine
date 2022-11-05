@@ -21,6 +21,8 @@ SOFTWARE.
 
 #include "Allocator.hpp"
 #include "Array.hpp"
+#include "Concepts.hpp"
+#include "StringBuilder.hpp"
 #include "StringUtils.hpp"
 
 #include <string>
@@ -42,7 +44,11 @@ class CString
     CString &operator=(CString &&) = default;
     CString &operator=(const CString &) = default;
 
+    CString(std::nullptr_t) = delete;
+
     inline CString(const tchar *pStr, usize nLength) : m_Data(i32(nLength) + 1) { Init(pStr, m_Data.GetSize()); }
+
+    CString(const u8 *pBytes, class IEncoder *pEncoder);
 
     inline CString &Append(tchar chr)
     {
@@ -112,6 +118,52 @@ class CString
         return CString(GetArray().GetData() + nStart, nCount);
     }
 
+    inline i32 Find(const tchar *pStr, i32 nOffset = 0)
+    {
+        we_assert(pStr != nullptr and nOffset < GetLength());
+        return CStringUtils::Find(GetArray().GetData(), pStr, nOffset);
+    }
+
+    TArray<CString, TAllocator<i32>> Split(const tchar *pStr);
+
+    template <WE::Concept::IsContainer TContainer>
+    inline static CString Join(tchar separator, const TContainer &container)
+    {
+        CStringBuilder builder;
+        bool bIsFirst = true;
+
+        for (CString str : container)
+        {
+            if (!bIsFirst) [[unlikely]]
+            {
+                builder.Append(separator);
+            }
+            builder.Append(str);
+            bIsFirst = false;
+        }
+
+        return builder.ToString();
+    }
+
+    template <WE::Concept::IsContainer TContainer>
+    inline static CString Join(const tchar *separator, const TContainer &container)
+    {
+        CStringBuilder builder;
+        bool bIsFirst = true;
+
+        for (CString str : container)
+        {
+            if (!bIsFirst) [[unlikely]]
+            {
+                builder.Append(separator);
+            }
+            builder.Append(str);
+            bIsFirst = false;
+        }
+
+        return builder.ToString();
+    }
+
     inline bool operator==(const CString &other) const { return CStringUtils::Compare(GetArray().GetData(), *other) == 0; }
 
   private:
@@ -138,8 +190,6 @@ class CString
     ArrayType m_Data;
 };
 
-inline namespace WE
-{
 inline namespace Literals
 {
 inline namespace StringLiterals
@@ -150,4 +200,3 @@ inline CString operator""_s(const tchar *pStr, usize nLength)
 }
 } // namespace StringLiterals
 } // namespace Literals
-} // namespace WE

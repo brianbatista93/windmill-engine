@@ -112,3 +112,32 @@ CString CString::ConcatCS(const tchar *pLhs, const CString &rhs)
 {
     return WE::Internal::ConcatCStringToStrings(pLhs, rhs);
 }
+
+TArray<CString, TAllocator<i32>> CString::Split(const tchar *pStr)
+{
+    we_assert(pStr != nullptr);
+
+    const i32 length = i32(std::char_traits<tchar>::length(pStr));
+    TArray<CString, TAllocator<i32>> result;
+
+    tchar *pStart = GetArray().GetData();
+    tchar *pEnd = pStart;
+
+    while (*pEnd != 0)
+    {
+        if (CStringUtils::Compare(pEnd, length, pStr) == 0)
+        {
+            result.Add(CString(pStart, pEnd - pStart));
+            pStart = pEnd + 1;
+        }
+
+        ++pEnd;
+    }
+
+    if (pStart != pEnd)
+    {
+        result.Add(CString(pStart, pEnd - pStart));
+    }
+
+    return result;
+}

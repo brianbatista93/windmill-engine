@@ -19,18 +19,25 @@ SOFTWARE.
 
 #pragma once
 
-#include "Types.hpp"
+#include "Array.hpp"
 
-class CStringUtils
+class CString;
+
+class CStringBuilder
 {
   public:
-    static bool StartsWith(const tchar *__restrict pStr, const tchar *__restrict pStart);
-    static bool EndsWith(const tchar *__restrict pStr, const tchar *__restrict pEnd, i32 nLength);
-    static bool EndsWith(const tchar *__restrict pStr, const tchar *__restrict pEnd);
+    CStringBuilder();
 
-    static i32 Compare(const tchar *__restrict pLhsStr, const tchar *__restrict pRhsStr);
-    static i32 Compare(const tchar *__restrict pLhsStr, i32 nLength, const tchar *__restrict pRhsStr);
+    CStringBuilder(i32 nInitialCapacity);
 
-    static i32 Find(const tchar *__restrict pStr, const tchar *__restrict pFind, i32 nOffset = 0);
-    static i32 Find(const tchar *__restrict pStr, i32 nStrLength, const tchar *__restrict pFind, i32 nFindLength, i32 nOffset = 0);
+    CStringBuilder &Append(tchar chr);
+
+    CStringBuilder &Append(const tchar *pStr);
+
+    CStringBuilder &Append(const CString &str);
+
+    CString ToString();
+
+  private:
+    TArray<tchar, TAllocator<i32>> m_Data;
 };
