@@ -48,7 +48,7 @@ class CString
 
     inline CString(const tchar *pStr, usize nLength) : m_Data(i32(nLength) + 1) { Init(pStr, m_Data.GetSize()); }
 
-    CString(const u8 *pBytes, class IEncoder *pEncoder);
+    CString(const u8 *pBytes, usize nSize, const class IEncoder *pEncoder);
 
     inline CString &Append(tchar chr)
     {

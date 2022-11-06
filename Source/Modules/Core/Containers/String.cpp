@@ -1,3 +1,4 @@
+#include "Encoding/IEncoder.hpp"
 #include "WeString.hpp"
 
 namespace WE::Internal
@@ -140,4 +141,16 @@ TArray<CString, TAllocator<i32>> CString::Split(const tchar *pStr)
     }
 
     return result;
+}
+
+CString::CString(const u8 *pBytes, usize nSize, const IEncoder *pEncoder)
+{
+    we_assert(pBytes != nullptr and pEncoder != nullptr);
+
+    const usize length = pEncoder->GetLength(pBytes, nSize);
+    if (length > 0)
+    {
+        m_Data.AddSlots(i32(length) + 1);
+        pEncoder->Decode(m_Data.GetData(), pBytes, length);
+    }
 }
