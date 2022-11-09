@@ -140,3 +140,9 @@ TEST(String, AnsiEncoder)
     CString text(bytes, 44, &AnsiEncoder::Get());
     EXPECT_EQ(text, WTL("The quick brown fox jumps over the lazy dog."));
 }
+
+TEST(String, Format)
+{
+    CString text = CString::Format(WT("This is {0}."), WT("Windmill Engine"));
+    EXPECT_EQ(text, WTL("This is Windmill Engine."));
+}

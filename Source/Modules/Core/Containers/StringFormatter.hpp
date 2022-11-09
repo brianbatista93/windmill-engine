@@ -19,50 +19,31 @@ SOFTWARE.
 
 #pragma once
 
-#include "Array.hpp"
-#include "StringFormatter.hpp"
+#include <functional>
+#include "Types.hpp"
 
 class CString;
+class IFormattable;
 
-class CStringBuilder
+class CFormatterArgument
 {
   public:
-    CStringBuilder();
+    using FormatterFunction = CString (*)(const tchar *pFormat);
 
-    CStringBuilder(i32 nInitialCapacity);
+    template <class T>
+    requires(std::derived_from<T, IFormattable>) CFormatterArgument(const T *a) : m_pFormattable(a) {}
 
-    CStringBuilder &Append(tchar chr);
+    CFormatterArgument(const tchar *pValue);
 
-    CStringBuilder &Append(tchar chr, i32 nCount);
-
-    CStringBuilder &Append(const tchar *pStr);
-
-    CStringBuilder &Append(const tchar *pStr, i32 nLength);
-
-    CStringBuilder &Append(const CString &str);
-
-    template <class... TArgs>
-    inline CStringBuilder &AppendFormat(const tchar *pFormat, TArgs &&...vArgs)
-    {
-        constexpr usize nArgc = sizeof...(vArgs);
-
-        if constexpr (nArgc > 0)
-        {
-            const CFormatterArgument pArgv[nArgc] = {vArgs...};
-            FormatInternal(pFormat, nArgc, pArgv);
-        }
-        else
-        {
-            FormatInternal(pFormat, 0, nullptr);
-        }
-
-        return *this;
-    }
-
-    CString ToString();
+    bool TryFormat(tchar **pDest, const tchar *pFormat);
 
   private:
-    void FormatInternal(const tchar *pFormat, usize nArgc, const CFormatterArgument *pArgs);
+    const IFormattable *m_pFormattable;
 
-    TArray<tchar, TAllocator<i32>> m_Data;
+    union {
+        i64 m_nDecimal;
+        u64 m_nUnsigned;
+        f64 m_nDouble;
+        const tchar *m_pString;
+    };
 };

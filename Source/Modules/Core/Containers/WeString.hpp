@@ -164,6 +164,14 @@ class CString
         return builder.ToString();
     }
 
+    template <class... TArgs>
+    inline static CString Format(const tchar *pFormat, TArgs &&...args)
+    {
+        CStringBuilder builder(256);
+        builder.AppendFormat(pFormat, std::forward<TArgs>(args)...);
+        return builder.ToString();
+    }
+
     inline bool operator==(const CString &other) const { return CStringUtils::Compare(GetArray().GetData(), *other) == 0; }
 
   private:
