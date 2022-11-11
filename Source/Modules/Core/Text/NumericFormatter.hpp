@@ -22,6 +22,8 @@ SOFTWARE.
 #include "Concepts.hpp"
 #include "Containers/StringUtils.hpp"
 
+#include <math.h>
+
 class CNumeric
 {
   public:
@@ -313,7 +315,7 @@ class CNumeric
                     decimalPart *= pow(10.0, nPrecision);
                     u64 decimal = u64(round(decimalPart));
 
-                    pDest = FormatUnsigned(decimal, pDest, nullptr);
+                    *pDest = FormatUnsigned(decimal, *pDest, nullptr);
                 }
                 else
                 {

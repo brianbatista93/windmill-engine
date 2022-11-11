@@ -19,6 +19,8 @@ SOFTWARE.
 
 #pragma once
 
+#include <stddef.h>
+
 using u8 = unsigned char;
 using u16 = unsigned short;
 using u32 = unsigned int;
@@ -43,7 +45,7 @@ using utf32 = char32_t;
 using tchar = wide;
 
 #define WT(x) L##x
-#define WTL(x) WT(x)##_s
+#define WTL(x) L##x##_s
 
 template <class T>
 class TType

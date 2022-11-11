@@ -20,6 +20,7 @@ SOFTWARE.
 #pragma once
 
 #include <concepts>
+#include <cstring>
 
 #include "Types.hpp"
 

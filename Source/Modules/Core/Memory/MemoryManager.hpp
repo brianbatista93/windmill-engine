@@ -46,7 +46,7 @@ class CMemoryManager
     template <class T, class... Args>
     static T *New(const char *pFilename, i32 nLine, const char *pFunctionName, Args &&...args)
     {
-        T *ptr = (T *)Allocate(sizeof(T), alignof(T), pFilename, nLine, pFunctionName);
+        T *ptr = (T *)Get().Allocate(sizeof(T), alignof(T), pFilename, nLine, pFunctionName);
         return new (ptr) T(std::forward<Args>(args)...);
     }
 

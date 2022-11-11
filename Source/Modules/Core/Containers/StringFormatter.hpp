@@ -41,15 +41,15 @@ class CFormatterArgument
     template <WE::Concept::IsFormattable T>
     CFormatterArgument(const T &rValue) : m_eType(kFormattable)
     {
-        m_pFormatter = [=](tchar **pDest, const tchar *pFormat) {
-            return ::TryFormat(rValue, pDest, pFormat);
+        m_pFormatter = [rValue](tchar **pDest, const tchar *pFormat) {
+            return TryFormat(rValue, pDest, pFormat);
         };
     }
 
     template <WE::Concept::IsNumeric T>
     CFormatterArgument(const T &rValue) : m_eType(kNumeric)
     {
-        m_pFormatter = [=](tchar **pDest, const tchar *pFormat) {
+        m_pFormatter = [rValue](tchar **pDest, const tchar *pFormat) {
             return CNumeric::TryFormat<T>(rValue, pDest, pFormat);
         };
     }
