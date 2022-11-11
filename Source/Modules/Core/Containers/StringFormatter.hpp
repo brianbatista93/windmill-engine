@@ -20,30 +20,51 @@ SOFTWARE.
 #pragma once
 
 #include <functional>
-#include "Types.hpp"
 
-class CString;
-class IFormattable;
+#include "Concepts.hpp"
+#include "Text/NumericFormatter.hpp"
+#include "Types.hpp"
 
 class CFormatterArgument
 {
   public:
-    using FormatterFunction = CString (*)(const tchar *pFormat);
+    using FormatterFunction = std::function<bool(tchar **, const tchar *)>;
 
-    template <class T>
-    requires(std::derived_from<T, IFormattable>) CFormatterArgument(const T *a) : m_pFormattable(a) {}
+    enum EType
+    {
+        kInvalid = 0,
+        kString = 1,
+        kNumeric = 2,
+        kFormattable = 3
+    };
+
+    template <WE::Concept::IsFormattable T>
+    CFormatterArgument(const T &rValue) : m_eType(kFormattable)
+    {
+        m_pFormatter = [=](tchar **pDest, const tchar *pFormat) {
+            return ::TryFormat(rValue, pDest, pFormat);
+        };
+    }
+
+    template <WE::Concept::IsNumeric T>
+    CFormatterArgument(const T &rValue) : m_eType(kNumeric)
+    {
+        m_pFormatter = [=](tchar **pDest, const tchar *pFormat) {
+            return CNumeric::TryFormat<T>(rValue, pDest, pFormat);
+        };
+    }
 
     CFormatterArgument(const tchar *pValue);
+    CFormatterArgument(class CString value);
 
     bool TryFormat(tchar **pDest, const tchar *pFormat);
 
-  private:
-    const IFormattable *m_pFormattable;
+    inline EType GetType() const { return m_eType; }
 
-    union {
-        i64 m_nDecimal;
-        u64 m_nUnsigned;
-        f64 m_nDouble;
-        const tchar *m_pString;
-    };
+    inline const tchar *GetString() const { return m_pString; }
+
+  private:
+    FormatterFunction m_pFormatter{nullptr};
+    EType m_eType{kInvalid};
+    const tchar *m_pString;
 };
