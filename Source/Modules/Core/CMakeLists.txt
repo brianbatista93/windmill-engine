@@ -9,7 +9,12 @@ add_library (${PROJECT_NAME} STATIC
  "Containers/Allocator.hpp"
  "Containers/Array.hpp"
  "Containers/WeString.hpp" 
- "Containers/String.cpp" "Containers/StringUtils.cpp" "Containers/StringBuilder.cpp" "Encoding/AnsiEncoder.cpp"  "Containers/StringFormat.cpp")
+ "Containers/String.cpp"
+ "Containers/StringUtils.cpp"
+ "Containers/StringBuilder.cpp"
+ "Encoding/AnsiEncoder.cpp" 
+ "Containers/StringFormat.cpp"
+ "Containers/StringFormatter.cpp")
 
 target_include_directories (${PROJECT_NAME}
 	PUBLIC

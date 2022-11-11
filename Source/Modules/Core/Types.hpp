@@ -55,10 +55,22 @@ class TType
     class TType<type>                                                                                                                                \
     {                                                                                                                                                \
       public:                                                                                                                                        \
-        inline static const char *GetName() { return name; }                                                                                         \
-        inline static const char *GetShortName() { return shortName; }                                                                               \
-        inline static usize GetSize() { return sizeof(type); }                                                                                       \
-        inline static usize GetAlign() { return alignof(type); }                                                                                     \
+        inline static const char *GetName()                                                                                                          \
+        {                                                                                                                                            \
+            return name;                                                                                                                             \
+        }                                                                                                                                            \
+        inline static const char *GetShortName()                                                                                                     \
+        {                                                                                                                                            \
+            return shortName;                                                                                                                        \
+        }                                                                                                                                            \
+        inline static usize GetSize()                                                                                                                \
+        {                                                                                                                                            \
+            return sizeof(type);                                                                                                                     \
+        }                                                                                                                                            \
+        inline static usize GetAlign()                                                                                                               \
+        {                                                                                                                                            \
+            return alignof(type);                                                                                                                    \
+        }                                                                                                                                            \
     }
 
 DECLARE_TYPE(u8, "uint8", "u8");
@@ -84,3 +96,12 @@ DECLARE_TYPE(utf32, "utf32", "utf32");
 #ifndef we_assert
     #define we_assert(x) assert((x))
 #endif // !we_assert
+
+#if defined(_MSC_VER) && !defined(__clang__)
+    #if !defined(_DEBUG) && !defined(NDEBUG)
+        #define NDEBUG
+    #endif
+    #define UNREF_PARAM(x) (x)
+#elif defined(__GNUC__) || defined(__clang__)
+    #define UNREF_PARAM(x) ((void)(x))
+#endif

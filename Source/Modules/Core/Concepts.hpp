@@ -21,6 +21,10 @@ SOFTWARE.
 
 #include <concepts>
 
+#include "Types.hpp"
+
+// clang-format off
+
 namespace WE::Concept
 {
 template <class T>
@@ -31,4 +35,15 @@ concept IsContainer = requires(T a, const T& b)
     { b.begin() } -> std::same_as<typename T::const_iterator>;
     { b.end() } -> std::same_as<typename T::const_iterator>;
 };
+
+template <class T>
+concept IsFormattable = requires(T value)
+{
+    { value.TryFormat(value, nullptr, nullptr) } -> std::same_as<bool>;
+};
+
+template <class T>
+concept IsNumeric = std::is_arithmetic_v<T>;
 } // namespace WE::Concept
+
+// clang-format oon

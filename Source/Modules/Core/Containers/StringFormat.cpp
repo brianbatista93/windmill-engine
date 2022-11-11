@@ -1,15 +1,9 @@
-#include "IFormattable.hpp"
 #include "StringBuilder.hpp"
-#include "StringFormattable.hpp"
 #include "WeString.hpp"
 
 bool CFormatterArgument::TryFormat(tchar **pDest, const tchar *pFormat)
 {
-    return m_pFormattable->TryFormat(pDest, pFormat);
-}
-
-CFormatterArgument::CFormatterArgument(const tchar *pValue) : m_pFormattable(&CStringFormattable::Get()), m_pString(pValue)
-{
+    return m_pFormatter(pDest, pFormat);
 }
 
 void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFormatterArgument *pArgs)
@@ -152,13 +146,26 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
         pos++;
         CString s;
 
+        switch (argument.GetType())
         {
+        case CFormatterArgument::kString: {
+            s = CString(argument.GetString());
+        }
+        break;
+        case CFormatterArgument::kNumeric:
+        case CFormatterArgument::kFormattable: {
             thread_local tchar buffer[128];
             memset(buffer, 0, 128 * sizeof(tchar));
-            tchar *pBufferPtr = buffer;
+            tchar *pBufferPtr = argument.GetType() == CFormatterArgument::kNumeric ? (std::end(buffer) - 1) : buffer;
             we_assert(argument.TryFormat(&pBufferPtr, *item_format_sub));
 
-            s = CString(buffer, 128);
+            s = CString((const tchar *)pBufferPtr);
+        }
+        break;
+        default: {
+            we_assert(false && "Invalid pFormat string");
+        }
+        break;
         }
 
         const i32 pad = width - s.GetLength();

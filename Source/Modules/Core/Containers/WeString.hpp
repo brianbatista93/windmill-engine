@@ -46,6 +46,8 @@ class CString
 
     CString(std::nullptr_t) = delete;
 
+    inline explicit CString(const tchar *pStr) : m_Data(i32(std::char_traits<tchar>::length(pStr)) + 1) { Init(pStr, m_Data.GetSize()); }
+
     inline CString(const tchar *pStr, usize nLength) : m_Data(i32(nLength) + 1) { Init(pStr, m_Data.GetSize()); }
 
     CString(const u8 *pBytes, usize nSize, const class IEncoder *pEncoder);
@@ -95,7 +97,7 @@ class CString
     inline i32 GetLength() const { return m_Data.GetSize() > 0 ? (m_Data.GetSize() - 1) : 0; }
     inline bool IsEmpty() const { return GetLength() == 0; }
 
-    inline const CharType *operator*() const { return IsEmpty() ? nullptr : m_Data.GetData(); }
+    inline const CharType *operator*() const { return IsEmpty() ? WT("") : m_Data.GetData(); }
 
     inline ArrayType GetArray() const { return m_Data; }
 

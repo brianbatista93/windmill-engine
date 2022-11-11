@@ -120,3 +120,8 @@ i32 CStringUtils::Find(const tchar *__restrict pStr, i32 nStrLength, const tchar
 
     return -1;
 }
+
+bool CStringUtils::IsDigit(tchar ch)
+{
+    return ch >= WT('0') && ch <= WT('9');
+}
