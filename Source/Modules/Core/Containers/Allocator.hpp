@@ -22,6 +22,8 @@ SOFTWARE.
 #define MEMORY_MANAGER_FROM_HEADER
 #include "Memory/Memory.hpp"
 
+#include "Types.hpp"
+
 template <class TIndexType> class TAllocator
 {
   public:

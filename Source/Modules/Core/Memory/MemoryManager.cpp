@@ -21,17 +21,16 @@ CMemoryManager &CMemoryManager::Get()
 CMemoryManager::~CMemoryManager()
 {
     // we_assert(m_CurrentAllocations.empty() && "There are still allocations that have not been freed.");
-    for (auto [memory, info] : m_CurrentAllocations)
-    {
-        printf("0x%08llx (%zx|%d) - %s:%d (%s)\n", usize(memory), info.nSize, info.nAlignment, info.pFilename, info.nLine,
-               info.pFunctionName);
-    }
+    // for (auto [memory, info] : m_CurrentAllocations)
+    // {
+    //    printf("0x%08llx (%zx|%d) - %s:%d (%s)\n", usize(memory), info.nSize, info.nAlignment, info.pFilename, info.nLine,
+    //           info.pFunctionName);
+    // }
 }
 
 static i32 lastOrder = 1;
 
-void *CMemoryManager::Allocate(usize nSize, usize nAlignment, const char *pFilename, i32 nLine,
-                               const char *pFunctionName)
+void *CMemoryManager::Allocate(usize nSize, usize nAlignment, const char *pFilename, i32 nLine, const char *pFunctionName)
 {
     WE::Internal::CheckAllocationInput(nSize, nAlignment);
 
@@ -50,8 +49,7 @@ void *CMemoryManager::Allocate(usize nSize, usize nAlignment, const char *pFilen
     return pointer;
 }
 
-void *CMemoryManager::Reallocate(void *pMemory, usize nSize, usize nAlignment, const char *pFilename, i32 nLine,
-                                 const char *pFunctionName)
+void *CMemoryManager::Reallocate(void *pMemory, usize nSize, usize nAlignment, const char *pFilename, i32 nLine, const char *pFunctionName)
 {
     WE::Internal::CheckAllocationInput(nSize, nAlignment);
 
@@ -92,7 +90,7 @@ void *CMemoryManager::ReallocInternal(void *pMemory, usize nSize, usize nAlignme
 #if defined(WE_OS_WINDOWS)
     return _aligned_realloc(pMemory, nSize, nAlignment);
 #else
-    return realloc(nSize);
+    return realloc(pMemory, nSize);
 #endif // defined(WE_OS_WINDOWS)
 }
 
