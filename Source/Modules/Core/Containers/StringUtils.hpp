@@ -19,41 +19,20 @@ SOFTWARE.
 
 #pragma once
 
-#include <concepts>
-
 #include "Types.hpp"
 
-class CMemoryUtils
+class CStringUtils
 {
   public:
-    template <class T> static void Construct(T *pData, usize nCount)
-    {
-        for (usize i = 0; i < nCount; ++i)
-        {
-            new (pData + i) T();
-        }
-    }
+    static bool StartsWith(const tchar *__restrict pStr, const tchar *__restrict pStart);
+    static bool EndsWith(const tchar *__restrict pStr, const tchar *__restrict pEnd, i32 nLength);
+    static bool EndsWith(const tchar *__restrict pStr, const tchar *__restrict pEnd);
 
-    template <class T> static void Destroy(T *pData, usize nCount)
-    {
-        for (usize i = 0; i < nCount; ++i)
-        {
-            pData[i].~T();
-        }
-    }
+    static i32 Compare(const tchar *__restrict pLhsStr, const tchar *__restrict pRhsStr);
+    static i32 Compare(const tchar *__restrict pLhsStr, i32 nLength, const tchar *__restrict pRhsStr);
 
-    template <class T> static void Copy(T *pDest, const T *pSrc, usize nCount)
-    {
-        if constexpr (std::is_trivially_copyable_v<T>)
-        {
-            memcpy(pDest, pSrc, nCount * sizeof(T));
-        }
-        else
-        {
-            for (usize i = 0; i < nCount; ++i)
-            {
-                new (pDest + i) T(*(pSrc + i));
-            }
-        }
-    }
+    static i32 Find(const tchar *__restrict pStr, const tchar *__restrict pFind, i32 nOffset = 0);
+    static i32 Find(const tchar *__restrict pStr, i32 nStrLength, const tchar *__restrict pFind, i32 nFindLength, i32 nOffset = 0);
+
+    static bool IsDigit(tchar ch);
 };

@@ -25,7 +25,8 @@ SOFTWARE.
 #include "Allocator.hpp"
 #include "Math/MathUtils.hpp"
 
-template <class T, class Alloc> class TArray
+template <class T, class Alloc>
+class TArray
 {
   public:
     using ElementType = T;
@@ -37,7 +38,11 @@ template <class T, class Alloc> class TArray
     inline TArray() : m_Allocator(), m_nSize(0), m_nCapacity(0) {}
     inline TArray(IndexType nInitialSize) { InitializeWithSize(nInitialSize); }
     inline TArray(std::initializer_list<ElementType> list) noexcept { InitializeWithRange(list.begin(), list.end()); }
-    template <typename ItType> inline TArray(ItType first, ItType last) { InitializeWithRange(first, last); }
+    template <typename ItType>
+    inline TArray(ItType first, ItType last)
+    {
+        InitializeWithRange(first, last);
+    }
 
     inline TArray(const TArray &other) { CopyFromOther(other); }
     inline TArray(TArray &&other) noexcept { MoveFromOther(std::move(other)); }
@@ -49,7 +54,7 @@ template <class T, class Alloc> class TArray
             const auto nDifference = CMath::Abs(m_nSize - other.m_nSize);
             CMemoryUtils::Destroy(GetData() + other.m_nSize, nDifference);
 
-            const size_t sizeInBytes = other.m_nSize * sizeof(ElementType);
+            const IndexType sizeInBytes = other.m_nSize * sizeof(ElementType);
             m_Allocator.Reallocate(sizeInBytes);
             m_nSize = other.m_nSize;
             m_nCapacity = other.m_nSize;
@@ -142,10 +147,11 @@ template <class T, class Alloc> class TArray
     inline ElementType *GetData() { return (ElementType *)m_Allocator.GetData(); }
     inline const ElementType *GetData() const { return (const ElementType *)m_Allocator.GetData(); }
 
-    template <class... Args> inline IndexType Emplace(IndexType nIndex, Args &&...vArgs) noexcept
+    template <class... Args>
+    inline IndexType Emplace(IndexType nIndex, Args &&...vArgs) noexcept
     {
         we_assert(nIndex <= m_nSize && "Index out of bound");
-        
+
         const IndexType newSize = m_nSize + 1;
         if (newSize > m_nCapacity)
         {
@@ -168,6 +174,16 @@ template <class T, class Alloc> class TArray
 
     inline IndexType InsertAt(IndexType nIndex, ElementType &&element) { return Emplace(nIndex, std::move(element)); }
     inline IndexType InsertAt(IndexType nIndex, const ElementType &element) { return Emplace(nIndex, element); }
+
+    inline IndexType AddSlots(IndexType nCount = 1)
+    {
+        const IndexType newSize = m_nSize + nCount;
+        const IndexType oldSize = m_nSize;
+
+        Resize(newSize);
+
+        return oldSize;
+    }
 
     inline void Resize(IndexType nNewSize)
     {
@@ -203,16 +219,16 @@ template <class T, class Alloc> class TArray
 
     // Global container functions
     friend inline ElementType *GetData(TArray arr) { return arr.GetData(); }
-    friend inline size_t GetSize(TArray arr) { return size_t(arr.GetSize()); }
+    friend inline usize GetSize(TArray arr) { return usize(arr.GetSize()); }
 
-    friend inline bool operator==(const TArray& lhs, const TArray& rhs)
+    friend inline bool operator==(const TArray &lhs, const TArray &rhs)
     {
         if (lhs.GetSize() != rhs.GetSize())
         {
             return false;
         }
 
-        for (size_t i = 0; i < lhs.GetSize(); ++i)
+        for (IndexType i = 0; i < lhs.GetSize(); ++i)
         {
             if (lhs[i] != rhs[i])
             {
@@ -234,7 +250,7 @@ template <class T, class Alloc> class TArray
 
     inline void InitializeWithRange(const ElementType *pBegin, const ElementType *pEnd)
     {
-        const size_t size = pEnd - pBegin;
+        const usize size = pEnd - pBegin;
         m_nSize = size;
         m_nCapacity = size;
         m_Allocator.Reallocate(size * sizeof(ElementType));

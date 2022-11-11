@@ -19,41 +19,19 @@ SOFTWARE.
 
 #pragma once
 
-#include <concepts>
-
 #include "Types.hpp"
 
-class CMemoryUtils
+class IEncoder
 {
   public:
-    template <class T> static void Construct(T *pData, usize nCount)
-    {
-        for (usize i = 0; i < nCount; ++i)
-        {
-            new (pData + i) T();
-        }
-    }
+    virtual ~IEncoder() = default;
 
-    template <class T> static void Destroy(T *pData, usize nCount)
-    {
-        for (usize i = 0; i < nCount; ++i)
-        {
-            pData[i].~T();
-        }
-    }
+    virtual const tchar *GetName() = 0;
+    virtual const tchar *GetShortName() { return nullptr; }
 
-    template <class T> static void Copy(T *pDest, const T *pSrc, usize nCount)
-    {
-        if constexpr (std::is_trivially_copyable_v<T>)
-        {
-            memcpy(pDest, pSrc, nCount * sizeof(T));
-        }
-        else
-        {
-            for (usize i = 0; i < nCount; ++i)
-            {
-                new (pDest + i) T(*(pSrc + i));
-            }
-        }
-    }
+    virtual usize GetLength(const u8 *pBytes, usize nByteCount) const = 0;
+    virtual usize Decode(tchar *pDest, const u8 *pSrc, usize nByteCount) const = 0;
+
+  protected:
+    IEncoder() = default;
 };

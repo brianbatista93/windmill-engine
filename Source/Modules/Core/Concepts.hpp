@@ -23,37 +23,27 @@ SOFTWARE.
 
 #include "Types.hpp"
 
-class CMemoryUtils
+// clang-format off
+
+namespace WE::Concept
 {
-  public:
-    template <class T> static void Construct(T *pData, usize nCount)
-    {
-        for (usize i = 0; i < nCount; ++i)
-        {
-            new (pData + i) T();
-        }
-    }
-
-    template <class T> static void Destroy(T *pData, usize nCount)
-    {
-        for (usize i = 0; i < nCount; ++i)
-        {
-            pData[i].~T();
-        }
-    }
-
-    template <class T> static void Copy(T *pDest, const T *pSrc, usize nCount)
-    {
-        if constexpr (std::is_trivially_copyable_v<T>)
-        {
-            memcpy(pDest, pSrc, nCount * sizeof(T));
-        }
-        else
-        {
-            for (usize i = 0; i < nCount; ++i)
-            {
-                new (pDest + i) T(*(pSrc + i));
-            }
-        }
-    }
+template <class T>
+concept IsContainer = requires(T a, const T& b)
+{
+    { a.begin() } -> std::same_as<typename T::iterator>;
+    { a.end() } -> std::same_as<typename T::iterator>;
+    { b.begin() } -> std::same_as<typename T::const_iterator>;
+    { b.end() } -> std::same_as<typename T::const_iterator>;
 };
+
+template <class T>
+concept IsFormattable = requires(T value)
+{
+    { value.TryFormat(value, nullptr, nullptr) } -> std::same_as<bool>;
+};
+
+template <class T>
+concept IsNumeric = std::is_arithmetic_v<T>;
+} // namespace WE::Concept
+
+// clang-format oon

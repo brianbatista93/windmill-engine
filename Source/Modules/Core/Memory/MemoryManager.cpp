@@ -5,7 +5,7 @@
 
 namespace WE::Internal
 {
-inline void CheckAllocationInput(size_t nSize, size_t nAlignment)
+inline void CheckAllocationInput(usize nSize, usize nAlignment)
 {
     we_assert(nSize > 0 && "Size must be greater than 0.");
     we_assert(CMath::IsPowerOfTwo(nAlignment) && "Alignment must be a power of 2.");
@@ -23,14 +23,14 @@ CMemoryManager::~CMemoryManager()
     // we_assert(m_CurrentAllocations.empty() && "There are still allocations that have not been freed.");
     for (auto [memory, info] : m_CurrentAllocations)
     {
-        printf("0x%08llx (%zx|%d) - %s:%d (%s)\n", size_t(memory), info.nSize, info.nAlignment, info.pFilename, info.nLine,
+        printf("0x%08llx (%zx|%d) - %s:%d (%s)\n", usize(memory), info.nSize, info.nAlignment, info.pFilename, info.nLine,
                info.pFunctionName);
     }
 }
 
 static i32 lastOrder = 1;
 
-void *CMemoryManager::Allocate(size_t nSize, size_t nAlignment, const char *pFilename, i32 nLine,
+void *CMemoryManager::Allocate(usize nSize, usize nAlignment, const char *pFilename, i32 nLine,
                                const char *pFunctionName)
 {
     WE::Internal::CheckAllocationInput(nSize, nAlignment);
@@ -50,7 +50,7 @@ void *CMemoryManager::Allocate(size_t nSize, size_t nAlignment, const char *pFil
     return pointer;
 }
 
-void *CMemoryManager::Reallocate(void *pMemory, size_t nSize, size_t nAlignment, const char *pFilename, i32 nLine,
+void *CMemoryManager::Reallocate(void *pMemory, usize nSize, usize nAlignment, const char *pFilename, i32 nLine,
                                  const char *pFunctionName)
 {
     WE::Internal::CheckAllocationInput(nSize, nAlignment);
@@ -78,7 +78,7 @@ void CMemoryManager::Free(void *pMemory)
     }
 }
 
-void *CMemoryManager::MallocInternal(size_t nSize, size_t nAlignment)
+void *CMemoryManager::MallocInternal(usize nSize, usize nAlignment)
 {
 #if defined(WE_OS_WINDOWS)
     return _aligned_malloc(nSize, nAlignment);
@@ -87,7 +87,7 @@ void *CMemoryManager::MallocInternal(size_t nSize, size_t nAlignment)
 #endif // defined(WE_OS_WINDOWS)
 }
 
-void *CMemoryManager::ReallocInternal(void *pMemory, size_t nSize, size_t nAlignment)
+void *CMemoryManager::ReallocInternal(void *pMemory, usize nSize, usize nAlignment)
 {
 #if defined(WE_OS_WINDOWS)
     return _aligned_realloc(pMemory, nSize, nAlignment);

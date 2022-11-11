@@ -19,41 +19,18 @@ SOFTWARE.
 
 #pragma once
 
-#include <concepts>
+#include "IEncoder.hpp"
 
-#include "Types.hpp"
-
-class CMemoryUtils
+class AnsiEncoder : public IEncoder
 {
   public:
-    template <class T> static void Construct(T *pData, usize nCount)
-    {
-        for (usize i = 0; i < nCount; ++i)
-        {
-            new (pData + i) T();
-        }
-    }
+    static AnsiEncoder &Get();
 
-    template <class T> static void Destroy(T *pData, usize nCount)
-    {
-        for (usize i = 0; i < nCount; ++i)
-        {
-            pData[i].~T();
-        }
-    }
+    virtual const tchar *GetName() override { return WT("ANSI"); }
+    virtual const tchar *GetShortName() override { return WT("ansi"); }
+    virtual usize GetLength(const u8 *pBytes, usize nByteCount) const override;
+    virtual usize Decode(tchar *pDest, const u8 *pSrc, usize nByteCount) const override;
 
-    template <class T> static void Copy(T *pDest, const T *pSrc, usize nCount)
-    {
-        if constexpr (std::is_trivially_copyable_v<T>)
-        {
-            memcpy(pDest, pSrc, nCount * sizeof(T));
-        }
-        else
-        {
-            for (usize i = 0; i < nCount; ++i)
-            {
-                new (pDest + i) T(*(pSrc + i));
-            }
-        }
-    }
+  private:
+    AnsiEncoder() = default;
 };

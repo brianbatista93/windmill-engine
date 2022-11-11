@@ -19,41 +19,50 @@ SOFTWARE.
 
 #pragma once
 
-#include <concepts>
+#include "Array.hpp"
+#include "StringFormatter.hpp"
 
-#include "Types.hpp"
+class CString;
 
-class CMemoryUtils
+class CStringBuilder
 {
   public:
-    template <class T> static void Construct(T *pData, usize nCount)
-    {
-        for (usize i = 0; i < nCount; ++i)
-        {
-            new (pData + i) T();
-        }
-    }
+    CStringBuilder();
 
-    template <class T> static void Destroy(T *pData, usize nCount)
-    {
-        for (usize i = 0; i < nCount; ++i)
-        {
-            pData[i].~T();
-        }
-    }
+    CStringBuilder(i32 nInitialCapacity);
 
-    template <class T> static void Copy(T *pDest, const T *pSrc, usize nCount)
+    CStringBuilder &Append(tchar chr);
+
+    CStringBuilder &Append(tchar chr, i32 nCount);
+
+    CStringBuilder &Append(const tchar *pStr);
+
+    CStringBuilder &Append(const tchar *pStr, i32 nLength);
+
+    CStringBuilder &Append(const CString &str);
+
+    template <class... TArgs>
+    inline CStringBuilder &AppendFormat(const tchar *pFormat, TArgs &&...vArgs)
     {
-        if constexpr (std::is_trivially_copyable_v<T>)
+        constexpr usize nArgc = sizeof...(vArgs);
+
+        if constexpr (nArgc > 0)
         {
-            memcpy(pDest, pSrc, nCount * sizeof(T));
+            const CFormatterArgument pArgv[nArgc] = {vArgs...};
+            FormatInternal(pFormat, nArgc, pArgv);
         }
         else
         {
-            for (usize i = 0; i < nCount; ++i)
-            {
-                new (pDest + i) T(*(pSrc + i));
-            }
+            FormatInternal(pFormat, 0, nullptr);
         }
+
+        return *this;
     }
+
+    CString ToString();
+
+  private:
+    void FormatInternal(const tchar *pFormat, usize nArgc, const CFormatterArgument *pArgs);
+
+    TArray<tchar, TAllocator<i32>> m_Data;
 };

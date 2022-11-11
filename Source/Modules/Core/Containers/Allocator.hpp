@@ -29,7 +29,7 @@ template <class TIndexType> class TAllocator
 
     ~TAllocator() { ReleaseData(); }
 
-    void *Reallocate(size_t nSize)
+    void *Reallocate(usize nSize)
     {
         if (m_pData != nullptr or nSize != 0)
         {

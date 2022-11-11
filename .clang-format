@@ -5,12 +5,12 @@ AllowAllArgumentsOnNextLine: 'false'
 AllowShortFunctionsOnASingleLine: InlineOnly
 AllowShortLambdasOnASingleLine: Inline
 AlwaysBreakBeforeMultilineStrings: 'false'
-AlwaysBreakTemplateDeclarations: MultiLine
+AlwaysBreakTemplateDeclarations: Yes
 IndentPPDirectives: BeforeHash
 UseTab: Never
 
 Language: Cpp
 Standard: c++20
-ColumnLimit: 120
+ColumnLimit: 150
 
 ...
