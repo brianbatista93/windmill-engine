@@ -37,4 +37,47 @@ class CMath
         const std::make_signed_t<T> sign = value;
         return sign < 0 ? -sign : sign;
     }
+
+    template <typename T>
+    static constexpr T GetPrime(T value)
+    {
+        if constexpr (std::is_signed_v<T>)
+        {
+            if (value < 0)
+            {
+                return -GetPrime(-value);
+            }
+        }
+
+        if (value < 3)
+        {
+            return value;
+        }
+
+        if (value % 2 == 0)
+        {
+            value++;
+        }
+
+        while (true)
+        {
+            bool is_prime = true;
+
+            for (T i = 3; i * i <= value; i += 2)
+            {
+                if (value % i == 0)
+                {
+                    is_prime = false;
+                    break;
+                }
+            }
+
+            if (is_prime)
+            {
+                return value;
+            }
+
+            value += 2;
+        }
+    }
 };

@@ -99,6 +99,15 @@ DECLARE_TYPE(utf32, "utf32", "utf32");
     #define we_assert(x) assert((x))
 #endif // !we_assert
 
+template <class T>
+constexpr void set_if_not_null(T *output, T value)
+{
+    if (output != nullptr)
+    {
+        *output = value;
+    }
+}
+
 #if defined(_MSC_VER) && !defined(__clang__)
     #if !defined(_DEBUG) && !defined(NDEBUG)
         #define NDEBUG
