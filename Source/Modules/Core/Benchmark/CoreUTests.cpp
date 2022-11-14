@@ -1,4 +1,5 @@
 #include "Containers/ArrayBenchmark.h"
+#include "Containers/SetBenchmark.h"
 #include "Containers/StringBenchmark.h"
 
 int main(int argc, char **argv)
