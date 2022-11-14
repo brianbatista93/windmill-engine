@@ -23,6 +23,7 @@ SOFTWARE.
 #include <type_traits>
 
 #include "Array.hpp"
+#include "Hashing/TypesHash.hpp"
 #include "Math/MathUtils.hpp"
 
 template <class T>
