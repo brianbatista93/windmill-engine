@@ -11,6 +11,9 @@ add_compile_options (
 
  /W4            # Set warning level 4
  /WX            # Treat warnings as errors
+
+ /DUNICODE      # Unicode character set
+ /D_UNICODE     # Unicode character set
 )
 
 set (CMAKE_RC_FLAGS /nologo)

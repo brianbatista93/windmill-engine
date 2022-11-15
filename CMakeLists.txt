@@ -18,3 +18,4 @@ include ("Build/CMake/CXX-Properties.cmake")
 include ("Build/CMake/Config-Properties.cmake")
 
 add_subdirectory ("Source/Modules/Core")
+add_subdirectory ("Source/Launchers")
