@@ -21,10 +21,10 @@ SOFTWARE.
 
 #include "IEncoder.hpp"
 
-class AnsiEncoder : public IEncoder
+class CAnsiEncoder : public IEncoder
 {
   public:
-    static AnsiEncoder &Get();
+    static CAnsiEncoder &Get();
 
     virtual const tchar *GetName() override { return WT("ANSI"); }
     virtual const tchar *GetShortName() override { return WT("ansi"); }
@@ -32,5 +32,5 @@ class AnsiEncoder : public IEncoder
     virtual usize Decode(tchar *pDest, const u8 *pSrc, usize nByteCount) const override;
 
   private:
-    AnsiEncoder() = default;
+    CAnsiEncoder() = default;
 };
