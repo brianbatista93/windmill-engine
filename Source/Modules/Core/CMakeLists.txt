@@ -14,7 +14,7 @@ add_library (${PROJECT_NAME} STATIC
  "Containers/StringBuilder.cpp"
  "Encoding/AnsiEncoder.cpp" 
  "Containers/StringFormat.cpp"
- "Containers/StringFormatter.cpp")
+ "Containers/StringFormatter.cpp" "HAL/Path.cpp")
 
 target_include_directories (${PROJECT_NAME}
 	PUBLIC

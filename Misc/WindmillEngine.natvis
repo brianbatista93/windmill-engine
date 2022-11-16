@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
-	<Type Name="TArray&lt;*,*&gt;">
-		<DisplayString>{{ Size={m_nSize} }}</DisplayString>
-		<Expand>
-			<Item Name="[Capacity]" ExcludeView="simple">m_nCapacity</Item>
-			<Item Name="[Allocator]" ExcludeView="simple">m_Allocator</Item>
-			<ArrayItems>
-				<Size>m_nSize</Size>
-				<ValuePointer>($T1*)m_Allocator.m_pData</ValuePointer>
-			</ArrayItems>
-		</Expand>
-	</Type>
+    <Type Name="TArray&lt;*,*&gt;">
+        <DisplayString>{{ Size={m_nSize} }}</DisplayString>
+        <Expand>
+            <Item Name="[Capacity]" ExcludeView="simple">m_nCapacity</Item>
+            <Item Name="[Allocator]" ExcludeView="simple">m_Allocator</Item>
+            <ArrayItems>
+                <Size>m_nSize</Size>
+                <ValuePointer>($T1*)m_Allocator.m_pData</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
 
     <Type Name="CString">
         <DisplayString Condition="m_Data.m_nSize == 0">[Empty]</DisplayString>
         <DisplayString Condition="m_Data.m_nSize &gt; 1">{(const char8_t*)m_Data.m_Allocator.m_pData,su}</DisplayString>
         <StringView Condition="m_Data.m_nSize &gt; 1">(const char8_t*)m_Data.m_Allocator.m_pData,su</StringView>
+    </Type>
+
+    <Type Name="CPath">
+        <DisplayString>{m_Text}</DisplayString>
     </Type>
 
 

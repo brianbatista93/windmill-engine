@@ -1,6 +1,7 @@
 #include "Containers/ArrayBenchmark.h"
 #include "Containers/SetBenchmark.h"
 #include "Containers/StringBenchmark.h"
+#include "HAL/PathBenchmark.h"
 
 int main(int argc, char **argv)
 {
