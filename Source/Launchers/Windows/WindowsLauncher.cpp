@@ -16,7 +16,7 @@ extern "C"
     __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 
-extern i32 WindmillMain(i32 nArgC, tchar *pArgV[]);
+extern i32 WindmillMain(i32 nArgC, tchar *ppArgV[]);
 
 void InvalidParameterHandler(const tchar *pExpression, const tchar *pFunction, const tchar *pFile, u32 nLine, uintptr_t Reserved);
 

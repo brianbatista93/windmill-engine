@@ -19,11 +19,15 @@ SOFTWARE.
 
 #pragma once
 
+#include <algorithm>
+
 #include "Containers/WeString.hpp"
 
 class CPath
 {
   public:
+    inline static tchar kSeparator = WT('/');
+
     CPath() = default;
     CPath(const CPath &) = default;
     CPath(CPath &&) noexcept = default;
@@ -31,18 +35,41 @@ class CPath
     CPath &operator=(const CPath &) = default;
     CPath &operator=(CPath &&) noexcept = default;
 
-    CPath(CString &&source) : m_Text(std::move(source)) {}
+    CPath(CString &&source) : m_Text(std::move(source)) { PreprocessPath(); }
 
     CPath &operator=(CString &&source) noexcept
     {
         m_Text = std::move(source);
+        PreprocessPath();
         return *this;
     }
 
     operator CString() const { return m_Text; }
 
     [[nodiscard]] inline bool IsEmpty() const { return m_Text.IsEmpty(); }
+    [[nodiscard]] inline i32 GetLength() const { return m_Text.GetLength(); }
+
+    [[nodiscard]] CPath GetParentPath() const
+    {
+        we_assert(!IsEmpty());
+        auto it = std::find_if(m_Text.rbegin(), m_Text.rend(), [](tchar c) { return c == kSeparator; });
+        usize length = std::distance(it, m_Text.rend());
+        we_assert(length <= m_Text.GetLength());
+        return CString(*m_Text, length - 1);
+    }
+
+    friend CPath operator/(const CPath &lhs, const CPath &rhs)
+    {
+        CPath result = lhs;
+        result.Append(rhs);
+        return result;
+    }
+
+    CPath &Append(const tchar *pStr, i32 nLength);
+    CPath &Append(const CPath &other) { return Append(*other.m_Text, other.m_Text.GetLength()); }
 
   private:
+    void PreprocessPath() { std::replace(m_Text.begin(), m_Text.end(), WT('\\'), kSeparator); }
+
     CString m_Text;
 };

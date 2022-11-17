@@ -185,6 +185,24 @@ class TArray
         return oldSize;
     }
 
+    inline void Append(const ElementType *pElements, IndexType nSize)
+    {
+        const IndexType newSize = m_nSize + nSize;
+        const IndexType oldSize = m_nSize;
+
+        Resize(newSize);
+
+        memcpy(GetData() + oldSize, pElements, nSize * sizeof(ElementType));
+    }
+
+    inline ElementType Pop()
+    {
+        we_assert(!IsEmpty());
+        ElementType element = std::move(GetData()[m_nSize - 1]);
+        --m_nSize;
+        return element;
+    }
+
     inline void Resize(IndexType nNewSize)
     {
         if (nNewSize > m_nCapacity)
@@ -251,8 +269,8 @@ class TArray
     inline void InitializeWithRange(const ElementType *pBegin, const ElementType *pEnd)
     {
         const usize size = pEnd - pBegin;
-        m_nSize = size;
-        m_nCapacity = size;
+        m_nSize = IndexType(size);
+        m_nCapacity = IndexType(size);
         m_Allocator.Reallocate(size * sizeof(ElementType));
         CMemoryUtils::Copy(GetData(), pBegin, size);
     }
