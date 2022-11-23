@@ -19,25 +19,9 @@ SOFTWARE.
 
 #pragma once
 
-#include "Containers/ContainerFwd.hpp"
-#include "Containers/WeString.hpp"
-#include "HAL/Path.hpp"
+#include "Types.hpp"
 
-class CFile
+namespace OS
 {
-  public:
-    enum class EEncoding
-    {
-        eAuto = 0,
-        eAnsi,
-        eUnicode,
-        eUTF8,
-        eUTF8NoBOM
-    };
-
-    static bool WriteBytes(const TArray<u8> &bytes, const CPath &filename);
-    static bool WriteString(const CString &str, const CPath &filename, EEncoding encoding = EEncoding::eAuto);
-
-    static bool ReadBytes(TArray<u8> &bytes, const CPath &filename);
-    static bool ReadString(CString &str, const CPath &filename);
-};
+extern u32 GetStackTrace(u32 nFramesToSkip, u32 nFramesToCapture, ansi ppSymbols[][255], u32 nSymbolMaxLength, void *ppCallers[]);
+}

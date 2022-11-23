@@ -74,15 +74,24 @@ class CWindowsFileNative : public IFileNative
     friend CWindowsFileSystem;
 
   public:
-    ~CWindowsFileNative() { Close(); }
+    virtual ~CWindowsFileNative() { Close(); }
 
     bool IsValid() const override { return m_Handle != NULL and m_Handle != INVALID_HANDLE_VALUE; }
     usize GetSize() const override { return m_Size; }
     void Close() override
     {
-        ::CloseHandle(m_Handle);
+        if (IsValid())
+        {
+            Flush();
+            if (::CloseHandle(m_Handle) == TRUE)
+            {
+                m_Handle = NULL;
+            }
+        }
         m_bCanRead = false;
         m_bCanWrite = false;
+        m_Size = 0;
+        m_Position = 0;
     }
     void Flush() override { ::FlushFileBuffers(m_Handle); }
     bool CanRead() const override { return m_bCanRead; }
@@ -199,7 +208,6 @@ class CWindowsFileNative : public IFileNative
         {
             UpdateFileStats();
         }
-        ZeroMemory(&m_Overlapped, sizeof(m_Overlapped));
     }
 
     void UpdateFileStats()
@@ -225,8 +233,8 @@ class CWindowsFileNative : public IFileNative
         m_Overlapped.OffsetHigh = large_int.HighPart;
     }
 
-    HANDLE m_Handle;
-    OVERLAPPED m_Overlapped;
+    HANDLE m_Handle{NULL};
+    OVERLAPPED m_Overlapped{0};
     usize m_Position;
     usize m_Size;
     bool m_bCanRead;

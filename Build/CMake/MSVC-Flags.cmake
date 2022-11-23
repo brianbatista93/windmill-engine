@@ -11,9 +11,11 @@ add_compile_options (
 
  /W4            # Set warning level 4
  /WX            # Treat warnings as errors
+ /wd4267		# Disable warning C4267: 'argument' : conversion from 'size_t' to 'type', possible loss of data
 
  /DUNICODE      # Unicode character set
  /D_UNICODE     # Unicode character set
+ /D_CRT_SECURE_NO_WARNINGS # Disable warnings about deprecated CRT functions
 )
 
 set (CMAKE_RC_FLAGS /nologo)

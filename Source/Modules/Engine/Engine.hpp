@@ -19,23 +19,23 @@ SOFTWARE.
 
 #pragma once
 
-#include "Containers/Array.hpp"
+#include "Containers/ContainerFwd.hpp"
 
 class CEngine
 {
   public:
     static CEngine &Get();
 
-    bool Initialize(TArray<tchar *, TAllocator<i32>> &&arguments);
+    bool Initialize(const TArrayView<tchar *> &arguments);
 
     void Shutdown();
 
     void Tick();
 
   private:
-    bool ProcessArguments(TArray<tchar *, TAllocator<i32>> &&arguments);
+    bool ProcessArguments(const TArrayView<tchar *> &arguments);
 };
 
-extern bool EngineInitialize(TArray<tchar *, TAllocator<i32>> &&arguments);
+extern bool EngineInitialize(const TArrayView<tchar *> &arguments);
 extern void EngineShutdown();
 extern void EngineLoop();

@@ -6,10 +6,9 @@ CAnsiEncoder &CAnsiEncoder::Get()
     return sInstance;
 }
 
-usize CAnsiEncoder::GetLength(const u8 *pBytes, usize nByteCount) const
+usize CAnsiEncoder::GetLength([[maybe_unused]] const u8 *pBytes, usize nByteCount) const
 {
     we_assert(pBytes != nullptr and nByteCount > 0);
-
     return nByteCount;
 }
 

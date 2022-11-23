@@ -19,25 +19,19 @@ SOFTWARE.
 
 #pragma once
 
-#include "Containers/ContainerFwd.hpp"
-#include "Containers/WeString.hpp"
-#include "HAL/Path.hpp"
+#include "IEncoder.hpp"
 
-class CFile
+class CUTF8Encoder : public IEncoder
 {
   public:
-    enum class EEncoding
-    {
-        eAuto = 0,
-        eAnsi,
-        eUnicode,
-        eUTF8,
-        eUTF8NoBOM
-    };
+    static CUTF8Encoder &Get();
 
-    static bool WriteBytes(const TArray<u8> &bytes, const CPath &filename);
-    static bool WriteString(const CString &str, const CPath &filename, EEncoding encoding = EEncoding::eAuto);
+    virtual const tchar *GetName() override { return WT("ANSI"); }
+    virtual const tchar *GetShortName() override { return WT("ansi"); }
+    virtual usize GetLength(const u8 *pBytes, usize nByteCount) const override;
+    virtual usize Decode(tchar *pDest, const u8 *pSrc, usize nByteCount) const override;
+    usize Encode(utf8 *pDest, const tchar *pSrc, usize nByteCount) const;
 
-    static bool ReadBytes(TArray<u8> &bytes, const CPath &filename);
-    static bool ReadString(CString &str, const CPath &filename);
+  private:
+    CUTF8Encoder() = default;
 };

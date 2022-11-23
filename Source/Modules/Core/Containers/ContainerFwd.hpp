@@ -19,5 +19,13 @@ SOFTWARE.
 
 #pragma once
 
-template <class T, class Alloc = TAllocator<usize>>
+#include "Allocator.hpp"
+#include "Types.hpp"
+
+using DefaultAllocator = typename TAllocator<i32>;
+
+template <class T, class Alloc = DefaultAllocator>
 class TArray;
+
+template <class T, class Alloc = DefaultAllocator>
+class TArrayView;

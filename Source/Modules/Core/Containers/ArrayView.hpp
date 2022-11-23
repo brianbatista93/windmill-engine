@@ -19,25 +19,30 @@ SOFTWARE.
 
 #pragma once
 
-#include "Containers/ContainerFwd.hpp"
-#include "Containers/WeString.hpp"
-#include "HAL/Path.hpp"
+#include "Array.hpp"
 
-class CFile
+template <class T, class Alloc>
+class TArrayView
 {
   public:
-    enum class EEncoding
+    using SizeType = typename Alloc::IndexType;
+
+    TArrayView() : m_pBegin(nullptr), m_pEnd(nullptr) {}
+    TArrayView(TArray<T, Alloc> &arr) : m_pBegin(arr.begin()), m_pEnd(arr.end()) {}
+    ~TArrayView()
     {
-        eAuto = 0,
-        eAnsi,
-        eUnicode,
-        eUTF8,
-        eUTF8NoBOM
-    };
+        m_pBegin = nullptr;
+        m_pEnd = nullptr;
+    }
 
-    static bool WriteBytes(const TArray<u8> &bytes, const CPath &filename);
-    static bool WriteString(const CString &str, const CPath &filename, EEncoding encoding = EEncoding::eAuto);
+    TArrayView(TArrayView &&) = default;
+    TArrayView(const TArrayView &) = default;
+    TArrayView &operator=(TArrayView &&) = default;
+    TArrayView &operator=(const TArrayView &) = default;
 
-    static bool ReadBytes(TArray<u8> &bytes, const CPath &filename);
-    static bool ReadString(CString &str, const CPath &filename);
+    constexpr bool IsEmpty() const { return m_pEnd == m_pBegin; }
+
+  private:
+    T *m_pBegin;
+    T *m_pEnd;
 };

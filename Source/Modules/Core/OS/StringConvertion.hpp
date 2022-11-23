@@ -19,25 +19,10 @@ SOFTWARE.
 
 #pragma once
 
-#include "Containers/ContainerFwd.hpp"
-#include "Containers/WeString.hpp"
-#include "HAL/Path.hpp"
+#include "Types.hpp"
 
-class CFile
+namespace OS
 {
-  public:
-    enum class EEncoding
-    {
-        eAuto = 0,
-        eAnsi,
-        eUnicode,
-        eUTF8,
-        eUTF8NoBOM
-    };
-
-    static bool WriteBytes(const TArray<u8> &bytes, const CPath &filename);
-    static bool WriteString(const CString &str, const CPath &filename, EEncoding encoding = EEncoding::eAuto);
-
-    static bool ReadBytes(TArray<u8> &bytes, const CPath &filename);
-    static bool ReadString(CString &str, const CPath &filename);
-};
+extern usize TCharToUTF8(utf8 *pDst, const tchar *pSrc, usize nSrcLength);
+extern usize UTF8ToTChar(tchar *pDst, const utf8 *pSrc, usize nSrcLength);
+}

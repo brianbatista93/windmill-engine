@@ -22,9 +22,7 @@ SOFTWARE.
 #include <benchmark/benchmark.h>
 #include <gtest/gtest.h>
 
-#include "Containers/Allocator.hpp"
-
-template <class T, typename AllocType = TAllocator<u64>> class TArray;
+#include "Containers/ContainerFwd.hpp"
 
 #include "Containers/Array.hpp"
 

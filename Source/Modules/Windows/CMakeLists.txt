@@ -1,8 +1,8 @@
 project ("Windows")
 
 add_library (${PROJECT_NAME} STATIC 
-    "HAL/WindowsFileSystem.cpp"
-)
+ "HAL/WindowsFileSystem.cpp"
+ "OS/WindowsStringConvertion.cpp" "OS/WindowsUtils.cpp")
 
 target_link_libraries (${PROJECT_NAME}
 PRIVATE

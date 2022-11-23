@@ -24,6 +24,7 @@ SOFTWARE.
 #include "Concepts.hpp"
 #include "StringBuilder.hpp"
 #include "StringUtils.hpp"
+#include "ContainerFwd.hpp"
 
 #include <string>
 
@@ -33,7 +34,7 @@ class CString
 
   public:
     using CharType = tchar;
-    using ArrayType = TArray<CharType, TAllocator<i32>>;
+    using ArrayType = TArray<CharType, DefaultAllocator>;
 
     enum
     {
@@ -101,7 +102,8 @@ class CString
 
     inline const CharType *operator*() const { return IsEmpty() ? WT("") : m_Data.GetData(); }
 
-    inline ArrayType GetArray() const { return m_Data; }
+    inline ArrayType &GetArray() { return m_Data; }
+    inline const ArrayType GetArray() const { return m_Data; }
 
     inline bool StartsWith(const tchar *pStart, i32 nOffset = 0) const
     {
@@ -128,7 +130,7 @@ class CString
         return CStringUtils::Find(GetArray().GetData(), pStr, nOffset);
     }
 
-    TArray<CString, TAllocator<i32>> Split(const tchar *pStr);
+    TArray<CString> Split(const tchar *pStr);
 
     template <WE::Concept::IsContainer TContainer>
     inline static CString Join(tchar separator, const TContainer &container)

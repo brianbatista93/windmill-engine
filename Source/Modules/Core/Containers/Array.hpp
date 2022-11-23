@@ -47,6 +47,12 @@ class TArray
     inline TArray(const TArray &other) { CopyFromOther(other); }
     inline TArray(TArray &&other) noexcept { MoveFromOther(std::move(other)); }
 
+    inline ~TArray()
+    {
+        CMemoryUtils::Destroy(GetData(), m_nSize);
+        m_Allocator.ReleaseData();
+    }
+
     inline TArray &operator=(const TArray &other)
     {
         if (this != &other)

@@ -1,4 +1,5 @@
 #include "Engine.hpp"
+#include "Containers/ArrayView.hpp"
 #include "HAL/FileSystem.hpp"
 
 #include "HAL/File.hpp"
@@ -9,9 +10,9 @@ CEngine &CEngine::Get()
     return sInstance;
 }
 
-bool CEngine::Initialize(TArray<tchar *, TAllocator<i32>> &&arguments)
+bool CEngine::Initialize(const TArrayView<tchar *> &arguments)
 {
-    if (!ProcessArguments(std::move(arguments)))
+    if (!ProcessArguments(arguments))
     {
         return false;
     }
@@ -21,9 +22,7 @@ bool CEngine::Initialize(TArray<tchar *, TAllocator<i32>> &&arguments)
         return false;
     }
 
-    auto res = CFile::WriteString(WTL("Brian Batista"), WTL("text.txt"));
-
-    return res;
+    return false;
 }
 
 void CEngine::Shutdown()
@@ -35,14 +34,14 @@ void CEngine::Tick()
 {
 }
 
-bool CEngine::ProcessArguments(TArray<tchar *, TAllocator<i32>> &&)
+bool CEngine::ProcessArguments(const TArrayView<tchar *> &)
 {
     return true;
 }
 
-bool EngineInitialize(TArray<tchar *, TAllocator<i32>> &&arguments)
+bool EngineInitialize(const TArrayView<tchar *> &arguments)
 {
-    return CEngine::Get().Initialize(std::move(arguments));
+    return CEngine::Get().Initialize(arguments);
 }
 
 void EngineShutdown()

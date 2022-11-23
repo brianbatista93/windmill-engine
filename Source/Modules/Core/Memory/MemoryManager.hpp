@@ -68,11 +68,16 @@ class CMemoryManager
         i32 nLine;
         i32 nAlignment;
         i32 nOrder;
+#ifdef WE_DEBUG
+        ansi ppCallStack[32][255];
+        u32 nCallStackFrames;
+        void *ppCallers[32];
+#endif // WE_DEBUG
     };
 
     std::map<void *, SAllocationInfo> m_CurrentAllocations;
 
-    CMemoryManager() {}
+    CMemoryManager() = default;
 
     void *MallocInternal(usize nSize, usize nAlignment);
 
