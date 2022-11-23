@@ -42,10 +42,15 @@ using utf8 = char8_t;
 using utf16 = char16_t;
 using utf32 = char32_t;
 
+#ifdef WE_OS_WINDOWS
 using tchar = wide;
-
-#define WT(x) L##x
-#define WTL(x) L##x##_s
+    #define WT(x) L##x
+    #define WTL(x) L##x##_s
+#else
+using tchar = ansi;
+    #define WT(x) x
+    #define WTL(x) x##_s
+#endif // WE_OS_WINDOWS
 
 template <class T>
 class TType

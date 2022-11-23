@@ -19,16 +19,6 @@ SOFTWARE.
 
 #pragma once
 
-#include "HAL/Interfaces/IFileSystem.hpp"
-
-class CWindowsFileSystem final : public IFileSystem
-{
-  public:
-    bool Initialize() override;
-    void Shutdown() override;
-    bool FileExists(const CPath &path) override;
-    bool DirectoryExists(const CPath &path) override;
-    bool CreateDirectory(const CPath &path) override;
-    IFileNative *OpenRead(const CPath &filename, bool bCanWrite) override;
-    IFileNative *OpenWrite(const CPath &filename, bool bAppend, bool bCanRead) override;
-};
+#define NOCOMM
+#define NOMINMAX
+#include <Windows.h>

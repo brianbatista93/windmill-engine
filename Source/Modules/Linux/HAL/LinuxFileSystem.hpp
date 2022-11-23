@@ -21,7 +21,7 @@ SOFTWARE.
 
 #include "HAL/Interfaces/IFileSystem.hpp"
 
-class CWindowsFileSystem final : public IFileSystem
+class CLinuxFileSystem final : public IFileSystem
 {
   public:
     bool Initialize() override;

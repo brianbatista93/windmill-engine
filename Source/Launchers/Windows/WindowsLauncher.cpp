@@ -1,4 +1,4 @@
-#include <Windows.h>
+#include "WindowsInclude.hpp"
 
 #ifdef WE_DEBUG
     #include <crtdbg.h>

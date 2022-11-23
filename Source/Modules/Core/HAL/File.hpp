@@ -19,16 +19,25 @@ SOFTWARE.
 
 #pragma once
 
-#include "HAL/Interfaces/IFileSystem.hpp"
+#include "Containers/ContainerFwd.hpp"
+#include "Containers/WeString.hpp"
+#include "HAL/Path.hpp"
 
-class CWindowsFileSystem final : public IFileSystem
+class CFile
 {
   public:
-    bool Initialize() override;
-    void Shutdown() override;
-    bool FileExists(const CPath &path) override;
-    bool DirectoryExists(const CPath &path) override;
-    bool CreateDirectory(const CPath &path) override;
-    IFileNative *OpenRead(const CPath &filename, bool bCanWrite) override;
-    IFileNative *OpenWrite(const CPath &filename, bool bAppend, bool bCanRead) override;
+    enum class EEncoding
+    {
+        eAuto = 0,
+        eAnsi,
+        eUnicode,
+        eUTF8,
+        eUTF8NoBOM
+    };
+
+    static bool WriteBytes(const TArray<u8> &bytes, const CPath &filename);
+    static bool WriteString(const CString &str, const CPath &filename, EEncoding encoding = EEncoding::eAuto);
+
+    static bool ReadBytes(TArray<u8> &bytes, const CPath &filename);
+    static bool ReadString(CString &str, const CPath &filename, EEncoding encoding = EEncoding::eAuto);
 };

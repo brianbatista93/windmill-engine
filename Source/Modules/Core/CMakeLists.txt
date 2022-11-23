@@ -17,7 +17,7 @@ add_library (${PROJECT_NAME} STATIC
  "Containers/StringFormatter.cpp" 
  "HAL/Path.cpp"
  "HAL/FileSystem.cpp"
- "Globals.cpp")
+ "Globals.cpp" "HAL/File.cpp")
 
 target_include_directories (${PROJECT_NAME}
 	PUBLIC

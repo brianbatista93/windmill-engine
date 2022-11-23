@@ -46,6 +46,8 @@ class CPath
 
     operator CString() const { return m_Text; }
 
+    inline const CString::CharType *operator*() const { return *m_Text; }
+
     [[nodiscard]] inline bool IsEmpty() const { return m_Text.IsEmpty(); }
     [[nodiscard]] inline i32 GetLength() const { return m_Text.GetLength(); }
 
@@ -54,7 +56,7 @@ class CPath
         we_assert(!IsEmpty());
         auto it = std::find_if(m_Text.rbegin(), m_Text.rend(), [](tchar c) { return c == kSeparator; });
         usize length = std::distance(it, m_Text.rend());
-        we_assert(length <= m_Text.GetLength());
+        we_assert((i32)length <= m_Text.GetLength());
         return CString(*m_Text, length - 1);
     }
 

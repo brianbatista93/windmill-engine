@@ -1,6 +1,8 @@
 #include "Engine.hpp"
 #include "HAL/FileSystem.hpp"
 
+#include "HAL/File.hpp"
+
 CEngine &CEngine::Get()
 {
     static CEngine sInstance;
@@ -19,7 +21,9 @@ bool CEngine::Initialize(TArray<tchar *, TAllocator<i32>> &&arguments)
         return false;
     }
 
-    return true;
+    auto res = CFile::WriteString(WTL("Brian Batista"), WTL("text.txt"));
+
+    return res;
 }
 
 void CEngine::Shutdown()

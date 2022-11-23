@@ -19,12 +19,21 @@ SOFTWARE.
 
 #pragma once
 
+#include "Interfaces/IFileSystem.hpp"
+
 class CFileSystem
 {
   public:
-    static bool Initialize();
-
-    static void Shutdown();
+    inline static bool Initialize() { return Get()->Initialize(); }
+    inline static void Shutdown() { Get()->Initialize(); }
+    inline static bool FileExists(const CPath &path) { return Get()->FileExists(path); }
+    inline static bool DirectoryExists(const CPath &path) { return Get()->DirectoryExists(path); }
+    inline static bool CreateDirectory(const CPath &path) { return Get()->CreateDirectory(path); }
+    inline static IFileNative *OpenRead(const CPath &path, bool bCanWrite = false) { return Get()->OpenRead(path, bCanWrite); }
+    inline static IFileNative *OpenWrite(const CPath &path, bool bAppend = false, bool bCanRead = false)
+    {
+        return Get()->OpenWrite(path, bAppend, bCanRead);
+    }
 
   private:
     static class IFileSystem *Get();

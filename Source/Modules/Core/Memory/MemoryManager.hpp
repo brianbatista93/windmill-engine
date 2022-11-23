@@ -39,8 +39,7 @@ class CMemoryManager
     ~CMemoryManager();
 
     void *Allocate(usize nSize, usize nAlign, const char *pFilename, i32 nLine, const char *pFunctionName);
-    void *Reallocate(void *pMemory, usize nSize, usize nAlign, const char *pFilename, i32 nLine,
-                     const char *pFunctionName);
+    void *Reallocate(void *pMemory, usize nSize, usize nAlign, const char *pFilename, i32 nLine, const char *pFunctionName);
     void Free(void *pMemory);
 
     template <class T, class... Args>
@@ -50,12 +49,13 @@ class CMemoryManager
         return new (ptr) T(std::forward<Args>(args)...);
     }
 
-    template <class T> static void Delete(T *ptr, const char *pFilename, i32 nLine, const char *pFunctionName)
+    template <class T>
+    static void Delete(T *ptr, const char *, i32, const char *)
     {
         if (ptr)
         {
             ptr->~T();
-            Free(ptr);
+            Get().Free(ptr);
         }
     }
 
