@@ -22,9 +22,9 @@ SOFTWARE.
 #include <benchmark/benchmark.h>
 #include <gtest/gtest.h>
 
-#include "Types.hpp"
 #include "Containers/WeString.hpp"
 #include "Encoding/AnsiEncoder.hpp"
+#include "Types.hpp"
 
 static void BM_StringEmptyCreation(benchmark::State &rState)
 {

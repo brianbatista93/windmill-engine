@@ -57,7 +57,7 @@ class CFormatterArgument
     CFormatterArgument(const tchar *pValue);
     CFormatterArgument(class CString value);
 
-    bool TryFormat(tchar **pDest, const tchar *pFormat);
+    bool TryFormat(tchar **pDest, const tchar *pFormat) const;
 
     inline EType GetType() const { return m_eType; }
 

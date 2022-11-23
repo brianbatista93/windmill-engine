@@ -1,3 +1,6 @@
+#include <errno.h>
+#include <stdio.h>
+
 #include "Containers/Array.hpp"
 #include "Encoding/AnsiEncoder.hpp"
 #include "Types.hpp"

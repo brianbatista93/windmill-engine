@@ -1,5 +1,11 @@
-ARG VARIANT=debian-11
-FROM mcr.microsoft.com/vscode/devcontainers/cpp:0-${VARIANT}
+FROM manjarolinux/build:latest
 
-RUN apt-get -y update && export DEBIAN_FRONTEND=noninteractive \
-     && apt-get -y upgrade
+RUN pacman -Syyu \
+    && pacman -Syu --noconfirm base-devel \
+    cmake \
+    cppcheck \
+    valgrind \
+    gdb \
+    ninja
+
+CMD ["/bin/sh"]

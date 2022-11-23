@@ -39,8 +39,7 @@ class CMemoryManager
     ~CMemoryManager();
 
     void *Allocate(usize nSize, usize nAlign, const char *pFilename, i32 nLine, const char *pFunctionName);
-    void *Reallocate(void *pMemory, usize nSize, usize nAlign, const char *pFilename, i32 nLine,
-                     const char *pFunctionName);
+    void *Reallocate(void *pMemory, usize nSize, usize nAlign, const char *pFilename, i32 nLine, const char *pFunctionName);
     void Free(void *pMemory);
 
     template <class T, class... Args>
@@ -50,12 +49,13 @@ class CMemoryManager
         return new (ptr) T(std::forward<Args>(args)...);
     }
 
-    template <class T> static void Delete(T *ptr, const char *pFilename, i32 nLine, const char *pFunctionName)
+    template <class T>
+    static void Delete(T *ptr, const char *, i32, const char *)
     {
         if (ptr)
         {
             ptr->~T();
-            Free(ptr);
+            Get().Free(ptr);
         }
     }
 
@@ -68,11 +68,16 @@ class CMemoryManager
         i32 nLine;
         i32 nAlignment;
         i32 nOrder;
+#ifdef WE_DEBUG
+        ansi ppCallStack[32][255];
+        u32 nCallStackFrames;
+        void *ppCallers[32];
+#endif // WE_DEBUG
     };
 
     std::map<void *, SAllocationInfo> m_CurrentAllocations;
 
-    CMemoryManager() {}
+    CMemoryManager() = default;
 
     void *MallocInternal(usize nSize, usize nAlignment);
 

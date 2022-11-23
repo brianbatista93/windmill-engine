@@ -30,6 +30,7 @@ class CAnsiEncoder : public IEncoder
     virtual const tchar *GetShortName() override { return WT("ansi"); }
     virtual usize GetLength(const u8 *pBytes, usize nByteCount) const override;
     virtual usize Decode(tchar *pDest, const u8 *pSrc, usize nByteCount) const override;
+    usize Encode(ansi *pDest, const tchar *pSrc, usize nByteCount) const;
 
   private:
     CAnsiEncoder() = default;

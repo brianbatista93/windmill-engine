@@ -6,10 +6,9 @@ CAnsiEncoder &CAnsiEncoder::Get()
     return sInstance;
 }
 
-usize CAnsiEncoder::GetLength(const u8 *pBytes, usize nByteCount) const
+usize CAnsiEncoder::GetLength([[maybe_unused]] const u8 *pBytes, usize nByteCount) const
 {
     we_assert(pBytes != nullptr and nByteCount > 0);
-
     return nByteCount;
 }
 
@@ -30,4 +29,23 @@ usize CAnsiEncoder::Decode(tchar *pDest, const u8 *pSrc, usize nByteCount) const
     }
 
     return length;
+}
+
+usize CAnsiEncoder::Encode(ansi *pDest, const tchar *pSrc, usize nByteCount) const
+{
+    we_assert(pSrc and *pSrc);
+
+    if (pDest == nullptr)
+    {
+        return nByteCount >> 1;
+    }
+
+    usize written = 0;
+
+    for (usize i = 0; i < nByteCount; i += 2, ++written)
+    {
+        *pDest++ = (ansi)*pSrc++;
+    }
+
+    return written;
 }

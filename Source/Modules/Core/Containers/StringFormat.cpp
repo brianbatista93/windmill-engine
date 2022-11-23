@@ -1,7 +1,7 @@
 #include "StringBuilder.hpp"
 #include "WeString.hpp"
 
-bool CFormatterArgument::TryFormat(tchar **pDest, const tchar *pFormat)
+bool CFormatterArgument::TryFormat(tchar **pDest, const tchar *pFormat) const
 {
     return m_pFormatter(pDest, pFormat);
 }
@@ -57,7 +57,11 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
         }
 
         pos++;
-        we_assert(not(pos == nLength or !isdigit(ch = pFormat[pos])) && "Invalid pFormat string");
+        if (pos == nLength or !isdigit(ch = pFormat[pos]))
+        {
+            we_assert(false and "Invalid pFormat string");
+            return;
+        }
         size_t index = 0;
         do
         {
@@ -113,7 +117,7 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
             pos++;
         }
 
-        auto argument = pArgs[index];
+        const CFormatterArgument argument = pArgs[index];
         CString item_format_sub;
 
         if (ch == WT(':'))
@@ -157,7 +161,11 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
             thread_local tchar buffer[128];
             memset(buffer, 0, 128 * sizeof(tchar));
             tchar *pBufferPtr = argument.GetType() == CFormatterArgument::kNumeric ? (std::end(buffer) - 1) : buffer;
-            we_assert(argument.TryFormat(&pBufferPtr, *item_format_sub));
+            if (!argument.TryFormat(&pBufferPtr, *item_format_sub))
+            {
+                we_assert(false && "Could not format argument");
+                return;
+            }
 
             s = CString((const tchar *)pBufferPtr);
         }

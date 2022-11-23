@@ -24,14 +24,17 @@ SOFTWARE.
 #include "Concepts.hpp"
 #include "StringBuilder.hpp"
 #include "StringUtils.hpp"
+#include "ContainerFwd.hpp"
 
 #include <string>
 
 class CString
 {
+    friend class CPath;
+
   public:
     using CharType = tchar;
-    using ArrayType = TArray<CharType, TAllocator<i32>>;
+    using ArrayType = TArray<CharType, DefaultAllocator>;
 
     enum
     {
@@ -99,34 +102,35 @@ class CString
 
     inline const CharType *operator*() const { return IsEmpty() ? WT("") : m_Data.GetData(); }
 
-    inline ArrayType GetArray() const { return m_Data; }
+    inline ArrayType &GetArray() { return m_Data; }
+    inline const ArrayType GetArray() const { return m_Data; }
 
-    inline bool StartsWith(const tchar *pStart, i32 nOffset = 0)
+    inline bool StartsWith(const tchar *pStart, i32 nOffset = 0) const
     {
         we_assert(nOffset < GetLength());
         return CStringUtils::StartsWith(GetArray().GetData() + nOffset, pStart);
     }
 
-    inline bool EndsWith(const tchar *pEnd, i32 nOffset = 0)
+    inline bool EndsWith(const tchar *pEnd, i32 nOffset = 0) const
     {
         we_assert(nOffset < GetLength());
         return CStringUtils::EndsWith(GetArray().GetData() + nOffset, pEnd, GetLength());
     }
 
-    inline CString Substring(i32 nStart, i32 nCount = INVALID_INDEX)
+    inline CString Substring(i32 nStart, i32 nCount = INVALID_INDEX) const
     {
         we_assert(nStart < GetLength() and (nCount == INVALID_INDEX or nCount <= GetLength()));
         nCount = nCount == INVALID_INDEX ? GetLength() : nCount;
         return CString(GetArray().GetData() + nStart, nCount);
     }
 
-    inline i32 Find(const tchar *pStr, i32 nOffset = 0)
+    inline i32 Find(const tchar *pStr, i32 nOffset = 0) const
     {
         we_assert(pStr != nullptr and nOffset < GetLength());
         return CStringUtils::Find(GetArray().GetData(), pStr, nOffset);
     }
 
-    TArray<CString, TAllocator<i32>> Split(const tchar *pStr);
+    TArray<CString> Split(const tchar *pStr);
 
     template <WE::Concept::IsContainer TContainer>
     inline static CString Join(tchar separator, const TContainer &container)
@@ -175,6 +179,32 @@ class CString
     }
 
     inline bool operator==(const CString &other) const { return CStringUtils::Compare(GetArray().GetData(), *other) == 0; }
+
+    auto begin() { return m_Data.begin(); }
+    const auto begin() const { return m_Data.begin(); }
+    auto end()
+    {
+        auto result = m_Data.end();
+        if (m_Data.GetSize())
+        {
+            --result;
+        }
+        return result;
+    }
+    const auto end() const
+    {
+        auto result = m_Data.end();
+        if (m_Data.GetSize())
+        {
+            --result;
+        }
+        return result;
+    }
+
+    auto rbegin() { return std::reverse_iterator(m_Data.end()); }
+    const auto rbegin() const { return std::reverse_iterator(m_Data.end()); }
+    auto rend() { return std::reverse_iterator(begin()); }
+    const auto rend() const { return std::reverse_iterator(begin()); }
 
   private:
     inline void Init(const tchar *pStr, usize nLength)

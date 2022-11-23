@@ -32,10 +32,23 @@ class CMath
      */
     static constexpr bool IsPowerOfTwo(auto value) { return (value & (value - 1)) == 0; }
 
-    template <class T> static constexpr std::make_signed_t<T> Abs(T value)
+    template <class T>
+    static constexpr std::make_signed_t<T> Abs(T value)
     {
         const std::make_signed_t<T> sign = value;
         return sign < 0 ? -sign : sign;
+    }
+
+    template <class T>
+    static constexpr T Min(T a, T b)
+    {
+        return a < b ? a : b;
+    }
+    
+    template <class T>
+    static constexpr T Max(T a, T b)
+    {
+        return a > b ? a : b;
     }
 
     template <typename T>

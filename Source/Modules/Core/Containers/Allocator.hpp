@@ -24,12 +24,13 @@ SOFTWARE.
 
 #include "Types.hpp"
 
-template <class TIndexType> class TAllocator
+template <class TIndexType>
+class TAllocator
 {
   public:
     using IndexType = TIndexType;
 
-    ~TAllocator() { ReleaseData(); }
+    ~TAllocator() { we_assert(m_pData == nullptr && "The allocator is been destroyed without releasing its data"); }
 
     void *Reallocate(usize nSize)
     {
