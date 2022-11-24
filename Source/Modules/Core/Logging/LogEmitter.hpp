@@ -19,13 +19,18 @@ SOFTWARE.
 
 #pragma once
 
-#include "Allocator.hpp"
-#include "Types.hpp"
+#include "Containers/WeString.hpp"
+#include "LogLevel.hpp"
 
-using DefaultAllocator = TAllocator<i32>;
+class CLogEmitter
+{
+  public:
+    CLogEmitter(const tchar *pName, ELogLevel logLevel) : m_Name(pName), m_eLogLevel(logLevel) {}
 
-template <class T, class Alloc = DefaultAllocator>
-class TArray;
+    inline CString GetName() const { return m_Name; }
+    inline bool ShouldLog(ELogLevel logLevel) const { return logLevel >= m_eLogLevel; }
 
-template <class T, class Alloc = DefaultAllocator>
-class TArrayView;
+  private:
+    CString m_Name;
+    ELogLevel m_eLogLevel;
+};

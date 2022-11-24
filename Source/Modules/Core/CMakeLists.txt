@@ -17,7 +17,7 @@ add_library (${PROJECT_NAME} STATIC
  "Containers/StringFormatter.cpp" 
  "HAL/Path.cpp"
  "HAL/FileSystem.cpp"
- "Globals.cpp" "HAL/File.cpp" "Encoding/UTF8Encoder.cpp")
+ "Globals.cpp" "HAL/File.cpp" "Encoding/UTF8Encoder.cpp" "Logging/Log.cpp" "Logging/LogFileSink.cpp" "Logging/StdLogSink.cpp")
 
 target_include_directories (${PROJECT_NAME}
 	PUBLIC

@@ -20,3 +20,5 @@ SOFTWARE.
 #pragma once
 
 extern bool gIsExiting;
+
+extern class CLogSystem *gLog;

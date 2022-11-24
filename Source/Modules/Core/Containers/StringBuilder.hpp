@@ -41,6 +41,8 @@ class CStringBuilder
 
     CStringBuilder &Append(const CString &str);
 
+    CStringBuilder &AppendLine(const CString &str);
+
     template <class... TArgs>
     inline CStringBuilder &AppendFormat(const tchar *pFormat, TArgs &&...vArgs)
     {

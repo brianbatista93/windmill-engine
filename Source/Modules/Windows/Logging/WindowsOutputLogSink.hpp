@@ -19,13 +19,10 @@ SOFTWARE.
 
 #pragma once
 
-#include "Allocator.hpp"
-#include "Types.hpp"
+#include "Logging/ILogSink.hpp"
 
-using DefaultAllocator = TAllocator<i32>;
-
-template <class T, class Alloc = DefaultAllocator>
-class TArray;
-
-template <class T, class Alloc = DefaultAllocator>
-class TArrayView;
+class CWindowsOutputLogSink : public ILogSink
+{
+  public:
+    void Log(const SLogMessage *pMessage) override;
+};

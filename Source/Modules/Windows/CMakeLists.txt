@@ -2,7 +2,7 @@ project ("Windows")
 
 add_library (${PROJECT_NAME} STATIC 
  "HAL/WindowsFileSystem.cpp"
- "OS/WindowsStringConvertion.cpp" "OS/WindowsUtils.cpp")
+ "OS/WindowsStringConvertion.cpp" "OS/WindowsUtils.cpp" "OS/WindowsOS.cpp" "Logging/WindowsOutputLogSink.cpp")
 
 target_link_libraries (${PROJECT_NAME}
 PRIVATE
