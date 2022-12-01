@@ -8,10 +8,10 @@
 
 namespace OS
 {
+#if WE_OS_SUPPORT_CALLSTACK_INFO
 u32 GetStackTrace([[maybe_unused]] u32 nFramesToSkip, [[maybe_unused]] u32 nFramesToCapture, [[maybe_unused]] ansi ppSymbols[][255],
                   [[maybe_unused]] u32 nSymbolMaxLength, [[maybe_unused]] void *ppCallers[])
 {
-#ifdef WE_DEBUG
     typedef USHORT(WINAPI * CaptureStackBackTraceType)(__in ULONG, __in ULONG, __out PVOID *, __out_opt PULONG);
     static CaptureStackBackTraceType func =
         (CaptureStackBackTraceType)(GetProcAddress(LoadLibrary(TEXT("kernel32.dll")), "RtlCaptureStackBackTrace"));
@@ -37,8 +37,8 @@ u32 GetStackTrace([[maybe_unused]] u32 nFramesToSkip, [[maybe_unused]] u32 nFram
         }
         return frames;
     }
-#endif
 
     return 0;
 }
+#endif // WE_OS_SUPPORT_CALLSTACK_INFO
 } // namespace OS

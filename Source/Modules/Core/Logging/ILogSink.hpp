@@ -19,13 +19,12 @@ SOFTWARE.
 
 #pragma once
 
-#include "Allocator.hpp"
-#include "Types.hpp"
+struct SLogMessage;
 
-using DefaultAllocator = TAllocator<i32>;
+class ILogSink
+{
+  public:
+    virtual ~ILogSink() = default;
 
-template <class T, class Alloc = DefaultAllocator>
-class TArray;
-
-template <class T, class Alloc = DefaultAllocator>
-class TArrayView;
+    virtual void Log(const SLogMessage *pMessage) = 0;
+};

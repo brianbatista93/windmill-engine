@@ -19,13 +19,40 @@ SOFTWARE.
 
 #pragma once
 
-#include "Allocator.hpp"
 #include "Types.hpp"
 
-using DefaultAllocator = TAllocator<i32>;
+enum class ELogLevel
+{
+    eDisabled = 0, // No logging
+    eFatal,        // Fatal error
+    eError,        // Error
+    eWarning,      // Warning
+    eInfo,         // Information
+    eDebug,        // Debug
+    eTrace,        // Trace
+    eAll = eTrace, // All logging
+    eCount         // Count of log levels
+};
 
-template <class T, class Alloc = DefaultAllocator>
-class TArray;
-
-template <class T, class Alloc = DefaultAllocator>
-class TArrayView;
+static constexpr const tchar *ToString(ELogLevel level)
+{
+    switch (level)
+    {
+    case ELogLevel::eDisabled:
+        return WT("Disabled");
+    case ELogLevel::eFatal:
+        return WT("Fatal");
+    case ELogLevel::eError:
+        return WT("Error");
+    case ELogLevel::eWarning:
+        return WT("Warning");
+    case ELogLevel::eInfo:
+        return WT("Info");
+    case ELogLevel::eDebug:
+        return WT("Debug");
+    case ELogLevel::eTrace:
+        return WT("Trace");
+    default:
+        return WT("Unknown");
+    }
+}

@@ -23,6 +23,7 @@ SOFTWARE.
 
 namespace OS
 {
-extern usize TCharToUTF8(utf8 *pDst, const tchar *pSrc, usize nSrcLength);
-extern usize UTF8ToTChar(tchar *pDst, const utf8 *pSrc, usize nSrcLength);
-}
+usize TCharToUTF8(utf8 *pDst, const tchar *pSrc, usize nSrcLength);
+
+usize UTF8ToTChar(tchar *pDst, const utf8 *pSrc, usize nSrcLength);
+} // namespace OS

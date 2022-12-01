@@ -5,6 +5,36 @@
 
 #include "HAL/FileSystem.hpp"
 #include "LinuxFileSystem.hpp"
+#include "OS/StringConvertion.hpp"
+
+template <class To, class From>
+class TStringCast
+{
+};
+
+template <>
+class TStringCast<ansi, wide>
+{
+  public:
+    inline TStringCast(const wide *pSrc, usize nLength) { OS::TCharToUTF8((utf8 *)m_pBuffer, pSrc, nLength); }
+
+    inline const ansi *operator*() const { return m_pBuffer; }
+
+  private:
+    ansi m_pBuffer[1024];
+};
+
+template <>
+class TStringCast<wide, ansi>
+{
+  public:
+    inline TStringCast(const ansi *pSrc, usize nLength) { OS::UTF8ToTChar(m_pBuffer, (const utf8 *)pSrc, nLength); }
+
+    inline const wide *operator*() const { return m_pBuffer; }
+
+  private:
+    wide m_pBuffer[1024];
+};
 
 IFileSystem *CFileSystem::Get()
 {
@@ -14,19 +44,19 @@ IFileSystem *CFileSystem::Get()
 
 bool CLinuxFileSystem::Initialize()
 {
-    tchar appFilePathAnsi[WE_OS_MAX_PATH]{0};
+    ansi appFilePathAnsi[WE_OS_MAX_PATH]{0};
     const usize length = readlink("/proc/self/exe", appFilePathAnsi, WE_OS_MAX_PATH);
-    CPath appFilePath({appFilePathAnsi, length});
+    CPath appFilePath(CString(*TStringCast<wide, ansi>(appFilePathAnsi, length), length));
     CPath appPath = appFilePath.GetParentPath();
     m_MountedDirs[(u32)EResourceMountType::eAssets] = appPath / WTL("Assets");
     m_MountedDirs[(u32)EResourceMountType::eDebug] = appPath / WTL("Logs");
 
-    const tchar *homeDir = nullptr;
+    const ansi *homeDir = nullptr;
     if ((homeDir = getenv("HOME")) == nullptr)
     {
         homeDir = getpwuid(getuid())->pw_dir;
     }
-    m_MountedDirs[(u32)EResourceMountType::eHome] = CPath({homeDir, strlen(homeDir)});
+    m_MountedDirs[(u32)EResourceMountType::eHome] = CPath(CString(*TStringCast<wide, ansi>(homeDir, strlen(homeDir)), length));
 
     return true;
 }
@@ -38,7 +68,7 @@ void CLinuxFileSystem::Shutdown()
 bool CLinuxFileSystem::FileExists(const CPath &path)
 {
     struct stat s;
-    if (stat(*path, &s))
+    if (stat(*TStringCast<ansi, wide>(*path, path.GetLength()), &s))
     {
         return false;
     }
@@ -49,7 +79,7 @@ bool CLinuxFileSystem::FileExists(const CPath &path)
 bool CLinuxFileSystem::DirectoryExists(const CPath &path)
 {
     struct stat s;
-    if (stat(*path, &s))
+    if (stat(*TStringCast<ansi, wide>(*path, path.GetLength()), &s))
     {
         return false;
     }
@@ -70,7 +100,7 @@ bool CLinuxFileSystem::CreateDirectory(const CPath &path)
         CreateDirectory(parentPath);
     }
 
-    return mkdir(*path, 0777) == 0;
+    return mkdir(*TStringCast<ansi, wide>(*path, path.GetLength()), 0777) == 0;
 }
 
 class CLinuxFile : public IFileNative
@@ -156,7 +186,7 @@ class CLinuxFile : public IFileNative
 IFileNative *CLinuxFileSystem::OpenRead(const CPath &filename, bool bCanWrite)
 {
     i32 flags = bCanWrite ? O_RDWR : O_RDONLY;
-    i32 handle = open(*filename, flags);
+    i32 handle = open(*TStringCast<ansi, wide>(*filename, filename.GetLength()), flags);
     if (handle == -1)
     {
         return nullptr;
@@ -169,7 +199,7 @@ IFileNative *CLinuxFileSystem::OpenWrite(const CPath &filename, bool bAppend, bo
 {
     i32 flags = bCanRead ? O_RDWR : O_WRONLY;
     flags |= bAppend ? O_APPEND : O_CREAT;
-    i32 handle = open(*filename, flags);
+    i32 handle = open(*TStringCast<ansi, wide>(*filename, filename.GetLength()), flags);
     if (handle == -1)
     {
         return nullptr;

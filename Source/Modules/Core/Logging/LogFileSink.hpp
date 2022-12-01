@@ -19,13 +19,16 @@ SOFTWARE.
 
 #pragma once
 
-#include "Allocator.hpp"
-#include "Types.hpp"
+#include "HAL/Path.hpp"
+#include "ILogSink.hpp"
 
-using DefaultAllocator = TAllocator<i32>;
+class CLogFileSink : public ILogSink
+{
+  public:
+    CLogFileSink(const CPath &filename);
 
-template <class T, class Alloc = DefaultAllocator>
-class TArray;
+    void Log(const SLogMessage *pMessage) override;
 
-template <class T, class Alloc = DefaultAllocator>
-class TArrayView;
+  private:
+    class IFileNative *m_pFile;
+};

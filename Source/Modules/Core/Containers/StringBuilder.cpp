@@ -52,6 +52,14 @@ CStringBuilder &CStringBuilder::Append(const CString &str)
     return *this;
 }
 
+CStringBuilder &CStringBuilder::AppendLine(const CString &str)
+{
+    Append(str);
+    Append(WT('\n'));
+    
+	return *this;
+}
+
 CString CStringBuilder::ToString()
 {
     return CString(m_Data.begin(), m_Data.GetSize());

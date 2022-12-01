@@ -38,11 +38,16 @@ using usize = size_t;
 
 using ansi = char;
 using wide = wchar_t;
+#ifdef __cpp_lib_char8_t 
 using utf8 = char8_t;
+#else
+using utf8 = ansi;
+#endif // __cpp_lib_char8_t 
+
 using utf16 = char16_t;
 using utf32 = char32_t;
 
-#ifdef WE_OS_WINDOWS
+#ifdef UNICODE
 using tchar = wide;
     #define WT(x) L##x
     #define WTL(x) L##x##_s
@@ -94,9 +99,13 @@ DECLARE_TYPE(f32, "float", "f32");
 DECLARE_TYPE(f64, "double", "f64");
 
 DECLARE_TYPE(wide, "wide", "wide");
-DECLARE_TYPE(utf8, "utf8", "utf8");
 DECLARE_TYPE(utf16, "utf16", "utf16");
 DECLARE_TYPE(utf32, "utf32", "utf32");
+
+#ifdef __cpp_lib_char8_t 
+DECLARE_TYPE(utf8, "utf8", "utf8");
+#endif // __cpp_lib_char8_t 
+
 
 #include <assert.h>
 

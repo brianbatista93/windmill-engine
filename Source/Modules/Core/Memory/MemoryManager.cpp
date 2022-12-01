@@ -24,23 +24,23 @@ CMemoryManager &CMemoryManager::Get()
 
 CMemoryManager::~CMemoryManager()
 {
-    fprintf_s(stderr, "\n[INFO] Memory manager have exited with [%d] unfreed allocations.\n", (i32)m_CurrentAllocations.size());
+    fprintf(stderr, "\n[INFO] Memory manager have exited with [%d] unfreed allocations.\n", (i32)m_CurrentAllocations.size());
 
     if (!m_CurrentAllocations.empty())
     {
         std::cerr << std::setfill('=') << std::setw(120) << '\n';
         u32 unfreedBytes = 0;
-        fprintf_s(stderr, "[ERROR] There are still allocations that have not been freed.\n");
+        fprintf(stderr, "[ERROR] There are still allocations that have not been freed.\n");
         for (auto [memory, info] : m_CurrentAllocations)
         {
-            fprintf_s(stderr, "0x%08llx (%d bytes|%d) - %s:%d (%s)\n", usize(memory), i32(info.nSize), info.nAlignment, info.pFilename, info.nLine,
-                      info.pFunctionName);
-#ifdef WE_DEBUG
+            fprintf(stderr, "0x%08llux (%d bytes|%d) - %s:%d (%s)\n", u64(memory), i32(info.nSize), info.nAlignment, info.pFilename, info.nLine,
+                    info.pFunctionName);
+#if WE_OS_SUPPORT_CALLSTACK_INFO
             for (u32 i = 0; i < info.nCallStackFrames; ++i)
             {
-                fprintf_s(stderr, "\t> %s\n", info.ppCallStack[i]);
+                fprintf(stderr, "\t> %s\n", info.ppCallStack[i]);
             }
-#endif // WE_DEBUG
+#endif // WE_OS_SUPPORT_CALLSTACK_INFO
 
             unfreedBytes += (u32)info.nSize;
         }
@@ -65,9 +65,10 @@ void *CMemoryManager::Allocate(usize nSize, usize nAlignment, const char *pFilen
     info.nLine = nLine;
     info.nAlignment = i32(nAlignment);
     info.nOrder = lastOrder++;
-#ifdef WE_DEBUG
+
+#if WE_OS_SUPPORT_CALLSTACK_INFO
     info.nCallStackFrames = OS::GetStackTrace(2, 32, info.ppCallStack, 255, info.ppCallers);
-#endif
+#endif // WE_OS_SUPPORT_CALLSTACK_INFO
 
     void *pointer = MallocInternal(nSize, nAlignment);
 
@@ -87,9 +88,10 @@ void *CMemoryManager::Reallocate(void *pMemory, usize nSize, usize nAlignment, c
     info.nLine = nLine;
     info.nAlignment = i32(nAlignment);
     info.nOrder = lastOrder++;
-#ifdef WE_DEBUG
+
+#if WE_OS_SUPPORT_CALLSTACK_INFO
     info.nCallStackFrames = OS::GetStackTrace(2, 32, info.ppCallStack, 255, info.ppCallers);
-#endif
+#endif // WE_OS_SUPPORT_CALLSTACK_INFO
 
     void *newPointer = ReallocInternal(pMemory, nSize, nAlignment);
 

@@ -75,3 +75,15 @@ SOFTWARE.
 #ifdef MEMORY_MANAGER_FROM_HEADER
     #undef MEMORY_MANAGER_FROM_HEADER
 #endif // MEMORY_MANAGER_FROM_HEADER
+
+#include <memory>
+
+template <class T>
+class TWEDeleter
+{
+  public:
+    constexpr void operator()(T *pObject) const noexcept { we_delete(pObject); }
+};
+
+template<class T>
+using TUniquePtr = std::unique_ptr<T, TWEDeleter<T>>;

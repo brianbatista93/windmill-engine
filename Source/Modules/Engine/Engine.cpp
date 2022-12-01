@@ -1,8 +1,12 @@
 #include "Engine.hpp"
 #include "Containers/ArrayView.hpp"
 #include "HAL/FileSystem.hpp"
+#include "Logging/Log.hpp"
+#include "Logging/LogFileSink.hpp"
+#include "Logging/StdLogSink.hpp"
+#include "OS/OS.hpp"
 
-#include "HAL/File.hpp"
+DECLARE_STATIC_LOG_EMITTER(Engine, eInfo);
 
 CEngine &CEngine::Get()
 {
@@ -22,11 +26,25 @@ bool CEngine::Initialize(const TArrayView<tchar *> &arguments)
         return false;
     }
 
+    if (!CLogSystem::Initialize())
+    {
+        return false;
+    }
+    CLogSystem::Get().AddSink(we_new(CStdLogSink));
+    CLogSystem::Get().AddSink(we_new(CLogFileSink, WTL("Engine.log")));
+
+    if (!OS::Initialize())
+    {
+        return false;
+    }
+
     return false;
 }
 
 void CEngine::Shutdown()
 {
+    OS::Shutdown();
+    CLogSystem::Shutdown();
     CFileSystem::Shutdown();
 }
 

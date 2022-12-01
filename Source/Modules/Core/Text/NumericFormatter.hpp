@@ -299,7 +299,7 @@ class CNumeric
     }
 
     template <class T>
-    inline bool FormatNumber(T value, tchar **pDest, i32 nPrecision)
+    inline static bool FormatNumber(T value, tchar **pDest, i32 nPrecision)
     {
         if constexpr (WE::Concept::IsNumeric<T>)
         {
@@ -321,23 +321,23 @@ class CNumeric
                 {
                     while (nPrecision-- > 0)
                     {
-                        *--pDest = WT('0');
+                        *--*pDest = WT('0');
                     }
                 }
 
-                *--pDest = kDecimalPoint;
+                *--*pDest = kDecimalPoint;
             }
 
             i32 nWrittenCount = 0;
 
             do
             {
-                *--pDest = tchar(integer % 10) + WT('0');
+                *--*pDest = tchar(integer % 10) + WT('0');
                 integer /= 10;
 
                 if (nWrittenCount++ % 3 == 2)
                 {
-                    *--pDest = kThousandsSeparator;
+                    *--*pDest = kThousandsSeparator;
                 }
             } while (integer != 0);
 

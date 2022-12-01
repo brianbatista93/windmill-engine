@@ -1,21 +1,13 @@
-#include <memory>
-
+#include "File.hpp"
 #include "Containers/Array.hpp"
 #include "Encoding/AnsiEncoder.hpp"
 #include "Encoding/UTF8Encoder.hpp"
-#include "File.hpp"
 #include "HAL/FileSystem.hpp"
-
-template <class T>
-class TDeleter
-{
-  public:
-    constexpr void operator()(T *pObject) const noexcept { we_delete(pObject); }
-};
+#include "Memory/Memory.hpp"
 
 bool CFile::WriteBytes(const TArray<u8> &bytes, const CPath &filename)
 {
-    std::unique_ptr<IFileNative, TDeleter<IFileNative>> fileNative;
+    TUniquePtr<IFileNative> fileNative;
     fileNative.reset(CFileSystem::OpenWrite(filename));
 
     if (!fileNative or !fileNative->IsValid())
@@ -24,7 +16,7 @@ bool CFile::WriteBytes(const TArray<u8> &bytes, const CPath &filename)
     }
 
     const auto size = bytes.GetSize();
-    return fileNative->Write(bytes.GetData(), size) == size;
+    return (i32)fileNative->Write(bytes.GetData(), size) == size;
 }
 
 constexpr bool IsAnsi(const tchar *pStr)
@@ -41,15 +33,20 @@ constexpr bool IsAnsi(const tchar *pStr)
 
 bool CFile::WriteString(const CString &str, const CPath &filename, EEncoding encoding)
 {
-    std::unique_ptr<IFileNative, TDeleter<IFileNative>> fileNative;
-    if (str.IsEmpty())
-    {
-        return true;
-    }
-
+    TUniquePtr<IFileNative> fileNative;
     fileNative.reset(CFileSystem::OpenWrite(filename));
 
-    if (!fileNative or !fileNative->IsValid())
+    return WriteString(fileNative.get(), str, encoding);
+}
+
+bool CFile::WriteString(IFileNative *pFile, const CString &str, EEncoding encoding)
+{
+    if (!pFile->CanWrite() or str.IsEmpty())
+    {
+        return false;
+    }
+
+    if (!IsValid(pFile))
     {
         return false;
     }
@@ -60,7 +57,7 @@ bool CFile::WriteString(const CString &str, const CPath &filename, EEncoding enc
         if (encoding == EEncoding::eUTF8)
         {
             utf8 utf8BOM[] = {(utf8)0xEF, (utf8)0xBB, (utf8)0xBF};
-            if (fileNative->Write((const u8 *)utf8BOM, 3 * sizeof(utf8)) != 3 * sizeof(utf8))
+            if (pFile->Write((const u8 *)utf8BOM, 3 * sizeof(utf8)) != 3 * sizeof(utf8))
             {
                 return false;
             }
@@ -68,32 +65,30 @@ bool CFile::WriteString(const CString &str, const CPath &filename, EEncoding enc
         const usize length = CUTF8Encoder::Get().Encode(nullptr, *str, str.GetLength() * sizeof(tchar));
         TArray<utf8> utf8Str(length);
         CUTF8Encoder::Get().Encode(utf8Str.GetData(), *str, str.GetLength() * sizeof(tchar));
-        return fileNative->Write((const u8 *)utf8Str.GetData(), length) == length;
+        return pFile->Write((const u8 *)utf8Str.GetData(), length) == length;
     }
     else if (forceUnicode)
     {
-        const tchar unicodeBOM = 0xFEFF;
-        if (fileNative->Write((const u8 *)&unicodeBOM, sizeof(tchar)) != sizeof(tchar))
+        const tchar unicodeBOM = (tchar)0xFEFF;
+        if (pFile->Write((const u8 *)&unicodeBOM, sizeof(tchar)) != sizeof(tchar))
         {
             return false;
         }
         const i32 length = str.GetLength() * sizeof(tchar);
-        return fileNative->Write((const u8 *)*str, length) == length;
+        return (i32)pFile->Write((const u8 *)*str, length) == length;
     }
     else
     {
         const usize length = CAnsiEncoder::Get().Encode(nullptr, *str, str.GetLength() * sizeof(tchar));
         TArray<ansi> ansiStr(length);
         CAnsiEncoder::Get().Encode(ansiStr.GetData(), *str, str.GetLength() * sizeof(tchar));
-        return fileNative->Write((const u8 *)ansiStr.GetData(), length) == length;
+        return pFile->Write((const u8 *)ansiStr.GetData(), length) == length;
     }
-
-    return true;
 }
 
 bool CFile::ReadBytes(TArray<u8> &bytes, const CPath &filename)
 {
-    std::unique_ptr<IFileNative, TDeleter<IFileNative>> fileNative;
+    TUniquePtr<IFileNative> fileNative;
     fileNative.reset(CFileSystem::OpenRead(filename));
 
     if (!fileNative or !fileNative->IsValid())
@@ -108,7 +103,7 @@ bool CFile::ReadBytes(TArray<u8> &bytes, const CPath &filename)
 
 bool CFile::ReadString(CString &result, const CPath &filename)
 {
-    std::unique_ptr<IFileNative, TDeleter<IFileNative>> fileNative;
+    TUniquePtr<IFileNative> fileNative;
     fileNative.reset(CFileSystem::OpenRead(filename));
     if (!fileNative or !fileNative->IsValid())
     {
@@ -152,4 +147,9 @@ bool CFile::ReadString(CString &result, const CPath &filename)
     bufferMem = nullptr;
 
     return true;
+}
+
+bool CFile::IsValid(const IFileNative *pFile)
+{
+    return pFile and pFile->IsValid();
 }

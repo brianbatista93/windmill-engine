@@ -19,13 +19,8 @@ SOFTWARE.
 
 #pragma once
 
-#include "Allocator.hpp"
-#include "Types.hpp"
-
-using DefaultAllocator = TAllocator<i32>;
-
-template <class T, class Alloc = DefaultAllocator>
-class TArray;
-
-template <class T, class Alloc = DefaultAllocator>
-class TArrayView;
+namespace OS
+{
+extern bool Initialize();
+extern void Shutdown();
+} // namespace OS

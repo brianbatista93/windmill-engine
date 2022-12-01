@@ -27,6 +27,7 @@ SOFTWARE.
 #include <utility>
 
 #include "Types.hpp"
+#include "OS/Utils.hpp"
 
 /**
  * @brief Manager responsible for allocating, freeing and managing memory.
@@ -68,11 +69,12 @@ class CMemoryManager
         i32 nLine;
         i32 nAlignment;
         i32 nOrder;
-#ifdef WE_DEBUG
+
+#ifdef WE_OS_SUPPORT_CALLSTACK_INFO
         ansi ppCallStack[32][255];
         u32 nCallStackFrames;
         void *ppCallers[32];
-#endif // WE_DEBUG
+#endif // WE_OS_SUPPORT_CALLSTACK_INFO
     };
 
     std::map<void *, SAllocationInfo> m_CurrentAllocations;

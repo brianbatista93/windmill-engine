@@ -23,6 +23,8 @@ SOFTWARE.
 #include "Containers/WeString.hpp"
 #include "HAL/Path.hpp"
 
+class IFileNative;
+
 class CFile
 {
   public:
@@ -37,7 +39,10 @@ class CFile
 
     static bool WriteBytes(const TArray<u8> &bytes, const CPath &filename);
     static bool WriteString(const CString &str, const CPath &filename, EEncoding encoding = EEncoding::eAuto);
+    static bool WriteString(IFileNative *pFile, const CString &str, EEncoding encoding = EEncoding::eAuto);
 
     static bool ReadBytes(TArray<u8> &bytes, const CPath &filename);
     static bool ReadString(CString &str, const CPath &filename);
+
+    static bool IsValid(const class IFileNative *pFile);
 };

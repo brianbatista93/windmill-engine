@@ -21,7 +21,11 @@ SOFTWARE.
 
 #include "Types.hpp"
 
+#define WE_OS_SUPPORT_CALLSTACK_INFO (WE_DEBUG && WE_OS_WINDOWS)
+
 namespace OS
 {
+#if WE_OS_SUPPORT_CALLSTACK_INFO
 extern u32 GetStackTrace(u32 nFramesToSkip, u32 nFramesToCapture, ansi ppSymbols[][255], u32 nSymbolMaxLength, void *ppCallers[]);
-}
+#endif // WE_OS_SUPPORT_CALLSTACK_INFO
+} // namespace OS
