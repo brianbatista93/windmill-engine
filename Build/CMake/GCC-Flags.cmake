@@ -17,7 +17,8 @@ add_compile_options (
     -Wno-reorder                    # Disable reorder warnings
     -Wno-delete-non-virtual-dtor    # Disable delete non virtual dtor warnings
     -Wno-class-memaccess            # Disable class memaccess warnings
-    -fpermissive                     # Enable permissive mode
+    -fpermissive                    # Enable permissive mode
+	-fchar8_t						# Enable char8_t
 )
 
 add_compile_options (

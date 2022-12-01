@@ -26,8 +26,8 @@ class CUTF8Encoder : public IEncoder
   public:
     static CUTF8Encoder &Get();
 
-    virtual const tchar *GetName() override { return WT("ANSI"); }
-    virtual const tchar *GetShortName() override { return WT("ansi"); }
+    virtual const tchar *GetName() override { return WT("UTF-8"); }
+    virtual const tchar *GetShortName() override { return WT("utf-8"); }
     virtual usize GetLength(const u8 *pBytes, usize nByteCount) const override;
     virtual usize Decode(tchar *pDest, const u8 *pSrc, usize nByteCount) const override;
     usize Encode(utf8 *pDest, const tchar *pSrc, usize nByteCount) const;
