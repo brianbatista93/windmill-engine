@@ -22,9 +22,9 @@ SOFTWARE.
 #include "Allocator.hpp"
 #include "Array.hpp"
 #include "Concepts.hpp"
+#include "ContainerFwd.hpp"
 #include "StringBuilder.hpp"
 #include "StringUtils.hpp"
-#include "ContainerFwd.hpp"
 
 #include <string>
 
@@ -54,6 +54,12 @@ class CString
     inline CString(const tchar *pStr, usize nLength) : m_Data(i32(nLength) + 1) { Init(pStr, m_Data.GetSize()); }
 
     CString(const u8 *pBytes, usize nSize, const class IEncoder *pEncoder);
+
+    template <class It>
+    CString(It *begin, It *end) : m_Data(i32(end - begin))
+    {
+        Init(begin, m_Data.GetSize());
+    }
 
     inline CString &Append(tchar chr)
     {

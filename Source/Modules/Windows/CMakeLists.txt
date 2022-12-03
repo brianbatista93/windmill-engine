@@ -12,11 +12,6 @@ PRIVATE
     "Core"
 )
 
-target_link_libraries ("Core"
-PUBLIC
-    ${PROJECT_NAME}
-)
-
 target_include_directories (${PROJECT_NAME}
 	PUBLIC
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>

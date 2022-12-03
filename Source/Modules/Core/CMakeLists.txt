@@ -23,6 +23,11 @@ target_include_directories (${PROJECT_NAME}
 		$<INSTALL_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
 
+target_link_libraries (${PROJECT_NAME}
+PUBLIC 
+	"${PLATFORM_NAME}"
+)
+
 if (ENABLE_TESTS_BENCHMARK)
 	add_subdirectory ("Benchmark")
 endif ()

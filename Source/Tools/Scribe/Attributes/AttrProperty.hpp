@@ -19,11 +19,9 @@ SOFTWARE.
 
 #pragma once
 
+#include "Containers/StringBuilder.hpp"
 #include "Types.hpp"
 
-namespace OS
-{
-extern usize TCharToUTF8(utf8 *pDst, const tchar *pSrc, usize nSrcLength);
+constexpr static i32 sAttrPropertyLength = 8;
 
-extern usize UTF8ToTChar(tchar *pDst, const utf8 *pSrc, usize nSrcLength);
-} // namespace OS
+extern tchar *ProcessProperty(const tchar *pStr, CStringBuilder &builder, i32 &rLine);

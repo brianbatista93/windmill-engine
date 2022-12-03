@@ -19,11 +19,14 @@ SOFTWARE.
 
 #pragma once
 
-#include "Types.hpp"
+#include "WTexture.gen.hpp"
 
-namespace OS
+class WTexture
 {
-extern usize TCharToUTF8(utf8 *pDst, const tchar *pSrc, usize nSrcLength);
+  private:
+    [[WE::Property(Config=Game)]]
+	float m_Width;
 
-extern usize UTF8ToTChar(tchar *pDst, const utf8 *pSrc, usize nSrcLength);
-} // namespace OS
+    [[WE::Property(Config=Engine)]] 
+	float m_Height;
+};

@@ -37,6 +37,8 @@ class CPath
 
     CPath(CString &&source) : m_Text(std::move(source)) { PreprocessPath(); }
 
+    explicit CPath(const tchar *pStr) : m_Text(pStr) { PreprocessPath(); }
+
     CPath &operator=(CString &&source) noexcept
     {
         m_Text = std::move(source);
@@ -60,12 +62,29 @@ class CPath
         return CString(*m_Text, length - 1);
     }
 
+    [[nodiscard]] CPath GetFileName() const
+    {
+        we_assert(!IsEmpty());
+        auto it = std::find_if(m_Text.rbegin(), m_Text.rend(), [](tchar c) { return c == kSeparator; });
+        return CString(it.base());
+    }
+
+    [[nodiscard]] CPath GetFileNameWithoutExtension() const
+    {
+        we_assert(!IsEmpty());
+        auto itExt = std::find_if(m_Text.rbegin(), m_Text.rend(), [](tchar c) { return c == '.'; });
+        auto it = std::find_if(itExt, m_Text.rend(), [](tchar c) { return c == kSeparator; });
+        return CString(it.base(), itExt.base());
+    }
+
     friend CPath operator/(const CPath &lhs, const CPath &rhs)
     {
         CPath result = lhs;
         result.Append(rhs);
         return result;
     }
+
+    friend CPath operator+(const CPath &lhs, const tchar *pStr) { return lhs.m_Text + pStr; }
 
     CPath &Append(const tchar *pStr, i32 nLength);
     CPath &Append(const CPath &other) { return Append(*other.m_Text, other.m_Text.GetLength()); }

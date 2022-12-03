@@ -153,3 +153,8 @@ bool CFile::IsValid(const IFileNative *pFile)
 {
     return pFile and pFile->IsValid();
 }
+
+bool CFile::Exist(const CPath &filename)
+{
+    return CFileSystem::FileExists(filename);
+}

@@ -45,4 +45,5 @@ class CFile
     static bool ReadString(CString &str, const CPath &filename);
 
     static bool IsValid(const class IFileNative *pFile);
+    static bool Exist(const CPath &filename);
 };

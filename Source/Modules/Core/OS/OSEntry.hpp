@@ -21,9 +21,8 @@ SOFTWARE.
 
 #include "Types.hpp"
 
-namespace OS
-{
-extern usize TCharToUTF8(utf8 *pDst, const tchar *pSrc, usize nSrcLength);
-
-extern usize UTF8ToTChar(tchar *pDst, const utf8 *pSrc, usize nSrcLength);
-} // namespace OS
+#ifdef UNICODE
+    #define MAIN_ENTRY i32 wmain(i32 nArgC, wide **ppArgV)
+#else
+    #define MAIN_ENTRY i32 main(i32 nArgC, ansi **ppArgV)
+#endif // UNICODE

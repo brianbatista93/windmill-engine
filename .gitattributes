@@ -1,8 +1,8 @@
 ###############################################################################
 # Set default behavior to automatically normalize line endings.
 ###############################################################################
-*.cpp eol=lf
-*.hpp eol=lf
+*.cpp eol=crlf
+*.hpp eol=crlf
 
 *.bat eol=crlf
 *.sh eol=lf

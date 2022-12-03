@@ -2,6 +2,7 @@ add_compile_options (
  /nologo        # Suppress startup banner
  /fp:fast       # Use fast floating point model
  /Zc:wchar_t    # wchar_t is native type
+ /Zc:char8_t	# char8_t is native type
  /GF            # Enable read-only string pooling
  /Gy            # Function-level linking
  /utf-8         # Use UTF-8 encoding for source code
@@ -12,6 +13,7 @@ add_compile_options (
  /W4            # Set warning level 4
  /WX            # Treat warnings as errors
  /wd4267		# Disable warning C4267: 'argument' : conversion from 'size_t' to 'type', possible loss of data
+ /wd5030		# Disable warning C5030: attribute 'attribute' is not recognized
 
  /D_CRT_SECURE_NO_WARNINGS # Disable warnings about deprecated CRT functions
 )

@@ -31,6 +31,12 @@ class CStringUtils
     static i32 Compare(const tchar *__restrict pLhsStr, const tchar *__restrict pRhsStr);
     static i32 Compare(const tchar *__restrict pLhsStr, i32 nLength, const tchar *__restrict pRhsStr);
 
+    inline static bool Equal(const tchar *__restrict pLhsStr, const tchar *__restrict pRhsStr) { return Compare(pLhsStr, pRhsStr) == 0; }
+    inline static bool Equal(const tchar *__restrict pLhsStr, const tchar *__restrict pRhsStr, i32 nLength)
+    {
+        return Compare(pLhsStr, nLength, pRhsStr) == 0;
+    }
+
     static i32 Find(const tchar *__restrict pStr, const tchar *__restrict pFind, i32 nOffset = 0);
     static i32 Find(const tchar *__restrict pStr, i32 nStrLength, const tchar *__restrict pFind, i32 nFindLength, i32 nOffset = 0);
 

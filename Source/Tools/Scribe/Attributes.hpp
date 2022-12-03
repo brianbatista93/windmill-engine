@@ -19,11 +19,12 @@ SOFTWARE.
 
 #pragma once
 
+#include <map>
+#include <string>
+
+#include "Containers/StringBuilder.hpp"
 #include "Types.hpp"
 
-namespace OS
-{
-extern usize TCharToUTF8(utf8 *pDst, const tchar *pSrc, usize nSrcLength);
+using AttributesMapType = std::map<std::basic_string<tchar>, std::function<tchar *(const tchar *, CStringBuilder &, i32 &)>>;
 
-extern usize UTF8ToTChar(tchar *pDst, const utf8 *pSrc, usize nSrcLength);
-} // namespace OS
+extern AttributesMapType gAttributeFunctions;
