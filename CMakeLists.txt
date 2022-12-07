@@ -25,10 +25,14 @@ include ("Build/CMake/Config-Properties.cmake")
 
 add_subdirectory ("Source/Modules/Core")
 add_subdirectory ("Source/Modules/${PLATFORM_NAME}")
-add_subdirectory ("Source/Modules/Engine")
-add_subdirectory ("Source/Launchers")
 
 option (BUILD_TOOLS "Build tools" ON)
 if (BUILD_TOOLS)
 	add_subdirectory ("Source/Tools/Scribe")
 endif ()
+
+include ("Build/CMake/Build-Helper.cmake")
+
+add_subdirectory ("Source/Modules/Engine")
+add_subdirectory ("Source/Launchers")
+

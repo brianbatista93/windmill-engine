@@ -3,7 +3,7 @@
 
 CStringBuilder::CStringBuilder()
 {
-    m_Data.Reserve(50);
+    m_Data.Reserve(64);
 }
 
 CStringBuilder::CStringBuilder(i32 nInitialCapacity)

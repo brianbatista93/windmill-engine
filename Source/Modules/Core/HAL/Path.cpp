@@ -1,4 +1,5 @@
 #include "Path.hpp"
+#include "FileSystem.hpp"
 
 CPath &CPath::Append(const tchar *pStr, i32 nLength)
 {
@@ -32,4 +33,44 @@ CPath &CPath::Append(const tchar *pStr, i32 nLength)
     }
 
     return *this;
+}
+
+bool CPath::IsDirectory() const
+{
+    return CFileSystem::DirectoryExists(*this) and !CFileSystem::FileExists(*this);
+}
+
+bool CPath::IsFile() const
+{
+    return CFileSystem::FileExists(*this) and !CFileSystem::DirectoryExists(*this);
+}
+
+TArray<CPath> GetAllFilesImpl(const CPath &path)
+{
+    return CFileSystem::ListChildren(path);
+}
+
+TArray<CPath> CPath::GetAllFiles(const tchar *pFilter, bool bRecursive) const
+{
+    we_assert(!IsEmpty());
+    we_assert(IsDirectory());
+    we_assert(pFilter and *pFilter);
+
+    TArray<CPath> result;
+
+    const TArray<CPath> files = GetAllFilesImpl(*this);
+
+    for (auto path : files)
+    {
+        if (path.IsFile() and CFileSystem::MatchFilter(path, pFilter))
+        {
+            result.Add(path);
+        }
+        else if (bRecursive and path.IsDirectory())
+        {
+            result.Append(path.GetAllFiles(pFilter, bRecursive));
+        }
+    }
+
+    return result;
 }

@@ -114,14 +114,39 @@ CString CString::ConcatCS(const tchar *pLhs, const CString &rhs)
     return WE::Internal::ConcatCStringToStrings(pLhs, rhs);
 }
 
-TArray<CString> CString::Split(const tchar *pStr)
+TArray<CString> CString::Split(tchar chr) const
+{
+    we_assert(chr != 0);
+
+    TArray<CString> result;
+
+    const tchar *pStart = m_Data.GetData();
+    const tchar *pEnd = pStart;
+    for (; *pEnd; ++pEnd)
+    {
+        if (*pEnd == chr and pEnd != pStart)
+        {
+            result.Add(CString(pStart, pEnd - pStart));
+            pStart = pEnd + 1;
+        }
+    }
+
+    if (pStart != pEnd)
+    {
+        result.Add(CString(pStart, pEnd - pStart));
+    }
+
+    return result;
+}
+
+TArray<CString> CString::Split(const tchar *pStr) const
 {
     we_assert(pStr != nullptr);
 
     const i32 length = i32(std::char_traits<tchar>::length(pStr));
 
-    tchar *pStart = GetArray().GetData();
-    tchar *pEnd = pStart;
+    const tchar *pStart = m_Data.GetData();
+    const tchar *pEnd = pStart;
 
     TArray<CString> result;
     for (; *pEnd; ++pEnd)

@@ -136,7 +136,8 @@ class CString
         return CStringUtils::Find(GetArray().GetData(), pStr, nOffset);
     }
 
-    TArray<CString> Split(const tchar *pStr);
+    TArray<CString> Split(tchar chr) const;
+    TArray<CString> Split(const tchar *pStr) const;
 
     template <WE::Concept::IsContainer TContainer>
     inline static CString Join(tchar separator, const TContainer &container)

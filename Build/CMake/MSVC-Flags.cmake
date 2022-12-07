@@ -22,25 +22,27 @@ set (CMAKE_RC_FLAGS /nologo)
 
 add_compile_options (
 # Debug flags
-    $<$<CONFIG:Debug>:/MDd>     # Use the debug multithread-specific and DLL-specific version of the run-time library.
-    $<$<CONFIG:Debug>:/Zi>      # Enable debugging information
-    $<$<CONFIG:Debug>:/Zo>      # Generate enhanced debugging information for optimized code in non-debug builds.
-    $<$<CONFIG:Debug>:/Od>      # Disable optimizations
-    $<$<CONFIG:Debug>:/Ob0>     # Disable inlining
-    $<$<CONFIG:Debug>:/Oy->     # Disable suppressing of the creation of frame pointers on the call stack for quicker function calls
-    $<$<CONFIG:Debug>:/RTC1>    # Enable run-time error checking
-    $<$<CONFIG:Debug>:/GS>      # Enable buffer security checks
-    $<$<CONFIG:Debug>:/DDEBUG>  # Define DEBUG
-    $<$<CONFIG:Debug>:/D_DEBUG> # Define _DEBUG
+    $<$<CONFIG:Debug>:/MDd>					# Use the debug multithread-specific and DLL-specific version of the run-time library.
+    $<$<CONFIG:Debug>:/Zi>					# Enable debugging information
+    $<$<CONFIG:Debug>:/Zo>					# Generate enhanced debugging information for optimized code in non-debug builds.
+    $<$<CONFIG:Debug>:/Od>					# Disable optimizations
+    $<$<CONFIG:Debug>:/Ob0>					# Disable inlining
+    $<$<CONFIG:Debug>:/Oy->					# Disable suppressing of the creation of frame pointers on the call stack for quicker function calls
+    $<$<CONFIG:Debug>:/RTC1>				# Enable run-time error checking
+    $<$<CONFIG:Debug>:/GS>					# Enable buffer security checks
+    $<$<CONFIG:Debug>:/DDEBUG>				# Define DEBUG
+    $<$<CONFIG:Debug>:/D_DEBUG>				# Define _DEBUG
+    $<$<CONFIG:Debug>:/analyze>				# Enable static code analysis
+    $<$<CONFIG:Debug>:/fsanitize=address>	# Enable address sanitizer
 
 # Profile flags
-    $<$<CONFIG:Profile>:/MD>    # Use the multithread-specific and DLL-specific version of the run-time library.
-    $<$<CONFIG:Profile>:/Zi>    # Enable debugging information
-    $<$<CONFIG:Profile>:/Zo>    # Generate enhanced debugging information for optimized code in non-debug builds.
-    $<$<CONFIG:Profile>:/Ox>    # Enable full optimizations
-    $<$<CONFIG:Profile>:/Oy->   # Disable suppressing of the creation of frame pointers on the call stack for quicker function calls
-    $<$<CONFIG:Profile>:/GS->   # Disable buffer security checks
-    $<$<CONFIG:Profile>:/D_PROFILE> # Define PROFILE
+    $<$<CONFIG:Profile>:/MD>				# Use the multithread-specific and DLL-specific version of the run-time library.
+    $<$<CONFIG:Profile>:/Zi>				# Enable debugging information
+    $<$<CONFIG:Profile>:/Zo>				# Generate enhanced debugging information for optimized code in non-debug builds.
+    $<$<CONFIG:Profile>:/Ox>				# Enable full optimizations
+    $<$<CONFIG:Profile>:/Oy->				# Disable suppressing of the creation of frame pointers on the call stack for quicker function calls
+    $<$<CONFIG:Profile>:/GS->				# Disable buffer security checks
+    $<$<CONFIG:Profile>:/D_PROFILE>			# Define PROFILE
 
 # Release flags
     $<$<CONFIG:Release>:/MD>    # Use the multithread-specific and DLL-specific version of the run-time library.

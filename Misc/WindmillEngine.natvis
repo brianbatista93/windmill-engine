@@ -16,8 +16,10 @@
     <Type Name="CString">
         <Intrinsic Name="type" Expression="sizeof(tchar)" />
         <DisplayString Condition="m_Data.m_nSize &lt;= 0">[Empty]</DisplayString>
+        <DisplayString Condition="type() == 4 &amp;&amp; m_Data.m_nSize &gt; 1">{(const tchar*)m_Data.m_Allocator.m_pData,s32}</DisplayString>
         <DisplayString Condition="type() == 2 &amp;&amp; m_Data.m_nSize &gt; 1">{(const tchar*)m_Data.m_Allocator.m_pData,su}</DisplayString>
         <DisplayString Condition="type() == 1 &amp;&amp; m_Data.m_nSize &gt; 1">{(const tchar*)m_Data.m_Allocator.m_pData,na}</DisplayString>
+        <StringView Condition="type() == 4 &amp;&amp; m_Data.m_nSize &gt; 1">(const tchar*)m_Data.m_Allocator.m_pData,s32</StringView>
         <StringView Condition="type() == 2 &amp;&amp; m_Data.m_nSize &gt; 1">(const tchar*)m_Data.m_Allocator.m_pData,su</StringView>
         <StringView Condition="type() == 1 &amp;&amp; m_Data.m_nSize &gt; 1">(const tchar*)m_Data.m_Allocator.m_pData,na</StringView>
     </Type>

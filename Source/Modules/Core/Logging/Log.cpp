@@ -18,6 +18,7 @@ void CLogSystem::Shutdown()
 {
     if (gLog)
     {
+        gLog->RemoveAllSinks();
         we_delete(gLog);
         gLog = nullptr;
     }

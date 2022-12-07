@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <locale>
@@ -158,5 +159,6 @@ void CMemoryManager::EditAllocationInfo(void *pOldMemory, void *pNewMemory, cons
 
 void CMemoryManager::RemoveAllocationInfo(void *pMemory)
 {
-    m_CurrentAllocations.erase(pMemory);
+    usize erased = m_CurrentAllocations.erase(pMemory);
+    we_assert(erased && "Trying to free an unallocated memory.");
 }

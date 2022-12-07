@@ -40,19 +40,19 @@ void CWindowsFileSystem::Shutdown()
 {
 }
 
-bool CWindowsFileSystem::FileExists(const CPath &path)
+bool CWindowsFileSystem::FileExists(const CPath &path) const
 {
     DWORD attributes = ::GetFileAttributesW(*path);
     return (attributes != INVALID_FILE_ATTRIBUTES) && !(attributes & FILE_ATTRIBUTE_DIRECTORY);
 }
 
-bool CWindowsFileSystem::DirectoryExists(const CPath &path)
+bool CWindowsFileSystem::DirectoryExists(const CPath &path) const
 {
     const DWORD attributes = ::GetFileAttributesW(*path);
     return (attributes != INVALID_FILE_ATTRIBUTES) and (attributes & FILE_ATTRIBUTE_DIRECTORY);
 }
 
-bool CWindowsFileSystem::CreateDirectory(const CPath &path)
+bool CWindowsFileSystem::CreateDirectory(const CPath &path) const
 {
     if (DirectoryExists(path))
     {
@@ -281,6 +281,31 @@ IFileNative *CWindowsFileSystem::OpenWrite(const CPath &filename, bool bAppend, 
     {
         result->Seek(0, SEEK_END);
     }
+
+    return result;
+}
+
+TArray<CPath> CWindowsFileSystem::ListChildren(const CPath &path) const
+{
+    TArray<CPath> result;
+
+    HANDLE hFind = INVALID_HANDLE_VALUE;
+    CPath searchPath = path + WT("/*");
+    WIN32_FIND_DATA ffd = {0};
+
+    hFind = ::FindFirstFile(*searchPath, &ffd);
+    if (hFind != INVALID_HANDLE_VALUE)
+    {
+        while (::FindNextFile(hFind, &ffd) != 0)
+        {
+            if (ffd.cFileName[0] != '.' and ffd.cFileName[1] != '\0' and ffd.cFileName[1] != '.' and ffd.cFileName[2] != '\0')
+            {
+                result.Add(path / ffd.cFileName);
+            }
+        }
+    }
+
+    FindClose(hFind);
 
     return result;
 }

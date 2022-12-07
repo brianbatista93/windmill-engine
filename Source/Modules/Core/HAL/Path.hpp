@@ -46,45 +46,59 @@ class CPath
         return *this;
     }
 
-    operator CString() const { return m_Text; }
-
     inline const CString::CharType *operator*() const { return *m_Text; }
 
     [[nodiscard]] inline bool IsEmpty() const { return m_Text.IsEmpty(); }
     [[nodiscard]] inline i32 GetLength() const { return m_Text.GetLength(); }
+    [[nodiscard]] bool IsDirectory() const;
+    [[nodiscard]] bool IsFile() const;
 
-    [[nodiscard]] CPath GetParentPath() const
+    inline const CString ToString() const { return m_Text; }
+
+    TArray<CPath> GetAllFiles(const tchar *pFilter, bool bRecursive = false) const;
+
+    [[nodiscard]] inline CPath GetParentPath() const
     {
         we_assert(!IsEmpty());
         auto it = std::find_if(m_Text.rbegin(), m_Text.rend(), [](tchar c) { return c == kSeparator; });
         usize length = std::distance(it, m_Text.rend());
         we_assert((i32)length <= m_Text.GetLength());
-        return CString(*m_Text, length - 1);
+        return CPath(CString(*m_Text, length - 1));
     }
 
-    [[nodiscard]] CPath GetFileName() const
+    [[nodiscard]] inline CPath GetFileName() const
     {
         we_assert(!IsEmpty());
         auto it = std::find_if(m_Text.rbegin(), m_Text.rend(), [](tchar c) { return c == kSeparator; });
-        return CString(it.base());
+        return CPath(CString(it.base()));
     }
 
-    [[nodiscard]] CPath GetFileNameWithoutExtension() const
+    [[nodiscard]] inline CPath GetFileNameWithoutExtension() const
     {
         we_assert(!IsEmpty());
         auto itExt = std::find_if(m_Text.rbegin(), m_Text.rend(), [](tchar c) { return c == '.'; });
         auto it = std::find_if(itExt, m_Text.rend(), [](tchar c) { return c == kSeparator; });
-        return CString(it.base(), itExt.base());
+        return CPath(CString(it.base(), itExt.base()));
     }
 
     friend CPath operator/(const CPath &lhs, const CPath &rhs)
     {
-        CPath result = lhs;
-        result.Append(rhs);
-        return result;
+        CPath result(lhs);
+        return result.Append(rhs);
+    }
+
+    friend CPath operator/(const CPath &lhs, const tchar *pRhs)
+    {
+        CPath result(lhs);
+        return result.Append(pRhs, std::char_traits<tchar>::length(pRhs));
     }
 
     friend CPath operator+(const CPath &lhs, const tchar *pStr) { return lhs.m_Text + pStr; }
+    CPath &operator+=(const tchar *pStr)
+    {
+        m_Text.Append(pStr);
+        return *this;
+    }
 
     CPath &Append(const tchar *pStr, i32 nLength);
     CPath &Append(const CPath &other) { return Append(*other.m_Text, other.m_Text.GetLength()); }

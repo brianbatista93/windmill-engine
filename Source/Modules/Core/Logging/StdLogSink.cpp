@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "LogEmitter.hpp"
 #include "LogMessage.hpp"
 #include "StdLogSink.hpp"
 
@@ -13,12 +14,18 @@
 
 void CStdLogSink::Log(const SLogMessage *pMessage)
 {
+    CStringBuilder builder;
+    builder.AppendFormat(WT("{0} [{1}] --- "), *pMessage->pEmitter->GetName(), ToString(pMessage->LogLevel));
+    builder.AppendLine(pMessage->FormattedMessage);
+
+    const CString message = builder.ToString();
+
     if (pMessage->LogLevel <= ELogLevel::eError)
     {
-        CERR << *pMessage->FormattedMessage << std::endl;
+        CERR << *message << std::endl;
     }
     else
     {
-        COUT << *pMessage->FormattedMessage << std::endl;
+        COUT << *message << std::endl;
     }
 }

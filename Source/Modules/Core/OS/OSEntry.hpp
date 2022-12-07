@@ -19,10 +19,37 @@ SOFTWARE.
 
 #pragma once
 
+#include "OS/StringConvertion.hpp"
 #include "Types.hpp"
 
-#ifdef UNICODE
-    #define MAIN_ENTRY i32 wmain(i32 nArgC, wide **ppArgV)
+#ifdef WE_OS_WINDOWS
+    #define MAIN_ENTRY_BEGIN                                                                                                                         \
+        i32 wmain(i32 nArgC, wide **ppArgV)                                                                                                          \
+        {                                                                                                                                            \
+            i32 errorCode = 0;
+
+    #define MAIN_ENTRY_END                                                                                                                           \
+        return errorCode;                                                                                                                            \
+        }
 #else
-    #define MAIN_ENTRY i32 main(i32 nArgC, ansi **ppArgV)
-#endif // UNICODE
+    #define MAIN_ENTRY_BEGIN                                                                                                                         \
+        i32 main(i32 nArgC, ansi **ppAnsiArgV)                                                                                                       \
+        {                                                                                                                                            \
+            i32 errorCode = 0;                                                                                                                       \
+            tchar *ppArgV[nArgC];                                                                                                                    \
+            for (i32 i = 0; i < nArgC; ++i)                                                                                                          \
+            {                                                                                                                                        \
+                auto cast = TStringCast<tchar, ansi>(ppAnsiArgV[i]);                                                                                 \
+                const usize length = cast.GetLength() + 1;                                                                                           \
+                ppArgV[i] = (tchar *)we_malloc(length * sizeof(tchar));                                                                              \
+                memcpy(ppArgV[i], *cast, length * sizeof(tchar));                                                                                    \
+            }
+
+    #define MAIN_ENTRY_END                                                                                                                           \
+        for (i32 i = 0; i < nArgC; ++i)                                                                                                              \
+        {                                                                                                                                            \
+            we_free(ppArgV[i]);                                                                                                                      \
+        }                                                                                                                                            \
+        return errorCode;                                                                                                                            \
+        }
+#endif // WE_OS_WINDOWS

@@ -54,11 +54,12 @@ class IFileSystem
 
     virtual bool Initialize() = 0;
     virtual void Shutdown() = 0;
-    virtual bool FileExists(const CPath &path) = 0;
-    virtual bool DirectoryExists(const CPath &path) = 0;
-    virtual bool CreateDirectory(const CPath &path) = 0;
+    virtual bool FileExists(const CPath &path) const = 0;
+    virtual bool DirectoryExists(const CPath &path) const = 0;
+    virtual bool CreateDirectory(const CPath &path) const = 0;
     virtual IFileNative *OpenRead(const CPath &filename, bool bCanWrite = false) = 0;
     virtual IFileNative *OpenWrite(const CPath &filename, bool bAppend = false, bool bCanRead = false) = 0;
+    virtual TArray<CPath> ListChildren(const CPath &path) const = 0;
 
   protected:
     CPath m_MountedDirs[(u32)EResourceMountType::eCount];

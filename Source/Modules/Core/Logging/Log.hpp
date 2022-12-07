@@ -50,7 +50,7 @@ class CLogSystem
             message.pFilename = pFile;
             message.nLine = nLine;
             message.pFunction = pFunction;
-            message.FormattedMessage = CString::Format(pFormat, std::forward<Args>(args)...);
+            message.FormattedMessage = std::move(CString::Format(pFormat, std::forward<Args>(args)...));
 
             LogInternal(&message);
         }
@@ -69,7 +69,7 @@ class CLogSystem
 #define DECLARE_STATIC_LOG_EMITTER(emitter, logLevel) static CLogEmitter _gLogEmitter##emitter(WT(#emitter), ELogLevel::logLevel)
 
 #define WE_LOG(emitter, logLevel, pFormat, ...)                                                                                                      \
-    CLogSystem::Get().Log(&_gLogEmitter##emitter, ELogLevel::##logLevel, __FILE__, __LINE__, __FUNCTION__, pFormat, ##__VA_ARGS__)
+    CLogSystem::Get().Log(&_gLogEmitter##emitter, ELogLevel::logLevel, __FILE__, __LINE__, __FUNCTION__, pFormat, ##__VA_ARGS__)
 
 #define WE_FATAL(emitter, pFormat, ...) WE_LOG(emitter, eFatal, pFormat, ##__VA_ARGS__)
 #define WE_ERROR(emitter, pFormat, ...) WE_LOG(emitter, eError, pFormat, ##__VA_ARGS__)

@@ -53,7 +53,7 @@ i32 WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 void InvalidParameterHandler(const tchar *pExpression, const tchar *pFunction, const tchar *pFile, u32 nLine, uintptr_t)
 {
-    wprintf(TEXT("SECURE CRT: Invalid parameter detected.\nExpression: %s Function: %s. File: %s Line: %d\n"),
+    wprintf(TEXT("SECURE CRT: Invalid parameter detected.\nExpression: %s Function: %s. File: %s Line: %u\n"),
             pExpression ? pExpression : TEXT("Unknown"), pFunction ? pFunction : TEXT("Unknown"), pFile ? pFile : TEXT("Unknown"), nLine);
 }
 

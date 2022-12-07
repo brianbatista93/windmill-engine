@@ -24,5 +24,8 @@ SOFTWARE.
 class CStdLogSink : public ILogSink
 {
   public:
+    CStdLogSink() = default;
+    ~CStdLogSink() = default;
+
     void Log(const SLogMessage *pMessage) override;
 };

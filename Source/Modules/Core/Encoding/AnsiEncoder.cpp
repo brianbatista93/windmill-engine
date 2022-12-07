@@ -37,12 +37,12 @@ usize CAnsiEncoder::Encode(ansi *pDest, const tchar *pSrc, usize nByteCount) con
 
     if (pDest == nullptr)
     {
-        return nByteCount >> 1;
+        return nByteCount / sizeof(tchar);
     }
 
     usize written = 0;
 
-    for (usize i = 0; i < nByteCount; i += 2, ++written)
+    for (usize i = 0; i < nByteCount; i += sizeof(tchar), ++written)
     {
         *pDest++ = (ansi)*pSrc++;
     }

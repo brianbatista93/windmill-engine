@@ -19,7 +19,7 @@ SOFTWARE.
 
 #pragma once
 
-#include "WTexture.gen.hpp"
+// #include "WTexture.gen.hpp"
 
 class WTexture
 {

@@ -34,6 +34,8 @@ class CFileSystem
     {
         return Get()->OpenWrite(path, bAppend, bCanRead);
     }
+    inline static TArray<CPath> ListChildren(const CPath &path) { return Get()->ListChildren(path); }
+    static bool MatchFilter(const CPath &path, const tchar *pFilter);
 
   private:
     static class IFileSystem *Get();

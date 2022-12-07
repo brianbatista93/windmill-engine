@@ -28,9 +28,10 @@ usize CUTF8Encoder::Decode(tchar *pDest, const u8 *pSrc, usize nByteCount) const
 
 usize CUTF8Encoder::Encode(utf8 *pDest, const tchar *pSrc, usize nByteCount) const
 {
+    const usize newByteCount = nByteCount / sizeof(tchar);
     if (pDest == nullptr)
     {
-        return GetLength((const u8 *)pSrc, nByteCount >> 1);
+        return GetLength((const u8 *)pSrc, newByteCount);
     }
-    return OS::TCharToUTF8(pDest, pSrc, nByteCount >> 1);
+    return OS::TCharToUTF8(pDest, pSrc, newByteCount);
 }

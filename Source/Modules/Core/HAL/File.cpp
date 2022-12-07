@@ -41,12 +41,7 @@ bool CFile::WriteString(const CString &str, const CPath &filename, EEncoding enc
 
 bool CFile::WriteString(IFileNative *pFile, const CString &str, EEncoding encoding)
 {
-    if (!pFile->CanWrite() or str.IsEmpty())
-    {
-        return false;
-    }
-
-    if (!IsValid(pFile))
+    if (str.IsEmpty() or !IsValid(pFile) or !pFile->CanWrite())
     {
         return false;
     }
@@ -91,7 +86,7 @@ bool CFile::ReadBytes(TArray<u8> &bytes, const CPath &filename)
     TUniquePtr<IFileNative> fileNative;
     fileNative.reset(CFileSystem::OpenRead(filename));
 
-    if (!fileNative or !fileNative->IsValid())
+    if (!CFile::IsValid(fileNative.get()))
     {
         return false;
     }
@@ -105,7 +100,7 @@ bool CFile::ReadString(CString &result, const CPath &filename)
 {
     TUniquePtr<IFileNative> fileNative;
     fileNative.reset(CFileSystem::OpenRead(filename));
-    if (!fileNative or !fileNative->IsValid())
+    if (!CFile::IsValid(fileNative.get()))
     {
         return false;
     }

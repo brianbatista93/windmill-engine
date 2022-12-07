@@ -1,3 +1,5 @@
+#include <cstring>
+#include <dirent.h>
 #include <fcntl.h>
 #include <pwd.h>
 #include <sys/stat.h>
@@ -6,35 +8,6 @@
 #include "HAL/FileSystem.hpp"
 #include "LinuxFileSystem.hpp"
 #include "OS/StringConvertion.hpp"
-
-template <class To, class From>
-class TStringCast
-{
-};
-
-template <>
-class TStringCast<ansi, wide>
-{
-  public:
-    inline TStringCast(const wide *pSrc, usize nLength) { OS::TCharToUTF8((utf8 *)m_pBuffer, pSrc, nLength); }
-
-    inline const ansi *operator*() const { return m_pBuffer; }
-
-  private:
-    ansi m_pBuffer[1024];
-};
-
-template <>
-class TStringCast<wide, ansi>
-{
-  public:
-    inline TStringCast(const ansi *pSrc, usize nLength) { OS::UTF8ToTChar(m_pBuffer, (const utf8 *)pSrc, nLength); }
-
-    inline const wide *operator*() const { return m_pBuffer; }
-
-  private:
-    wide m_pBuffer[1024];
-};
 
 IFileSystem *CFileSystem::Get()
 {
@@ -65,7 +38,7 @@ void CLinuxFileSystem::Shutdown()
 {
 }
 
-bool CLinuxFileSystem::FileExists(const CPath &path)
+bool CLinuxFileSystem::FileExists(const CPath &path) const
 {
     struct stat s;
     if (stat(*TStringCast<ansi, wide>(*path, path.GetLength()), &s))
@@ -76,7 +49,7 @@ bool CLinuxFileSystem::FileExists(const CPath &path)
     return S_ISREG(s.st_mode);
 }
 
-bool CLinuxFileSystem::DirectoryExists(const CPath &path)
+bool CLinuxFileSystem::DirectoryExists(const CPath &path) const
 {
     struct stat s;
     if (stat(*TStringCast<ansi, wide>(*path, path.GetLength()), &s))
@@ -84,23 +57,35 @@ bool CLinuxFileSystem::DirectoryExists(const CPath &path)
         return false;
     }
 
-    return (s.st_mode & S_IFDIR) != 0;
+    return S_ISDIR(s.st_mode);
 }
 
-bool CLinuxFileSystem::CreateDirectory(const CPath &path)
+bool CLinuxFileSystem::CreateDirectory(const CPath &path) const
 {
     if (DirectoryExists(path))
     {
         return true;
     }
 
-    CPath parentPath = path.GetParentPath();
-    if (!parentPath.IsEmpty() and !DirectoryExists(parentPath))
+    TArray<CString> pathNodes = path.ToString().Split(CPath::kSeparator);
+
+    CPath directory;
+    for (auto node : pathNodes)
     {
-        CreateDirectory(parentPath);
+        directory = directory / *node;
+        if (mkdir(*TStringCast<ansi, wide>(*directory, directory.GetLength()), 0775) == -1)
+        {
+            i32 error = errno;
+            if (error == EEXIST)
+            {
+                continue;
+            }
+
+            return false;
+        }
     }
 
-    return mkdir(*TStringCast<ansi, wide>(*path, path.GetLength()), 0777) == 0;
+    return true;
 }
 
 class CLinuxFile : public IFileNative
@@ -197,13 +182,54 @@ IFileNative *CLinuxFileSystem::OpenRead(const CPath &filename, bool bCanWrite)
 
 IFileNative *CLinuxFileSystem::OpenWrite(const CPath &filename, bool bAppend, bool bCanRead)
 {
-    i32 flags = bCanRead ? O_RDWR : O_WRONLY;
-    flags |= bAppend ? O_APPEND : O_CREAT;
-    i32 handle = open(*TStringCast<ansi, wide>(*filename, filename.GetLength()), flags);
+    i32 flags = O_CREAT | O_CLOEXEC;
+
+    if (bCanRead)
+    {
+        flags |= O_RDWR;
+    }
+    else
+    {
+        flags |= O_WRONLY;
+    }
+
+    i32 handle = open(*TStringCast<ansi, wide>(*filename, filename.GetLength()), flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
     if (handle == -1)
     {
+        printf("Error: %s\n", std::strerror(errno));
         return nullptr;
     }
 
-    return we_new(CLinuxFile, handle, filename, bCanRead, true);
+    auto result = we_new(CLinuxFile, handle, filename, bCanRead, true);
+
+    if (bAppend)
+    {
+        result->Seek(0, SEEK_END);
+    }
+
+    return result;
+}
+
+TArray<CPath> CLinuxFileSystem::ListChildren(const CPath &path) const
+{
+    TArray<CPath> result;
+
+    DIR *dir = NULL;
+    struct dirent *ent = NULL;
+
+    if ((dir = opendir(*TStringCast<ansi, wide>(*path, path.GetLength()))) != NULL)
+    {
+        while ((ent = readdir(dir)) != NULL)
+        {
+            if (ent->d_name[0] != '.' and ent->d_name[1] != '\0' and ent->d_name[1] != '.' and ent->d_name[2] != '\0')
+            {
+                const usize len = strlen(ent->d_name);
+                const CPath entPath = path / CString(*TStringCast<wide, ansi>(ent->d_name, len));
+                result.Add(entPath);
+            }
+        }
+        closedir(dir);
+    }
+
+    return result;
 }

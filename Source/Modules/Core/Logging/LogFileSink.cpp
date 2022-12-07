@@ -1,8 +1,8 @@
 #include "LogFileSink.hpp"
 #include "HAL/File.hpp"
 #include "HAL/FileSystem.hpp"
-#include "LogMessage.hpp"
 #include "LogEmitter.hpp"
+#include "LogMessage.hpp"
 
 CLogFileSink::CLogFileSink(const CPath &filename)
 {
@@ -16,4 +16,13 @@ void CLogFileSink::Log(const SLogMessage *pMessage)
     builder.AppendLine(pMessage->FormattedMessage);
 
     CFile::WriteString(m_pFile, builder.ToString(), CFile::EEncoding::eUTF8NoBOM);
+}
+
+CLogFileSink ::~CLogFileSink()
+{
+    if (m_pFile)
+    {
+        we_delete(m_pFile);
+        m_pFile = nullptr;
+    }
 }

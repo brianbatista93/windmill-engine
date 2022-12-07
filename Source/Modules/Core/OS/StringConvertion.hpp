@@ -20,6 +20,7 @@ SOFTWARE.
 #pragma once
 
 #include "Types.hpp"
+#include <string>
 
 namespace OS
 {
@@ -27,3 +28,46 @@ extern usize TCharToUTF8(utf8 *pDst, const tchar *pSrc, usize nSrcLength);
 
 extern usize UTF8ToTChar(tchar *pDst, const utf8 *pSrc, usize nSrcLength);
 } // namespace OS
+
+template <class To, class From>
+class TStringCast
+{
+};
+
+template <>
+class TStringCast<ansi, wide>
+{
+  public:
+    inline TStringCast(const wide *pSrc) : TStringCast(pSrc, std::char_traits<wide>::length(pSrc)) {}
+    inline TStringCast(const wide *pSrc, usize nLength) : m_nLength(nLength)
+    {
+        we_assert(nLength < 1024);
+        OS::TCharToUTF8((utf8 *)m_pBuffer, pSrc, nLength);
+    }
+
+    inline const ansi *operator*() const { return m_pBuffer; }
+    inline usize GetLength() const { return m_nLength; }
+
+  private:
+    ansi m_pBuffer[1024]{0};
+    usize m_nLength;
+};
+
+template <>
+class TStringCast<wide, ansi>
+{
+  public:
+    inline TStringCast(const ansi *pSrc) : TStringCast(pSrc, std::char_traits<ansi>::length(pSrc)) {}
+    inline TStringCast(const ansi *pSrc, usize nLength) : m_nLength(nLength)
+    {
+        we_assert(nLength < 1024);
+        OS::UTF8ToTChar(m_pBuffer, (const utf8 *)pSrc, nLength);
+    }
+
+    inline const wide *operator*() const { return m_pBuffer; }
+    inline usize GetLength() const { return m_nLength; }
+
+  private:
+    wide m_pBuffer[1024]{0};
+    usize m_nLength;
+};

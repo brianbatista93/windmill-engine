@@ -198,7 +198,17 @@ class TArray
 
         Resize(newSize);
 
-        memcpy(GetData() + oldSize, pElements, nSize * sizeof(ElementType));
+        CMemoryUtils::Copy(GetData() + oldSize, pElements, nSize);
+    }
+
+    inline void Append(const TArray &other)
+    {
+        const IndexType newSize = m_nSize + other.m_nSize;
+        const IndexType oldSize = m_nSize;
+
+        Resize(newSize);
+
+        CMemoryUtils::Copy(GetData() + oldSize, other.GetData(), other.GetSize());
     }
 
     inline ElementType Pop()
@@ -218,11 +228,11 @@ class TArray
 
         if (nNewSize > m_nSize)
         {
-            CMemoryUtils::Construct(GetData() + m_nSize, nNewSize - m_nSize);
+            CMemoryUtils::Construct(GetData() + m_nSize, (usize)(nNewSize - m_nSize));
         }
         else if (nNewSize < m_nSize)
         {
-            CMemoryUtils::Destroy(GetData() + nNewSize, m_nSize - nNewSize);
+            CMemoryUtils::Destroy(GetData() + nNewSize, (usize)(m_nSize - nNewSize));
         }
 
         m_nSize = nNewSize;
@@ -281,12 +291,15 @@ class TArray
         CMemoryUtils::Copy(GetData(), pBegin, size);
     }
 
-    inline void CopyFromOther(const TArray &other) noexcept
+    inline void CopyFromOther(const TArray &other)
     {
         m_nSize = other.m_nSize;
         m_nCapacity = other.m_nSize;
-        m_Allocator.Reallocate(m_nSize * sizeof(ElementType));
-        CMemoryUtils::Copy(GetData(), other.GetData(), m_nSize);
+        if (m_nSize > 0)
+        {
+            m_Allocator.Reallocate(m_nSize * sizeof(ElementType));
+            CMemoryUtils::Copy(GetData(), other.GetData(), m_nSize);
+        }
     }
 
     inline void MoveFromOther(TArray &&other) noexcept

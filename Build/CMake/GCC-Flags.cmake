@@ -8,7 +8,8 @@ add_compile_options (
     -Wall                           # Enable all warnings
     -Werror                         # Treat warnings as errors
     -Wno-unknown-pragmas            # Disable unknown pragma warnings
- 
+	-Wno-attributes
+	
     -fno-rtti                       # Disable RTTI
     -Wno-invalid-offsetof           # Disable invalid offsetof warnings
     -Wno-aligned-new                # Disable aligned new warnings
@@ -19,20 +20,29 @@ add_compile_options (
     -Wno-class-memaccess            # Disable class memaccess warnings
     -fpermissive                    # Enable permissive mode
 	-fchar8_t						# Enable char8_t
+
+	-fsanitize=address
 )
 
 add_compile_options (
 # Debug flags
-    $<$<CONFIG:Debug>:-g>       # Enable debug symbols
-    $<$<CONFIG:Debug>:-O0>      # Disable optimizations
-    $<$<CONFIG:Debug>:-DDEBUG>  # Define DEBUG macro
-    $<$<CONFIG:Debug>:-D_DEBUG> # Define _DEBUG macro
+    $<$<CONFIG:Debug>:-g>								# Enable debug symbols
+    $<$<CONFIG:Debug>:-O0>								# Disable optimizations
+    $<$<CONFIG:Debug>:-DDEBUG>							# Define DEBUG macro
+    $<$<CONFIG:Debug>:-D_DEBUG>							# Define _DEBUG macro
+    $<$<CONFIG:Debug>:-fsanitize=address>				# Enable address sanitizer
+    $<$<CONFIG:Debug>:-fsanitize=undefined>				# Enable undefined behavior sanitizer
+    $<$<CONFIG:Debug>:-fno-sanitize-recover=all>		# Disable sanitizer recovery
+    $<$<CONFIG:Debug>:-fsanitize=float-divide-by-zero>	# Enable float divide by zero sanitizer
+    $<$<CONFIG:Debug>:-fsanitize=float-cast-overflow>	# Enable float cast overflow sanitizer
+    $<$<CONFIG:Debug>:-fno-sanitize=null>				# Disable null sanitizer
+    $<$<CONFIG:Debug>:-fno-sanitize=alignment>			# Disable alignment sanitizer	
     
 # Profile flags
-    $<$<CONFIG:Profile>:-g>         # Enable debug symbols
-    $<$<CONFIG:Profile>:-O2>        # Enable optimizations
-    $<$<CONFIG:Profile>:-D_PROFILE> # Define _PROFILE macro
-    $<$<CONFIG:Profile>:-DNDEBUG>   # Define NDEBUG macro
+    $<$<CONFIG:Profile>:-g>			# Enable debug symbols
+    $<$<CONFIG:Profile>:-O2>		# Enable optimizations
+    $<$<CONFIG:Profile>:-D_PROFILE>	# Define _PROFILE macro
+    $<$<CONFIG:Profile>:-DNDEBUG>	# Define NDEBUG macro
 
 # Release flags
     $<$<CONFIG:Release>:-O3>        # Enable optimizations
@@ -41,3 +51,8 @@ add_compile_options (
 )
 
 set(CMAKE_LINK_FLAGS "{$CMAKE_LINK_FLAGS} -Wl, --gc-sections")
+
+add_link_options(
+	$<$<CONFIG:Debug>:-fsanitize=address>
+	$<$<CONFIG:Debug>:-fsanitize=undefined>
+)
