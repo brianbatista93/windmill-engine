@@ -21,12 +21,14 @@ SOFTWARE.
 
 // #include "WTexture.gen.hpp"
 
-class WTexture
+#define wclass(...) class
+#define wstruct(...) struct
+#define wenum(...) enum
+
+wclass() WTexture
 {
   private:
-    [[WE::Property(Config=Game)]]
-	float m_Width;
+    [[WE::Property(Config)]] float m_Width;
 
-    [[WE::Property(Config=Engine)]] 
-	float m_Height;
+    [[WE::Property(Config)]] float m_Height;
 };
