@@ -21,7 +21,7 @@ git clone --recurse-submodules https://github.com/brianbatista93/windmill-engine
 ```bash
 mkdir build
 cd build
-cmake ..
+cmake ./Engine
 cmake --build .
 ```
 
