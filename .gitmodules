@@ -1,3 +1,4 @@
 [submodule "Engine/Source/ThirdParty/benchmark"]
 	path = Engine/Source/ThirdParty/benchmark
 	url = https://github.com/google/benchmark.git
+	branch = main
