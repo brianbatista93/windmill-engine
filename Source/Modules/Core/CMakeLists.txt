@@ -15,7 +15,7 @@ add_library (${PROJECT_NAME} STATIC
  "Logging/Log.cpp"
  "Logging/LogFileSink.cpp"
  "Logging/StdLogSink.cpp"
- "Memory/MemoryManager.cpp")
+ "Memory/MemoryManager.cpp" "Console/ConfigFile.cpp")
 
 target_include_directories (${PROJECT_NAME}
 	PUBLIC
