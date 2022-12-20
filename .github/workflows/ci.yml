@@ -46,20 +46,31 @@ jobs:
           CXX: g++
         - os: windows-latest
           CMAKE_PRESET: windows-build
+          SETUP_FILE: Setup.bat
         - os: ubuntu-latest
           CMAKE_PRESET: linux-build
+          SETUP_FILE: Setup.sh
         - os: macos-latest
           CMAKE_PRESET: macos-build
+          SETUP_FILE: Setup.command
 
     env:
       CMAKE_BUILD_DIR: ${{ github.workspace }}/Build
       CC: ${{ matrix.CC }}
       CXX: ${{ matrix.CXX }}
+      CMAKE_C_COMPILER: ${{ matrix.CC }}
+      CMAKE_CXX_COMPILER: ${{ matrix.CXX }}
+      SETUP_FILE: ${{ github.workspace }}/${{ matrix.SETUP_FILE }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: true
+        clean: true
+
+    - name: Setup
+      run: |
+        ${{ env.SETUP_FILE }}
 
     - name: Configuring projects
       run: >-
