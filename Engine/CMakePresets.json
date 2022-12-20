@@ -42,6 +42,7 @@
 				"ENABLE_TESTS_BENCHMARK": false,
 				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Build/CMake/Toolchain/WindowsPC-MSVC.cmake"
 			},
+			"toolset": "v143",
 			"architecture": {
 				"value": "x64",
 				"strategy": "external"

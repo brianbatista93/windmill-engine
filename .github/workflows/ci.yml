@@ -15,14 +15,12 @@ jobs:
       CI
       ${{ matrix.os }}
       ${{ matrix.compiler }}
-      ${{ matrix.build-type }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         compiler: [msvc, gcc, clang]
         os: [windows-latest, macos-latest, ubuntu-latest]
-        build-type: [Debug, Profile, Release]
         exclude:
         - os: windows-latest
           compiler: gcc   
@@ -80,6 +78,14 @@ jobs:
         --preset ${{ matrix.CMAKE_PRESET }}
         -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
 
-    - name: Build
+    - name: Build (Debug)
       run: >-
-        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config "${{ matrix.build-type }}"
+        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug
+
+    - name: Build (Profile)
+      run: >-
+        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Profile
+
+    - name: Build (Release)
+      run: >-
+        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Release
