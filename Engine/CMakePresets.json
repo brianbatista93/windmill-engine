@@ -17,8 +17,6 @@
 			"generator": "Ninja Multi-Config",
 			"cacheVariables": {
 				"ENABLE_TESTS_BENCHMARK": false,
-				"CMAKE_C_COMPILER": "gcc",
-				"CMAKE_CXX_COMPILER": "g++",
 				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Build/CMake/Toolchain/Linux-GCC.cmake"
 			},
 			"vendor": {
@@ -42,8 +40,6 @@
 			"generator": "Ninja Multi-Config",
 			"cacheVariables": {
 				"ENABLE_TESTS_BENCHMARK": false,
-				"CMAKE_C_COMPILER": "cl",
-				"CMAKE_CXX_COMPILER": "cl",
 				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Build/CMake/Toolchain/WindowsPC-MSVC.cmake"
 			},
 			"architecture": {
@@ -64,6 +60,29 @@
 			"displayName": "Windows x64",
 			"description": "Target Windows with the Visual Studio development environment. (x64)",
 			"inherits": [ "output-base", "windows-base" ]
+		},
+		{
+			"name": "macos-base",
+			"hidden": true,
+			"generator": "Ninja Multi-Config",
+			"cacheVariables": {
+				"ENABLE_TESTS_BENCHMARK": false,
+				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Build/CMake/Toolchain/MacOSX-Clang.cmake"
+			},
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"hostOS": [ "macOS" ]
+				},
+				"microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+					"sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+				}
+			}
+		},
+		{
+			"name": "macos-build",
+			"displayName": "macOS",
+			"description": "Target macOS with the Xcode development environment.",
+			"inherits": [ "output-base", "macos-base" ]
 		}
 	]
 }
