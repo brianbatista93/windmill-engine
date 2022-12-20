@@ -80,7 +80,7 @@ jobs:
     - name: Configuring projects
       run: >-
         cmake
-        -S "${{ github.workspace }}/Engine"
+        -S "${{ github.workspace }}"
         -B "${{ env.CMAKE_BUILD_DIR }}" 
         -G "${{ matrix.CMAKE_GENERATOR }}"
         --toolchain "${{ env.TOOLCHAIN }}"
