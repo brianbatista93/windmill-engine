@@ -26,8 +26,8 @@ SOFTWARE.
 #include <map>
 #include <utility>
 
-#include "Types.hpp"
 #include "OS/Utils.hpp"
+#include "Types.hpp"
 
 /**
  * @brief Manager responsible for allocating, freeing and managing memory.

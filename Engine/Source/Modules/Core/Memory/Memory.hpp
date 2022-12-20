@@ -23,18 +23,15 @@ SOFTWARE.
 #include "MemoryUtils.hpp"
 
 #ifndef we_malloc
-    #define we_malloc(size)                                                                                            \
-        CMemoryManager::Get().Allocate((size), WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
+    #define we_malloc(size) CMemoryManager::Get().Allocate((size), WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
 #endif // !we_malloc
 
 #ifndef we_calloc
-    #define we_calloc(count, size)                                                                                     \
-        CMemoryManager::Get().Allocate((count) * (size), WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
+    #define we_calloc(count, size) CMemoryManager::Get().Allocate((count) * (size), WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
 #endif // !we_calloc
 
 #ifndef we_realloc
-    #define we_realloc(data, size)                                                                                     \
-        CMemoryManager::Get().Reallocate((data), (size), WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
+    #define we_realloc(data, size) CMemoryManager::Get().Reallocate((data), (size), WE_OS_MEM_DEFAULT_ALIGNMENT, __FILE__, __LINE__, __FUNCTION__)
 #endif // !we_realloc
 
 #ifndef we_free
@@ -85,5 +82,5 @@ class TWEDeleter
     constexpr void operator()(T *pObject) const noexcept { we_delete(pObject); }
 };
 
-template<class T>
+template <class T>
 using TUniquePtr = std::unique_ptr<T, TWEDeleter<T>>;

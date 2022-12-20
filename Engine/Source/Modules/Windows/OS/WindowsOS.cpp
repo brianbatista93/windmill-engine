@@ -16,7 +16,7 @@ bool Initialize()
     }
 
     WE_INFO(Windows, WT("Initializing Windows OS"));
-	
+
     return true;
 }
 

@@ -24,12 +24,14 @@ jobs:
         source: "./Engine/Source"
         exclude: "./Engine/ThirdParty"
         extensions: 'hpp,cpp,mm'
+        inplace: True
         clangFormatVersion: 15
 
     - name: Diff
       shell: bash
       run: git diff HEAD
-      
+
+
   code-lint:
     name: "Clang lint"
     needs: check-code-format
