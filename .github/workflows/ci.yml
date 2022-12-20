@@ -10,7 +10,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-test:
+  Build:
     name:  >-
       CI
       ${{ matrix.os }}
@@ -78,7 +78,7 @@ jobs:
         cmake
         -S "${{ github.workspace }}/Engine"
         -B "${{ env.CMAKE_BUILD_DIR }}" 
-        -G "${{ matrix.generator }}"
+        -G "${{ matrix.CMAKE_GENERATOR }}"
         -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
 
     - name: Build (Debug)
