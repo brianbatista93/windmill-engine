@@ -24,17 +24,12 @@ jobs:
         source: "./Engine/Source"
         exclude: "./Engine/ThirdParty"
         extensions: 'hpp,cpp,mm'
-        inplace: True
         clangFormatVersion: 15
 
-    - uses: EndBug/add-and-commit@v9
-      with:
-        author_name: Clang Formatter
-        author_email: clang@robot.com
-        message: 'Committing clang-format changes'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+    - name: Diff
+      shell: bash
+      run: git diff HEAD
+      
   code-lint:
     name: "Clang lint"
     needs: check-code-format
