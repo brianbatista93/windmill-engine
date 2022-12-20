@@ -11,8 +11,8 @@ on:
 
 jobs:
   check-code-format:
-    name: "Check code format"
-    runs-on: self-hosted
+    name: "Code formatter"
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -32,8 +32,26 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-and-test:
+  code-lint:
+    name: "Clang lint"
     needs: check-code-format
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: ZedThree/clang-tidy-review@v0.10.1
+      id: review
+      with:
+        # CMake command to run in order to generate compile_commands.json
+        cmake_command: cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/Engine/Build/CMake/Toolchain/Linux-PC.cmake" .
+        config_file: '.clang-tidy'
+        clang_tidy_checks: 'readability-redundant-*,bugprone-*,performance-*'
+        
+    - if: steps.review.outputs.total_comments > 0
+      run: exit 1
+
+  build-and-test:
+    needs: code-lint
     name:  >-
       CI
       ${{ matrix.os }}
