@@ -60,7 +60,7 @@ jobs:
       CXX: ${{ matrix.CXX }}
       CMAKE_C_COMPILER: ${{ matrix.CC }}
       CMAKE_CXX_COMPILER: ${{ matrix.CXX }}
-      SETUP_FILE: ${{ github.workspace }}/${{ matrix.SETUP_FILE }}
+      SETUP_FILE: ${{ matrix.SETUP_FILE }}
 
     steps:
     - uses: actions/checkout@v3
@@ -70,7 +70,7 @@ jobs:
 
     - name: Setup
       run: |
-        ${{ env.SETUP_FILE }}
+        ./${{ env.SETUP_FILE }}
 
     - name: Configuring projects
       run: >-
