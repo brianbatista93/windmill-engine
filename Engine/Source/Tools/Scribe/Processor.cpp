@@ -37,14 +37,14 @@ bool ProcessFile(const CPath &filePath, const CPath &output)
         }
     }
 
-    CString fileContent;
+    CString fileContent = {};
     if (!CFile::ReadString(fileContent, filePath))
     {
         WE_ERROR(Scribe, WT("Failed to read file {0}"), *filePath);
         return false;
     }
 
-    CStringBuilder builder = WriteHeaderAndGetStringBuilder();
+    CStringBuilder builder{WriteHeaderAndGetStringBuilder()};
 
     if (!Parse(fileContent, builder))
     {
@@ -191,13 +191,10 @@ tchar *IdentifyAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
         }
         else if (*pStr == WT('\n'))
         {
-            ++pStr;
             ++rLine;
         }
-        else
-        {
-            ++pStr;
-        }
+
+        ++pStr;
     }
 
     return (tchar *)pStr;
@@ -208,7 +205,7 @@ tchar *ProcessAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
     CString attributeName = GetAttributeName(pStr);
     if (auto it = gAttributeFunctions.find(*attributeName); it != gAttributeFunctions.end())
     {
-        return it->second(pStr, builder, rLine);
+        return it->second(builder, pStr, rLine);
     }
     else
     {

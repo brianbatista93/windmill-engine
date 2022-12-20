@@ -19,16 +19,16 @@ SOFTWARE.
 
 #pragma once
 
-// #include "WTexture.gen.hpp"
+// #include "Texture.gen.hpp"
 
 #define wclass(...) class
 #define wstruct(...) struct
 #define wenum(...) enum
 
-wclass() WTexture
+wclass() CTexture
 {
   private:
-    [[WE::Property(Config)]] float m_Width;
+    [[WE::Property(Config)]] float mWidth;
 
-    [[WE::Property(Config)]] float m_Height;
+    [[WE::Property(Config)]] float mHeight;
 };

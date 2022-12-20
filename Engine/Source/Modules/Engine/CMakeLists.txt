@@ -2,7 +2,7 @@ project ("Engine")
 
 add_library (${PROJECT_NAME} STATIC
  "Engine.cpp"
- "Classes/WTexture.cpp")
+ "Classes/Texture.cpp")
 
 target_link_libraries (${PROJECT_NAME}
 PUBLIC

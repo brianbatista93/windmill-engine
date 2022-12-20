@@ -24,4 +24,4 @@ SOFTWARE.
 
 constexpr static i32 sAttrPropertyLength = 8;
 
-extern tchar *ProcessProperty(const tchar *pStr, CStringBuilder &builder, i32 &rLine);
+extern tchar *ProcessProperty(CStringBuilder &builder, const tchar *pStr, i32 &rLine);

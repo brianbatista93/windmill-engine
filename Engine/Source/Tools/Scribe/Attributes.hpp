@@ -25,6 +25,6 @@ SOFTWARE.
 #include "Containers/StringBuilder.hpp"
 #include "Types.hpp"
 
-using AttributesMapType = std::map<std::basic_string<tchar>, std::function<tchar *(const tchar *, CStringBuilder &, i32 &)>>;
+using AttributesMapType = std::map<std::basic_string<tchar>, std::function<tchar *(CStringBuilder &, const tchar *, i32 &)>>;
 
-extern AttributesMapType gAttributeFunctions;
+extern const AttributesMapType gAttributeFunctions;

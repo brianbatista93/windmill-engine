@@ -21,7 +21,7 @@ i32 InitScribe(i32 nArgC, tchar *ppArgV[])
         return EINVAL;
     }
 
-    CPath outputDirectory;
+    CPath outputDirectory = {};
 
     for (i32 i = 1; i < nArgC; ++i)
     {
@@ -44,13 +44,13 @@ i32 InitScribe(i32 nArgC, tchar *ppArgV[])
         return EINVAL;
     }
 
-    const CPath filePath(ppArgV[1]);
+    const CPath filePath{ppArgV[1]};
 
-    TArray<CPath> files;
+    TArray<CPath> files = {};
 
     if (filePath.IsDirectory())
     {
-        const TArray<CPath> headerFiles = filePath.GetAllFiles(WT("*.hpp"), true);
+        const TArray<CPath> headerFiles{filePath.GetAllFiles(WT("*.hpp"), true)};
         for (auto file : headerFiles)
         {
             files.Add(file);
