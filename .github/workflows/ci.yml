@@ -77,10 +77,6 @@ jobs:
       run: |
         ./${{ env.SETUP_FILE }}
 
-    - name: Check files
-      run: |
-        ls -la ${{ env.CMAKE_BUILD_DIR }}
-
     - name: Configuring projects
       run: >-
         cmake
@@ -89,6 +85,11 @@ jobs:
         -G "${{ matrix.CMAKE_GENERATOR }}"
         --toolchain "${{ env.TOOLCHAIN }}"
         -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
+
+    - name: Check files
+      shell: bash
+      run: |
+        ls -la ${{ env.CMAKE_BUILD_DIR }}
 
     - name: Build (Debug)
       run: >-
