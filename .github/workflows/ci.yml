@@ -39,8 +39,8 @@ jobs:
           CC: clang
           CXX: clang++
         - compiler: msvc
-          CC: 
-          CXX: 
+          CC: cl
+          CXX: cl
         - compiler: gcc
           CC: gcc
           CXX: g++
