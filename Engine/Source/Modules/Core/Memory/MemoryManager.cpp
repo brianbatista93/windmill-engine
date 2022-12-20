@@ -159,6 +159,6 @@ void CMemoryManager::EditAllocationInfo(void *pOldMemory, void *pNewMemory, cons
 
 void CMemoryManager::RemoveAllocationInfo(void *pMemory)
 {
-    usize erased = m_CurrentAllocations.erase(pMemory);
+    [[maybe_unused]] usize erased = m_CurrentAllocations.erase(pMemory);
     we_assert(erased && "Trying to free an unallocated memory.");
 }

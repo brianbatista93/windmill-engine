@@ -7,8 +7,7 @@
 			"binaryDir": "${sourceDir}/out/build/${presetName}",
 			"installDir": "${sourceDir}/out/install/${presetName}",
 			"cacheVariables": {
-				"CMAKE_CONFIGURATION_TYPES": "Debug;Profile;Release",
-				"CMAKE_DEFAULT_BUILD_TYPE": "Release"
+				"CMAKE_CONFIGURATION_TYPES": "Debug;Profile;Release"
 			}
 		},
 		{
@@ -17,7 +16,8 @@
 			"generator": "Ninja Multi-Config",
 			"cacheVariables": {
 				"ENABLE_TESTS_BENCHMARK": false,
-				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Build/CMake/Toolchain/Linux-GCC.cmake"
+				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Build/CMake/Toolchain/Linux-GCC.cmake",
+				"CMAKE_DEFAULT_BUILD_TYPE": "Release"
 			},
 			"vendor": {
 				"microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -42,7 +42,6 @@
 				"ENABLE_TESTS_BENCHMARK": false,
 				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Build/CMake/Toolchain/WindowsPC-MSVC.cmake"
 			},
-			"toolset": "v143",
 			"architecture": {
 				"value": "x64",
 				"strategy": "external"

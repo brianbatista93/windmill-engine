@@ -45,12 +45,15 @@ jobs:
         - os: windows-latest
           CMAKE_PRESET: windows-build
           SETUP_FILE: Setup.bat
+          CMAKE_GENERATOR: Visual Studio 17 2022
         - os: ubuntu-latest
           CMAKE_PRESET: linux-build
           SETUP_FILE: Setup.sh
+          CMAKE_GENERATOR: Ninja Multi-Config
         - os: macos-latest
           CMAKE_PRESET: macos-build
           SETUP_FILE: Setup.command
+          CMAKE_GENERATOR: Xcode
 
     env:
       CMAKE_BUILD_DIR: ${{ github.workspace }}/Build
@@ -75,7 +78,7 @@ jobs:
         cmake
         -S "${{ github.workspace }}/Engine"
         -B "${{ env.CMAKE_BUILD_DIR }}" 
-        --preset ${{ matrix.CMAKE_PRESET }}
+        -G "${{ matrix.generator }}"
         -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
 
     - name: Build (Debug)
