@@ -39,7 +39,7 @@ add_subdirectory ("Source/Launchers")
 
 add_custom_target (
 	"Copy-Engine-Resources" ALL
-	COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/Assets" "${CMAKE_BINARY_DIR}/Assets"
-	COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/Config" "${CMAKE_BINARY_DIR}/Config"
+	COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/Engine/Assets" "${CMAKE_BINARY_DIR}/Assets"
+	COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/Engine/Config" "${CMAKE_BINARY_DIR}/Config"
 	COMMENT "Coping engine resources..."
 )

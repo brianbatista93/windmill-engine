@@ -85,11 +85,7 @@ jobs:
         -G "${{ matrix.CMAKE_GENERATOR }}"
         --toolchain "${{ env.TOOLCHAIN }}"
         -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
-
-    - name: Check files
-      shell: bash
-      run: |
-        ls -la ${{ env.CMAKE_BUILD_DIR }}
+        -DCMAKE_CONFIGURATION_TYPES=Debug;Profile;Release
 
     - name: Build (Debug)
       run: >-
