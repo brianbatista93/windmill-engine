@@ -30,7 +30,7 @@ jobs:
         author_email: clang@robot.com
         message: 'Committing clang-format changes'
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.ENBUG_TOKEN }}
 
   code-lint:
     name: "Clang lint"
