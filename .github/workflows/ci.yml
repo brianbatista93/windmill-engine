@@ -24,7 +24,7 @@ jobs:
         inplace: True
         clangFormatVersion: 15
 
-    - uses: EndBug/add-and-commit@v9
+    - uses: EndBug/add-and-commit@v4
       with:
         author_name: Clang Formatter
         author_email: clang@robot.com
