@@ -41,11 +41,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Setup
+      run: |
+        ./Setup.sh
+
     - uses: ZedThree/clang-tidy-review@v0.10.1
       id: review
       with:
         # CMake command to run in order to generate compile_commands.json
-        cmake_command: cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/Engine/Build/CMake/Toolchain/Linux-PC.cmake" .
+        cmake_command: cmake -G "Ninja" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/Engine/Build/CMake/Toolchain/Linux-PC.cmake" .
         config_file: '.clang-tidy'
         clang_tidy_checks: 'readability-redundant-*,bugprone-*,performance-*'
         
