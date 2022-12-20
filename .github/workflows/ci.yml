@@ -46,17 +46,17 @@ jobs:
           CMAKE_PRESET: windows-build
           SETUP_FILE: Setup.bat
           CMAKE_GENERATOR: Visual Studio 17 2022
-          TOOLCHAIN_FILE: Windows64-MSVC.cmake
+          TOOLCHAIN_FILE: Windows-PC.cmake
         - os: ubuntu-latest
           CMAKE_PRESET: linux-build
           SETUP_FILE: Setup.sh
           CMAKE_GENERATOR: Ninja Multi-Config
-          TOOLCHAIN_FILE: Linux64-GCC.cmake
+          TOOLCHAIN_FILE: Linux-PC.cmake
         - os: macos-latest
           CMAKE_PRESET: macos-build
           SETUP_FILE: Setup.command
           CMAKE_GENERATOR: Xcode
-          TOOLCHAIN_FILE: 
+          TOOLCHAIN_FILE: macOS-PC.cmake
 
     env:
       CMAKE_BUILD_DIR: ${{ github.workspace }}/Build
