@@ -33,6 +33,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-and-test:
+    needs: check-code-format
     name:  >-
       CI
       ${{ matrix.os }}
