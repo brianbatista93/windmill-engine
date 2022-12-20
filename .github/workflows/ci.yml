@@ -35,6 +35,11 @@ jobs:
     name: "Code lint"
     needs: check-code-format
     runs-on: ubuntu-latest
+    env:
+      CMAKE_BUILD_DIR: ${{ github.workspace }}/Build
+      TOOLCHAIN: ${{ github.workspace }}/Engine/Build/CMake/Toolchain/Linux-PC.cmake
+      CC: clang
+      CXX: clang++
 
     steps:
     - uses: actions/checkout@v3
@@ -45,12 +50,27 @@ jobs:
       run: |
         ./Setup.sh
 
+    - name: Configuring projects
+      run: >-
+        cmake
+        -S "${{ github.workspace }}"
+        -B "${{ env.CMAKE_BUILD_DIR }}" 
+        -G "Ninja Multi-Config"
+        -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
+        -DCMAKE_CONFIGURATION_TYPES="Debug;Profile;Release"
+        -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
+
+    - name: Build
+      run: >-
+        cmake --build "${{ env.CMAKE_BUILD_DIR }}"
+        --config "Release"
+
     - uses: ZedThree/clang-tidy-review@v0.10.1
       id: review
       with:
-        # CMake command to run in order to generate compile_commands.json
-        cmake_command: cmake -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
-        config_file: '.clang-tidy'
+        build_dir: '/Build'
+        include: "**/Modules/*.hpp,**/Modules/*.cpp,**/Tools/*.hpp,**/Tools/*.cpp"
+        exclude: "**/Tests/*,**/Benchmark/*"
         clang_tidy_checks: 'readability-redundant-*,bugprone-*,performance-*'
         
     - if: steps.review.outputs.total_comments > 0
