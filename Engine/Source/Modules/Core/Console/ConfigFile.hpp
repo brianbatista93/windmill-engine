@@ -19,3 +19,7 @@ SOFTWARE.
 
 #pragma once
 
+class CConfigFile
+{
+
+};

@@ -37,6 +37,8 @@ class CFileSystem
     inline static TArray<CPath> ListChildren(const CPath &path) { return Get()->ListChildren(path); }
     static bool MatchFilter(const CPath &path, const tchar *pFilter);
 
+    static bool MapDirectory(EResourceMountType eResourceMountType, EResourceType eResourceType, const CPath &path);
+
   private:
     static class IFileSystem *Get();
 };

@@ -26,8 +26,12 @@ bool CEngine::Initialize(const TArrayView<tchar *> &arguments)
         return false;
     }
 
-    // CFileSystem::MapDirectory(EResourceMountType::eAssets,EResourceType::eTextures CPath(WT("Assets/Textures")));
-    // CFileSystem::MapDirectory(EResourceMountType::eDebug, EResourceType::eConfig, CPath(WT("Assets/Textures")));
+    // CFileSystem::MapDirectory(EResourceMountType::eAssets,EResourceType::eTextures CPath(WT("../Assets/Textures")));
+    bool dirMapped = CFileSystem::MapDirectory(EResourceMountType::eEngine, EResourceType::eConfigFile, CPath(WT("../Config")));
+    if (!dirMapped)
+    {
+        return false;
+    }
 
     if (!CLogSystem::Initialize())
     {

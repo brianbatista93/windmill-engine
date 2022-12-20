@@ -22,6 +22,7 @@ bool CWindowsFileSystem::Initialize()
     CPath appFilePath({appPathWide, length});
     CPath appPath = appFilePath.GetParentPath();
     m_MountedDirs[(u32)EResourceMountType::eAssets] = appPath / WTL("Assets");
+    m_MountedDirs[(u32)EResourceMountType::eEngine] = appPath;
     m_MountedDirs[(u32)EResourceMountType::eDebug] = appPath / WTL("Logs");
 
     PWSTR userDocumentsWide = nullptr;

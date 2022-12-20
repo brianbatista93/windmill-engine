@@ -26,9 +26,18 @@ enum class EResourceMountType
     eAssets = 0, // Bundle files
     eDebug,      // Logs and other debug files
     eHome,       // Home (Documents) directory
+    eEngine,     // Engine files
+    eGame,       // Game files
 #ifdef WE_OS_ANDROID
     eSystem, // /proc/
 #endif       // WE_OS_ANDROID
+    eCount
+};
+
+enum class EResourceType
+{
+    eShader = 0, // Shader source file
+    eConfigFile, // Config file
     eCount
 };
 
@@ -49,6 +58,8 @@ class IFileNative
 
 class IFileSystem
 {
+    friend class CFileSystem;
+
   public:
     virtual ~IFileSystem() = default;
 
