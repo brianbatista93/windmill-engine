@@ -84,7 +84,7 @@ CheckOptions:
   - key:             readability-identifier-naming.GetConfigPerFile
     value:           false
   - key:			 readability-identifier-naming.MacroDefinitionCase
-	value:           UPPER_CASE
+    value:           UPPER_CASE
   - key:			 readability-identifier-naming.MacroDefinitionIgnoredRegexp
     value:           ^we_*
   - key:             readability-function-cognitive-complexity.Threshold
