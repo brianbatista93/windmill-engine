@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         compiler: [msvc, gcc, clang]
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, raspberry-pi-4, macos-latest]
         exclude:
         - os: windows-latest
           compiler: gcc   
@@ -32,6 +32,10 @@ jobs:
           compiler: gcc
         - os: ubuntu-latest
           compiler: msvc
+        - os: raspberry-pi-4
+          compiler: msvc
+        - os: raspberry-pi-4
+          compiler: clang
         include:
         - compiler: clang
           CC: clang
@@ -48,6 +52,11 @@ jobs:
           CMAKE_GENERATOR: Visual Studio 17 2022
           TOOLCHAIN_FILE: Windows-PC.cmake
         - os: ubuntu-latest
+          CMAKE_PRESET: linux-build
+          SETUP_FILE: Setup.sh
+          CMAKE_GENERATOR: Ninja Multi-Config
+          TOOLCHAIN_FILE: Linux-PC.cmake
+        - os: raspberry-pi-4
           CMAKE_PRESET: linux-build
           SETUP_FILE: Setup.sh
           CMAKE_GENERATOR: Ninja Multi-Config
@@ -85,7 +94,7 @@ jobs:
         -G "${{ matrix.CMAKE_GENERATOR }}"
         --toolchain "${{ env.TOOLCHAIN }}"
         -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
-        -DCMAKE_CONFIGURATION_TYPES=Debug;Profile;Release
+        -DCMAKE_CONFIGURATION_TYPES="Debug;Profile;Release"
 
     - name: Build (Debug)
       run: >-
