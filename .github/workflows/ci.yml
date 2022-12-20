@@ -61,9 +61,9 @@ jobs:
       id: review
       with:
         build_dir: '/Build'
+        config_file: '.clang-tidy'
         include: "**/Modules/*.hpp,**/Modules/*.cpp,**/Tools/*.hpp,**/Tools/*.cpp"
         exclude: "**/Tests/*,**/Benchmark/*"
-        clang_tidy_checks: 'readability-redundant-*,bugprone-*,performance-*'
         
     - if: steps.review.outputs.total_comments > 0
       run: exit 1
