@@ -25,6 +25,7 @@ bool CWindowsFileSystem::Initialize()
     m_MountedDirs[(u32)EResourceMountType::eEngine] = appPath;
     m_MountedDirs[(u32)EResourceMountType::eDebug] = appPath / WTL("Logs");
 
+#ifndef WE_OS_UWP
     PWSTR userDocumentsWide = nullptr;
     HRESULT result = ::SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &userDocumentsWide);
     if (FAILED(result))
@@ -33,6 +34,7 @@ bool CWindowsFileSystem::Initialize()
     }
     m_MountedDirs[(u32)EResourceMountType::eHome] = CPath({userDocumentsWide, ::wcslen(userDocumentsWide)});
     CoTaskMemFree(userDocumentsWide);
+#endif // !WE_OS_UWP
 
     return true;
 }

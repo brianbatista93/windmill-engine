@@ -14,11 +14,16 @@ endif()
 
 include ("Build/CMake/Engine-Flags.cmake")
 
-if (WINDOWS)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
+	include ("Build/CMake/Clang-Flags.cmake")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
+	include ("Build/CMake/GCC-Flags.cmake")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
     include ("Build/CMake/MSVC-Flags.cmake")
-elseif (LINUX)
-    include ("Build/CMake/GCC-Flags.cmake")
-endif ()
+endif()
 
 include ("Build/CMake/CXX-Properties.cmake")
 include ("Build/CMake/Config-Properties.cmake")

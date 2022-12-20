@@ -46,14 +46,17 @@ jobs:
           CMAKE_PRESET: windows-build
           SETUP_FILE: Setup.bat
           CMAKE_GENERATOR: Visual Studio 17 2022
+          TOOLCHAIN_FILE: Windows64-MSVC.cmake
         - os: ubuntu-latest
           CMAKE_PRESET: linux-build
           SETUP_FILE: Setup.sh
           CMAKE_GENERATOR: Ninja Multi-Config
+          TOOLCHAIN_FILE: Linux64-GCC.cmake
         - os: macos-latest
           CMAKE_PRESET: macos-build
           SETUP_FILE: Setup.command
           CMAKE_GENERATOR: Xcode
+          TOOLCHAIN_FILE: 
 
     env:
       CMAKE_BUILD_DIR: ${{ github.workspace }}/Build
@@ -62,6 +65,7 @@ jobs:
       CMAKE_C_COMPILER: ${{ matrix.CC }}
       CMAKE_CXX_COMPILER: ${{ matrix.CXX }}
       SETUP_FILE: ${{ matrix.SETUP_FILE }}
+      TOOLCHAIN: ${{ github.workspace }}/Engine/Build/CMake/Toolchain/${{ matrix.TOOLCHAIN_FILE }}
 
     steps:
     - uses: actions/checkout@v3
@@ -79,6 +83,7 @@ jobs:
         -S "${{ github.workspace }}/Engine"
         -B "${{ env.CMAKE_BUILD_DIR }}" 
         -G "${{ matrix.CMAKE_GENERATOR }}"
+        --toolchain "${{ env.TOOLCHAIN }}"
         -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
 
     - name: Build (Debug)
