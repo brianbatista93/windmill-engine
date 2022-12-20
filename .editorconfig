@@ -18,6 +18,6 @@ indent_style = space
 indent_size = 4
 
 # YAML files
-[*.yaml]
+[*.{yaml,yml}]
 indent_style = space
 indent_size = 2

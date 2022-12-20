@@ -10,9 +10,9 @@ on:
     branches: [ "main" ]
 
 jobs:
-  Build:
+  ci:
     name:  >-
-      CI
+      Configure
       ${{ matrix.os }}
       ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
@@ -76,6 +76,10 @@ jobs:
     - name: Setup
       run: |
         ./${{ env.SETUP_FILE }}
+
+    - name: Check files
+      run: |
+        ls -la ${{ env.CMAKE_BUILD_DIR }}
 
     - name: Configuring projects
       run: >-

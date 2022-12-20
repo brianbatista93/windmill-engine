@@ -16,7 +16,7 @@
 			"generator": "Ninja Multi-Config",
 			"cacheVariables": {
 				"ENABLE_TESTS_BENCHMARK": false,
-				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Build/CMake/Toolchain/Linux-PC.cmake",
+				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/Linux-PC.cmake",
 				"CMAKE_DEFAULT_BUILD_TYPE": "Release"
 			},
 			"vendor": {
@@ -58,7 +58,7 @@
 				"strategy": "external"
 			},
 			"cacheVariables": {
-				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Build/CMake/Toolchain/Windows-PC.cmake"
+				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-PC.cmake"
 			}
 		},
 		{
@@ -71,7 +71,7 @@
 			},
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Release",
-				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Build/CMake/Toolchain/Windows-Store.cmake"
+				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-Store.cmake"
 			}
 		},
 		{
@@ -92,7 +92,7 @@
 			"generator": "Ninja Multi-Config",
 			"cacheVariables": {
 				"ENABLE_TESTS_BENCHMARK": false,
-				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Build/CMake/Toolchain/macOS-PC.cmake"
+				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/macOS-PC.cmake"
 			},
 			"vendor": {
 				"microsoft.com/VisualStudioSettings/CMake/1.0": {
