@@ -16,7 +16,6 @@ add_compile_options (
  /nologo        # Suppress startup banner
  /Oi			# Enable intrinsic functions
  /permissive-	# Standards conformance mode
- /sdl			# Enable SDL checks
  /utf-8         # Use UTF-8 encoding for source code
  /W4            # Set warning level 4
  /wd4267		# Disable warning C4267: 'argument' : conversion from 'size_t' to 'type', possible loss of data

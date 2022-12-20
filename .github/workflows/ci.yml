@@ -10,9 +10,31 @@ on:
     branches: [ "main" ]
 
 jobs:
-  ci:
+  check-code-format:
+    name: "Check code format"
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: DoozyX/clang-format-lint-action@v0.15
+      with:
+        source: "./Engine/Source"
+        exclude: "./Engine/ThirdParty"
+        extensions: 'hpp,cpp,mm'
+        inplace: True
+        clangFormatVersion: 15
+
+    - uses: EndBug/add-and-commit@v9
+      with:
+        author_name: Clang Formatter
+        author_email: clang@robot.com
+        message: 'Committing clang-format changes'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-test:
     name:  >-
-      Configure
+      CI
       ${{ matrix.os }}
       ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
@@ -92,9 +114,9 @@ jobs:
         -S "${{ github.workspace }}"
         -B "${{ env.CMAKE_BUILD_DIR }}" 
         -G "${{ matrix.CMAKE_GENERATOR }}"
-        --toolchain "${{ env.TOOLCHAIN }}"
-        -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
+        -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
         -DCMAKE_CONFIGURATION_TYPES="Debug;Profile;Release"
+        -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
 
     - name: Build (Debug)
       run: >-

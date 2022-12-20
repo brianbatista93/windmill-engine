@@ -20,8 +20,6 @@ add_compile_options (
     -Wno-class-memaccess            # Disable class memaccess warnings
     -fpermissive                    # Enable permissive mode
 	-fchar8_t						# Enable char8_t
-
-	-fsanitize=address
 )
 
 add_compile_options (
