@@ -66,7 +66,7 @@ jobs:
         cmake
         -S "${{ github.workspace }}/Engine"
         -B "${{ env.CMAKE_BUILD_DIR }}" 
-        --preset "${{ env.CMAKE_PRESET }}"
+        --preset ${{ matrix.CMAKE_PRESET }}
         -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
 
     - name: Build
