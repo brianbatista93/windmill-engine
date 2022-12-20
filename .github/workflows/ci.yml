@@ -1,8 +1,5 @@
 name: Contiguous-Integration 
 
-permissions:
-  contents: read
-
 on:
   push:
     branches: [ "main" ]
@@ -59,11 +56,6 @@ jobs:
         -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
         -DCMAKE_CONFIGURATION_TYPES="Debug;Profile;Release"
         -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
-
-    - name: Build
-      run: >-
-        cmake --build "${{ env.CMAKE_BUILD_DIR }}"
-        --config "Release"
 
     - uses: ZedThree/clang-tidy-review@v0.10.1
       id: review
