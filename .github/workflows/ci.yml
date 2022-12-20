@@ -27,15 +27,17 @@ jobs:
         inplace: True
         clangFormatVersion: 15
 
-    - name: Diff
+    - name: "Formatted files"
       shell: bash
-      run: git diff HEAD
-
+      run: git ls-files -m
 
   code-lint:
     name: "Clang lint"
     needs: check-code-format
     runs-on: ubuntu-latest
+    env:
+      CC: gcc
+      CXX: g++
     steps:
     - uses: actions/checkout@v3
 
