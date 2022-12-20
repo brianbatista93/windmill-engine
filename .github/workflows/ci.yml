@@ -1,0 +1,74 @@
+name: Contiguous-Integration 
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ "main", "ci" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    name:  >-
+      CI
+      ${{ matrix.os }}
+      ${{ matrix.compiler }}
+      ${{ matrix.build-type }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [msvc, gcc, clang]
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        build-type: [Debug, Profile, Release]
+        exclude:
+        - os: windows-latest
+          compiler: gcc   
+        - os: windows-latest
+          compiler: clang
+        - os: macos-latest
+          compiler: msvc
+        - os: macos-latest
+          compiler: gcc
+        - os: ubuntu-latest
+          compiler: msvc
+        include:
+        - compiler: clang
+          CC: clang
+          CXX: clang++
+        - compiler: msvc
+          CC: 
+          CXX: 
+        - compiler: gcc
+          CC: gcc
+          CXX: g++
+        - os: windows-latest
+          CMAKE_PRESET: windows-build
+        - os: ubuntu-latest
+          CMAKE_PRESET: linux-build
+        - os: macos-latest
+          CMAKE_PRESET: macos-build
+
+    env:
+      CMAKE_BUILD_DIR: ${{ github.workspace }}/Build
+      CC: ${{ matrix.CC }}
+      CXX: ${{ matrix.CXX }}
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Configuring projects
+      run: >-
+        cmake
+        -S "${{ github.workspace }}/Engine"
+        -B "${{ env.CMAKE_BUILD_DIR }}" 
+        --preset "${{ env.CMAKE_PRESET }}"
+        -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
+
+    - name: Build
+      run: >-
+        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config "${{ matrix.build-type }}"
