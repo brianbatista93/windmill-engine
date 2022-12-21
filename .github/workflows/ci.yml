@@ -53,8 +53,13 @@ jobs:
         -S "${{ github.workspace }}"
         -B "${{ env.CMAKE_BUILD_DIR }}" 
         -GNinja
-        -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
+
+    - name: "Checking Files"
+      shell: bash
+      run: |
+        ls -la ${{ env.CMAKE_BUILD_DIR }}
 
     - uses: ZedThree/clang-tidy-review@v0.10.1
       id: review
