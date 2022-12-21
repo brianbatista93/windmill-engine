@@ -43,16 +43,28 @@ jobs:
       with:
         clean: true
 
+    - name: Setup
+      run: |
+        ./Setup.sh
+
+    - name: Configuring projects
+      run: >-
+        cmake
+        -S "${{ github.workspace }}"
+        -B "${{ env.CMAKE_BUILD_DIR }}" 
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
+
+    - name: "Checking Files"
+      shell: bash
+      run: |
+        ls -la ${{ env.CMAKE_BUILD_DIR }}
+
     - uses: ZedThree/clang-tidy-review@v0.10.1
       id: review
       with:
-        apt_packages: ninja-build
         clang_tidy_version: 14
-        cmake_command:  >-
-          cmake
-          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-          -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
-          .
+        build_dir: '${{ env.CMAKE_BUILD_DIR }}/'
         config_file: '.clang-tidy'
         include: "**/Modules/*.hpp,**/Modules/*.cpp,**/Tools/*.hpp,**/Tools/*.cpp"
         exclude: "**/Tests/*,**/Benchmark/*"
