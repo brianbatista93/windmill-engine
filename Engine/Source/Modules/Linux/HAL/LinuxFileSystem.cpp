@@ -24,8 +24,8 @@ bool CLinuxFileSystem::Initialize()
     mMountedDirs[(u32)EResourceMountType::eAssets] = appPath / WTL("Assets");
     mMountedDirs[(u32)EResourceMountType::eDebug] = appPath / WTL("Logs");
 
-    const ansi *homeDir = nullptr;
-    if ((homeDir = getenv("HOME")) == nullptr)
+    const ansi *homeDir = = getenv("HOME");
+    if (homeDir == nullptr)
     {
         homeDir = getpwuid(getuid())->pw_dir;
     }

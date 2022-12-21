@@ -7,7 +7,8 @@
 			"binaryDir": "${sourceDir}/out/build/${presetName}",
 			"installDir": "${sourceDir}/out/install/${presetName}",
 			"cacheVariables": {
-				"CMAKE_CONFIGURATION_TYPES": "Debug;Profile;Release"
+				"CMAKE_CONFIGURATION_TYPES": "Debug;Profile;Release",
+				"CMAKE_EXPORT_COMPILE_COMMANDS": true
 			}
 		},
 		{
@@ -58,8 +59,7 @@
 				"strategy": "external"
 			},
 			"cacheVariables": {
-				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-PC.cmake",
-				"CMAKE_EXPORT_COMPILE_COMMANDS": true
+				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-PC.cmake"
 			}
 		},
 		{
