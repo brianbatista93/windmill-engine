@@ -32,7 +32,7 @@ CMemoryManager::~CMemoryManager()
         std::cerr << std::setfill('=') << std::setw(120) << '\n';
         u32 unfreedBytes = 0;
         fprintf(stderr, "[ERROR] There are still allocations that have not been freed.\n");
-        for (auto [memory, info] : m_CurrentAllocations)
+        for (auto &[memory, info] : m_CurrentAllocations)
         {
             fprintf(stderr, "0x%08llux (%d bytes|%d) - %s:%d (%s)\n", u64(memory), i32(info.nSize), info.nAlignment, info.pFilename, info.nLine,
                     info.pFunctionName);
@@ -68,7 +68,7 @@ void *CMemoryManager::Allocate(usize nSize, usize nAlignment, const char *pFilen
     info.nOrder = lastOrder++;
 
 #if WE_OS_SUPPORT_CALLSTACK_INFO
-    info.nCallStackFrames = OS::GetStackTrace(2, 32, info.ppCallStack, 255, info.ppCallers);
+    info.nCallStackFrames = OS::GetStackTrace(2, MAX_CALLSTACKS, info.ppCallStack, MAX_SIMBOLS_LENGTH, info.ppCallers);
 #endif // WE_OS_SUPPORT_CALLSTACK_INFO
 
     void *pointer = MallocInternal(nSize, nAlignment);
@@ -91,7 +91,7 @@ void *CMemoryManager::Reallocate(void *pMemory, usize nSize, usize nAlignment, c
     info.nOrder = lastOrder++;
 
 #if WE_OS_SUPPORT_CALLSTACK_INFO
-    info.nCallStackFrames = OS::GetStackTrace(2, 32, info.ppCallStack, 255, info.ppCallers);
+    info.nCallStackFrames = OS::GetStackTrace(2, MAX_CALLSTACKS, info.ppCallStack, MAX_SIMBOLS_LENGTH, info.ppCallers);
 #endif // WE_OS_SUPPORT_CALLSTACK_INFO
 
     void *newPointer = ReallocInternal(pMemory, nSize, nAlignment);

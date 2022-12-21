@@ -45,7 +45,7 @@ bool CFileSystem::MapDirectory(EResourceMountType eResourceMountType, EResourceT
     auto &info = sMappedDirectories[(i32)eResourceType];
 
     info.eMountType = eResourceMountType;
-    info.Path = Get()->m_MountedDirs[(i32)eResourceMountType] / path;
+    info.Path = Get()->mMountedDirs[(i32)eResourceMountType] / path;
 
     if (eResourceMountType != EResourceMountType::eAssets and !CFileSystem::DirectoryExists(info.Path))
     {

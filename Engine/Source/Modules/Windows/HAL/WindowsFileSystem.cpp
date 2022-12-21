@@ -204,8 +204,8 @@ class CWindowsFileNative : public IFileNative
     }
 
   private:
-    CWindowsFileNative(HANDLE handle, const CPath &filename, bool bCanRead, bool bCanWrite)
-        : mHandle(handle), mCanRead(bCanRead), mCanWrite(bCanWrite), mFilename(filename)
+    CWindowsFileNative(HANDLE handle, CPath filename, bool bCanRead, bool bCanWrite)
+        : mHandle(handle), mCanRead(bCanRead), mCanWrite(bCanWrite), mFilename(std::move(filename))
     {
         if (IsValid())
         {

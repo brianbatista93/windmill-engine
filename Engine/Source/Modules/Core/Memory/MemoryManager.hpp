@@ -71,9 +71,9 @@ class CMemoryManager
         i32 nOrder;
 
 #ifdef WE_OS_SUPPORT_CALLSTACK_INFO
-        ansi ppCallStack[32][255];
+        ansi ppCallStack[MAX_CALLSTACKS][MAX_SIMBOLS_LENGTH];
         u32 nCallStackFrames;
-        void *ppCallers[32];
+        void *ppCallers[MAX_CALLSTACKS];
 #endif // WE_OS_SUPPORT_CALLSTACK_INFO
     };
 

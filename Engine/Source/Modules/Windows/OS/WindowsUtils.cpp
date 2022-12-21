@@ -6,8 +6,6 @@
 
 #include "OS/Utils.hpp"
 
-#define MAX_SIMBOLS_LENGTH 256
-
 namespace OS
 {
 #if WE_OS_SUPPORT_CALLSTACK_INFO
