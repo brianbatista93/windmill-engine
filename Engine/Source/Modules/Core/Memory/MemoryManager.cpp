@@ -105,8 +105,8 @@ void CMemoryManager::Free(void *pMemory)
 {
     if (pMemory != nullptr)
     {
-        FreeInternal(pMemory);
         RemoveAllocationInfo(pMemory);
+        FreeInternal(pMemory);
     }
 }
 

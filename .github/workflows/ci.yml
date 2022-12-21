@@ -79,7 +79,7 @@ jobs:
       fail-fast: false
       matrix:
         compiler: [msvc, gcc, clang]
-        os: [windows-latest, ubuntu-latest, raspberry-pi-4]
+        os: [windows-latest, ubuntu-latest, raspberry-pi-4, macos-latest]
         exclude:
         - os: windows-latest
           compiler: gcc   
