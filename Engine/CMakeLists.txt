@@ -4,6 +4,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 option (ENABLE_TESTS_BENCHMARK "Enable tests and benchmark" OFF)
 if (ENABLE_TESTS_BENCHMARK)
+	include(CTest)
+	enable_testing()
 	set (BENCHMARK_DOWNLOAD_DEPENDENCIES ON)
 	add_subdirectory ("Source/ThirdParty/benchmark")
 endif()

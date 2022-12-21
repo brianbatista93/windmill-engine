@@ -8,4 +8,5 @@ PRIVATE
 	benchmark::benchmark gtest
 )
 
-add_test (NAME ${PROJECT_NAME}_gtests COMMAND ${PROJECT_NAME})
+include (GoogleTest)
+gtest_add_tests (${PROJECT_NAME} "" AUTO)

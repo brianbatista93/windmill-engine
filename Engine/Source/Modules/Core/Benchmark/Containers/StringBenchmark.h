@@ -19,10 +19,8 @@ SOFTWARE.
 
 #pragma once
 
-#pragma warning(push, 0)
 #include <benchmark/benchmark.h>
 #include <gtest/gtest.h>
-#pragma warning(pop)
 
 #include "Containers/WeString.hpp"
 #include "Encoding/AnsiEncoder.hpp"
