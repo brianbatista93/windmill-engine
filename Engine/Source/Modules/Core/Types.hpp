@@ -129,3 +129,5 @@ constexpr void set_if_not_null(T *output, T value)
 #elif defined(__GNUC__) || defined(__clang__)
     #define UNREF_PARAM(x) ((void)(x))
 #endif
+
+#define NDISCARD [[nodiscard]]

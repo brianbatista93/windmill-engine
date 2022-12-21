@@ -9,16 +9,8 @@ Checks: >
   cert-*,
   misc-*,
   concurrency-*,
-  cppcoreguidelines-*,
   readability-*,
-  modernize-avoid-bind,
-  modernize-avoid-c-arrays,
-  modernize-concat-nested-namespaces,
-  modernize-deprecated-headers,
-  modernize-deprecated-ios-base-aliases,
   modernize-loop-convert,
-  modernize-make-shared,
-  modernize-make-unique,
   modernize-pass-by-value,
   modernize-raw-string-literal,
   modernize-redundant-void-arg,
@@ -44,9 +36,6 @@ Checks: >
 
 WarningsAsErrors: >
   bugprone-*,
-  performance-*,
-  cert-*,
-  concurrency-*,
 
 CheckOptions:
   - key:             readability-identifier-naming.ClassCase
@@ -97,8 +86,8 @@ CheckOptions:
     value:           ^[DECLARE_|DEFINE_]*
   - key:             modernize-use-nodiscard.ReplacementString
     value:           NDISCARD
-  - key:             cppcoreguidelines-init-variables.IncludeStyle
-    value:           google
   - key:             misc-unused-parameters.StrictMode
+    value:           true
+  - key:             modernize-use-override.IgnoreDestructors
     value:           true
 ...

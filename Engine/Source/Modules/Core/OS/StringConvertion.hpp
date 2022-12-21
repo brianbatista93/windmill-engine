@@ -42,7 +42,7 @@ class TStringCast<ansi, wide>
     inline TStringCast(const wide *pSrc, usize nLength) : m_nLength(nLength)
     {
         we_assert(nLength < 1024);
-        OS::TCharToUTF8((utf8 *)m_pBuffer, pSrc, nLength);
+        OS::TCharToUTF8((utf8 *)m_pBuffer, (const tchar *)pSrc, nLength);
     }
 
     inline const ansi *operator*() const { return m_pBuffer; }
@@ -61,7 +61,7 @@ class TStringCast<wide, ansi>
     inline TStringCast(const ansi *pSrc, usize nLength) : m_nLength(nLength)
     {
         we_assert(nLength < 1024);
-        OS::UTF8ToTChar(m_pBuffer, (const utf8 *)pSrc, nLength);
+        OS::UTF8ToTChar((tchar *)m_pBuffer, (const utf8 *)pSrc, nLength);
     }
 
     inline const wide *operator*() const { return m_pBuffer; }

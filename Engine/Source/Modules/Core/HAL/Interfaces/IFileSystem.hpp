@@ -73,5 +73,5 @@ class IFileSystem
     virtual TArray<CPath> ListChildren(const CPath &path) const = 0;
 
   protected:
-    CPath m_MountedDirs[(u32)EResourceMountType::eCount];
+    CPath mMountedDirs[(u32)EResourceMountType::eCount];
 };

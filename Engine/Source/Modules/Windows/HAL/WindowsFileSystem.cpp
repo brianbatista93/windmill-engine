@@ -20,19 +20,19 @@ bool CWindowsFileSystem::Initialize()
         return false;
     }
     CPath appFilePath({appPathWide, length});
-    CPath appPath = appFilePath.GetParentPath();
-    m_MountedDirs[(u32)EResourceMountType::eAssets] = appPath / WTL("Assets");
-    m_MountedDirs[(u32)EResourceMountType::eEngine] = appPath;
-    m_MountedDirs[(u32)EResourceMountType::eDebug] = appPath / WTL("Logs");
+    const CPath appPath = appFilePath.GetParentPath();
+    mMountedDirs[(u32)EResourceMountType::eAssets] = appPath / WTL("Assets");
+    mMountedDirs[(u32)EResourceMountType::eEngine] = appPath;
+    mMountedDirs[(u32)EResourceMountType::eDebug] = appPath / WTL("Logs");
 
 #ifndef WE_OS_UWP
     PWSTR userDocumentsWide = nullptr;
-    HRESULT result = ::SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &userDocumentsWide);
+    const HRESULT result = ::SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &userDocumentsWide);
     if (FAILED(result))
     {
         return false;
     }
-    m_MountedDirs[(u32)EResourceMountType::eHome] = CPath({userDocumentsWide, ::wcslen(userDocumentsWide)});
+    mMountedDirs[(u32)EResourceMountType::eHome] = CPath({userDocumentsWide, ::wcslen(userDocumentsWide)});
     CoTaskMemFree(userDocumentsWide);
 #endif // !WE_OS_UWP
 
@@ -46,13 +46,13 @@ void CWindowsFileSystem::Shutdown()
 bool CWindowsFileSystem::FileExists(const CPath &path) const
 {
     DWORD attributes = ::GetFileAttributesW(*path);
-    return (attributes != INVALID_FILE_ATTRIBUTES) && !(attributes & FILE_ATTRIBUTE_DIRECTORY);
+    return (attributes != INVALID_FILE_ATTRIBUTES) and (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
 }
 
 bool CWindowsFileSystem::DirectoryExists(const CPath &path) const
 {
     const DWORD attributes = ::GetFileAttributesW(*path);
-    return (attributes != INVALID_FILE_ATTRIBUTES) and (attributes & FILE_ATTRIBUTE_DIRECTORY);
+    return (attributes != INVALID_FILE_ATTRIBUTES) and (attributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
 }
 
 bool CWindowsFileSystem::CreateDirectory(const CPath &path) const
@@ -62,13 +62,13 @@ bool CWindowsFileSystem::CreateDirectory(const CPath &path) const
         return true;
     }
 
-    CPath parentPath = path.GetParentPath();
+    const CPath parentPath = path.GetParentPath();
     if (!parentPath.IsEmpty() and !DirectoryExists(parentPath))
     {
         CreateDirectory(parentPath);
     }
 
-    return ::CreateDirectoryW(*path, nullptr) ? true : false;
+    return ::CreateDirectoryW(*path, nullptr);
 }
 
 class CWindowsFileNative : public IFileNative
@@ -79,26 +79,26 @@ class CWindowsFileNative : public IFileNative
   public:
     virtual ~CWindowsFileNative() { Close(); }
 
-    bool IsValid() const override { return m_Handle != NULL and m_Handle != INVALID_HANDLE_VALUE; }
-    usize GetSize() const override { return m_Size; }
+    NDISCARD bool IsValid() const override { return mHandle != nullptr and mHandle != INVALID_HANDLE_VALUE; }
+    NDISCARD usize GetSize() const override { return mSize; }
     void Close() override
     {
         if (IsValid())
         {
             Flush();
-            if (::CloseHandle(m_Handle) == TRUE)
+            if (::CloseHandle(mHandle) == TRUE)
             {
-                m_Handle = NULL;
+                mHandle = nullptr;
             }
         }
-        m_bCanRead = false;
-        m_bCanWrite = false;
-        m_Size = 0;
-        m_Position = 0;
+        mCanRead = false;
+        mCanWrite = false;
+        mSize = 0;
+        mPosition = 0;
     }
-    void Flush() override { ::FlushFileBuffers(m_Handle); }
-    bool CanRead() const override { return m_bCanRead; }
-    bool CanWrite() const override { return m_bCanWrite; }
+    void Flush() override { ::FlushFileBuffers(mHandle); }
+    NDISCARD bool CanRead() const override { return mCanRead; }
+    NDISCARD bool CanWrite() const override { return mCanWrite; }
     void Seek(usize nPosition, i32 mode) override
     {
         we_assert(IsValid());
@@ -107,14 +107,14 @@ class CWindowsFileNative : public IFileNative
         {
         case SEEK_SET:
             we_assert(nPosition >= 0);
-            m_Position = nPosition;
+            mPosition = nPosition;
             break;
         case SEEK_CUR:
-            m_Position += nPosition;
+            mPosition += nPosition;
             break;
         case SEEK_END:
             we_assert(nPosition <= 0);
-            m_Position = m_Size + nPosition;
+            mPosition = mSize + nPosition;
             break;
         default:
             break;
@@ -131,13 +131,13 @@ class CWindowsFileNative : public IFileNative
             return 0;
         }
 
-        DWORD bytes_read = 0;
+        DWORD bytesRead = 0;
         do
         {
-            DWORD size_clamped = CMath::Min((DWORD)nSize, (DWORD)MAXDWORD);
+            const DWORD sizeClamped = CMath::Min((DWORD)nSize, (DWORD)MAXDWORD);
             DWORD read = 0;
 
-            if (::ReadFile(m_Handle, pBytes, (DWORD)nSize, &read, &m_Overlapped) == FALSE)
+            if (::ReadFile(mHandle, pBytes, (DWORD)nSize, &read, &mOverlapped) == FALSE)
             {
                 DWORD error = GetLastError();
                 if (error != ERROR_IO_PENDING)
@@ -146,26 +146,26 @@ class CWindowsFileNative : public IFileNative
                 }
 
                 read = 0;
-                if (GetOverlappedResult(m_Handle, &m_Overlapped, (::DWORD *)&read, TRUE) == FALSE)
+                if (GetOverlappedResult(mHandle, &mOverlapped, (::DWORD *)&read, TRUE) == FALSE)
                 {
                     error = GetLastError();
                     return 0;
                 }
             }
 
-            nSize -= size_clamped;
-            pBytes += size_clamped;
-            bytes_read += read;
-            m_Position += read;
+            nSize -= sizeClamped;
+            pBytes += sizeClamped;
+            bytesRead += read;
+            mPosition += read;
             UpdateOverlapped();
 
-            if (size_clamped != read)
+            if (sizeClamped != read)
             {
                 return 0;
             }
         } while (nSize > 0);
 
-        return static_cast<size_t>(bytes_read);
+        return static_cast<size_t>(bytesRead);
     }
     usize Write(const u8 *pBytes, usize nSize) override
     {
@@ -176,36 +176,36 @@ class CWindowsFileNative : public IFileNative
             return 0;
         }
 
-        DWORD BytesWritten = 0;
+        DWORD bytesWritten = 0;
 
-        if (::WriteFile(m_Handle, pBytes, static_cast<DWORD>(nSize), &BytesWritten, &m_Overlapped) == FALSE)
+        if (::WriteFile(mHandle, pBytes, static_cast<DWORD>(nSize), &bytesWritten, &mOverlapped) == FALSE)
         {
-            auto Err = GetLastError();
-            if (Err != ERROR_IO_PENDING)
+            auto lastError = GetLastError();
+            if (lastError != ERROR_IO_PENDING)
             {
                 return 0;
             }
 
-            BytesWritten = 0;
-            if (GetOverlappedResult(m_Handle, &m_Overlapped, &BytesWritten, TRUE) == 0)
+            bytesWritten = 0;
+            if (GetOverlappedResult(mHandle, &mOverlapped, &bytesWritten, TRUE) == 0)
             {
-                Err = GetLastError();
+                lastError = GetLastError();
                 return 0;
             }
         }
 
-        m_Position += BytesWritten;
+        mPosition += bytesWritten;
 
         UpdateOverlapped();
 
-        m_Size = (m_Position > m_Size) ? m_Position : m_Size;
+        mSize = (mPosition > mSize) ? mPosition : mSize;
 
-        return (usize)BytesWritten;
+        return (usize)bytesWritten;
     }
 
   private:
     CWindowsFileNative(HANDLE handle, const CPath &filename, bool bCanRead, bool bCanWrite)
-        : m_Handle(handle), m_Position(0), m_Size(0), m_bCanRead(bCanRead), m_bCanWrite(bCanWrite), m_Filename(filename)
+        : mHandle(handle), mCanRead(bCanRead), mCanWrite(bCanWrite), mFilename(filename)
     {
         if (IsValid())
         {
@@ -215,34 +215,34 @@ class CWindowsFileNative : public IFileNative
 
     void UpdateFileStats()
     {
-        LARGE_INTEGER large_int;
-        ::GetFileSizeEx(m_Handle, &large_int);
-        m_Size = large_int.QuadPart;
+        LARGE_INTEGER largeInt;
+        ::GetFileSizeEx(mHandle, &largeInt);
+        mSize = largeInt.QuadPart;
 
         /*FILETIME creation_time{};
         FILETIME last_modified{};
 
-        if (::GetFileTime(m_Handle, &creation_time, NULL, &last_modified))
+        if (::GetFileTime(mHandle, &creation_time, nullptr, &last_modified))
         {
-            m_CreationTime = WindowsToDateTime(&creation_time);
-            m_LastModificationTime = WindowsToDateTime(&last_modified);
+            mCreationTime = WindowsToDateTime(&creation_time);
+            mLastModificationTime = WindowsToDateTime(&last_modified);
         }*/
     }
 
     void UpdateOverlapped()
     {
-        ULARGE_INTEGER large_int{.QuadPart = m_Position};
-        m_Overlapped.Offset = large_int.LowPart;
-        m_Overlapped.OffsetHigh = large_int.HighPart;
+        const ULARGE_INTEGER largeInt{.QuadPart = mPosition};
+        mOverlapped.Offset = largeInt.LowPart;
+        mOverlapped.OffsetHigh = largeInt.HighPart;
     }
 
-    HANDLE m_Handle{NULL};
-    OVERLAPPED m_Overlapped{0};
-    usize m_Position;
-    usize m_Size;
-    bool m_bCanRead;
-    bool m_bCanWrite;
-    CPath m_Filename;
+    HANDLE mHandle{nullptr};
+    OVERLAPPED mOverlapped{0};
+    usize mPosition{0};
+    usize mSize{0};
+    bool mCanRead;
+    bool mCanWrite;
+    const CPath mFilename;
 };
 
 IFileNative *CWindowsFileSystem::OpenRead(const CPath &filename, bool bCanWrite)
@@ -254,7 +254,7 @@ IFileNative *CWindowsFileSystem::OpenRead(const CPath &filename, bool bCanWrite)
     const DWORD creationFlag = OPEN_EXISTING;
     const DWORD flags = FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED;
 
-    HANDLE handle = CreateFileW(*filename, access, shareMode, NULL, creationFlag, flags, NULL);
+    HANDLE handle = CreateFileW(*filename, access, shareMode, nullptr, creationFlag, flags, nullptr);
     if (handle == nullptr or handle == INVALID_HANDLE_VALUE)
     {
         // TODO: Log some error
@@ -271,7 +271,7 @@ IFileNative *CWindowsFileSystem::OpenWrite(const CPath &filename, bool bAppend, 
     const DWORD creationFlag = bAppend ? OPEN_ALWAYS : CREATE_ALWAYS;
     const DWORD flags = FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED;
 
-    HANDLE handle = CreateFileW(*filename, access, shareMode, NULL, creationFlag, flags, NULL);
+    HANDLE handle = CreateFileW(*filename, access, shareMode, nullptr, creationFlag, flags, nullptr);
     if (handle == nullptr or handle == INVALID_HANDLE_VALUE)
     {
         // TODO: Log some error
@@ -293,7 +293,7 @@ TArray<CPath> CWindowsFileSystem::ListChildren(const CPath &path) const
     TArray<CPath> result;
 
     HANDLE hFind = INVALID_HANDLE_VALUE;
-    CPath searchPath = path + WT("/*");
+    const CPath searchPath = path + WT("/*");
     WIN32_FIND_DATA ffd = {0};
 
     hFind = ::FindFirstFile(*searchPath, &ffd);
