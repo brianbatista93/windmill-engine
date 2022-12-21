@@ -59,7 +59,7 @@ jobs:
       id: review
       with:
         clang_tidy_version: 14
-        build_dir: '/Build'
+        build_dir: '${{ env.CMAKE_BUILD_DIR }}'
         config_file: '.clang-tidy'
         include: "**/Modules/*.hpp,**/Modules/*.cpp,**/Tools/*.hpp,**/Tools/*.cpp"
         exclude: "**/Tests/*,**/Benchmark/*"

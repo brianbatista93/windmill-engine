@@ -34,7 +34,7 @@ CMemoryManager::~CMemoryManager()
         fprintf(stderr, "[ERROR] There are still allocations that have not been freed.\n");
         for (auto &[memory, info] : mCurrentAllocations)
         {
-            fprintf(stderr, "0x%08llux (%d bytes|%d) - %s:%d (%s)\n", memory, i32(info.nSize), info.nAlignment, info.pFilename, info.nLine,
+            fprintf(stderr, "0x%08llux (%d bytes|%d) - %s:%d (%s)\n", u64(memory), i32(info.nSize), info.nAlignment, info.pFilename, info.nLine,
                     info.pFunctionName);
 #if WE_OS_SUPPORT_CALLSTACK_INFO
             for (u32 i = 0; i < info.nCallStackFrames; ++i)
