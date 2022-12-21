@@ -59,7 +59,6 @@
 			},
 			"cacheVariables": {
 				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-PC.cmake",
-				"CMAKE_CXX_CLANG_TIDY": "clang-tidy;--extra-arg=-Wno-error=unknown-warning-option",
 				"CMAKE_EXPORT_COMPILE_COMMANDS": true
 			}
 		},
