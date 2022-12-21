@@ -40,12 +40,15 @@ jobs:
         -DENABLE_TESTS_BENCHMARK=ON
         -DENABLE_ASAN=ON
         
+    - name: Build
+      run: |
+        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug
+
     - name: Test
       shell: bash
       run: |
-             cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug
-             cd "${{ env.CMAKE_BUILD_DIR }}"
-             ctest
+        cd "${{ env.CMAKE_BUILD_DIR }}"
+        ctest
 
   ub-sanitizer:
     name: "Undefined Behavior Sanitizer"
