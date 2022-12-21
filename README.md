@@ -1,5 +1,8 @@
 # Windmill Engine
 
+[![Contiguous-Integration](https://github.com/brianbatista93/windmill-engine/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/brianbatista93/windmill-engine/actions/workflows/ci.yml)
+[![C/C++ Sanitizer](https://github.com/brianbatista93/windmill-engine/actions/workflows/sanitizer.yml/badge.svg?branch=main)](https://github.com/brianbatista93/windmill-engine/actions/workflows/sanitizer.yml)
+
 The goal of this project is to build a cross-platform, multithreaded game engine that can easily create both 2D and 3D games using modern graphics APIs such as DirectX, Vulkan and Metal. The engine should be capable of deploying games for desktops, consoles and mobile platforms in a scalable way, so the same game project should be buildable for all platforms without changing the game's code.
 
 ## Getting started
@@ -21,7 +24,7 @@ git clone --recurse-submodules https://github.com/brianbatista93/windmill-engine
 ```bash
 mkdir build
 cd build
-cmake ..
+cmake ./Engine
 cmake --build .
 ```
 

@@ -1,8 +1,5 @@
 name: Contiguous-Integration 
 
-permissions:
-  contents: read
-
 on:
   push:
     branches: [ "main" ]
@@ -10,19 +7,92 @@ on:
     branches: [ "main" ]
 
 jobs:
+  check-code-format:
+    name: "Code format"
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        repository: ${{ github.event.pull_request.head.repo.full_name }}
+        ref: ${{ github.event.pull_request.head.ref }}
+    - uses: DoozyX/clang-format-lint-action@v0.15
+      with:
+        source: "./Engine/Source"
+        exclude: "./Engine/ThirdParty"
+        extensions: 'hpp,cpp,mm'
+        inplace: True
+        clangFormatVersion: 15
+
+    - name: "Formatted files"
+      shell: bash
+      run: git ls-files -m
+
+  code-lint:
+    name: "Code lint"
+    needs: check-code-format
+    runs-on: ubuntu-latest
+    env:
+      CMAKE_BUILD_DIR: ${{ github.workspace }}/Build
+      TOOLCHAIN: ${{ github.workspace }}/Engine/Build/CMake/Toolchain/Linux-PC.cmake
+      CC: clang
+      CXX: clang++
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        clean: true
+
+    - name: Setup
+      run: |
+        ./Setup.sh
+
+    - name: Configuring projects
+      run: >-
+        cmake
+        -S "${{ github.workspace }}"
+        -B "${{ env.CMAKE_BUILD_DIR }}" 
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
+
+    - name: "Checking Files"
+      shell: bash
+      run: |
+        ls -la ${{ env.CMAKE_BUILD_DIR }}
+
+    - uses: ZedThree/clang-tidy-review@v0.10.1
+      id: review
+      with:
+        clang_tidy_version: 14
+        build_dir: '${{ env.CMAKE_BUILD_DIR }}/'
+        config_file: '.clang-tidy'
+        include: "**/Modules/*.hpp,**/Modules/*.cpp,**/Tools/*.hpp,**/Tools/*.cpp"
+        exclude: "**/Tests/*,**/Benchmark/*"
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: clang-tidy-review
+        retention-days: 1
+        path: |
+          clang-tidy-review-output.json
+          clang-tidy-review-metadata.json
+          clang_tidy_review.yaml
+        
+    #- if: steps.review.outputs.total_comments > 0
+      #run: exit 1
+
   build-and-test:
+    needs: code-lint
     name:  >-
       CI
       ${{ matrix.os }}
       ${{ matrix.compiler }}
-      ${{ matrix.build-type }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         compiler: [msvc, gcc, clang]
-        os: [windows-latest, macos-latest, ubuntu-latest]
-        build-type: [Debug, Profile, Release]
+        os: [windows-latest, ubuntu-latest, raspberry-pi-4, macos-latest]
         exclude:
         - os: windows-latest
           compiler: gcc   
@@ -34,41 +104,82 @@ jobs:
           compiler: gcc
         - os: ubuntu-latest
           compiler: msvc
+        - os: raspberry-pi-4
+          compiler: msvc
+        - os: raspberry-pi-4
+          compiler: clang
         include:
         - compiler: clang
           CC: clang
           CXX: clang++
         - compiler: msvc
-          CC: 
-          CXX: 
+          CC: cl
+          CXX: cl
         - compiler: gcc
           CC: gcc
           CXX: g++
         - os: windows-latest
           CMAKE_PRESET: windows-build
+          SETUP_FILE: Setup.bat
+          CMAKE_GENERATOR: Visual Studio 17 2022
+          TOOLCHAIN_FILE: Windows-PC.cmake
         - os: ubuntu-latest
           CMAKE_PRESET: linux-build
+          SETUP_FILE: Setup.sh
+          CMAKE_GENERATOR: Ninja Multi-Config
+          TOOLCHAIN_FILE: Linux-PC.cmake
+        - os: raspberry-pi-4
+          CMAKE_PRESET: linux-build
+          SETUP_FILE: Setup.sh
+          CMAKE_GENERATOR: Ninja Multi-Config
+          TOOLCHAIN_FILE: Linux-PC.cmake
         - os: macos-latest
           CMAKE_PRESET: macos-build
+          SETUP_FILE: Setup.command
+          CMAKE_GENERATOR: Xcode
+          TOOLCHAIN_FILE: macOS-PC.cmake
 
     env:
       CMAKE_BUILD_DIR: ${{ github.workspace }}/Build
       CC: ${{ matrix.CC }}
       CXX: ${{ matrix.CXX }}
+      CMAKE_C_COMPILER: ${{ matrix.CC }}
+      CMAKE_CXX_COMPILER: ${{ matrix.CXX }}
+      SETUP_FILE: ${{ matrix.SETUP_FILE }}
+      TOOLCHAIN: ${{ github.workspace }}/Engine/Build/CMake/Toolchain/${{ matrix.TOOLCHAIN_FILE }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: true
+        clean: true
+
+    - name: Setup
+      run: |
+        ./${{ env.SETUP_FILE }}
 
     - name: Configuring projects
+      if: ${{ matrix.os != 'macos-latest' }}
       run: >-
         cmake
-        -S "${{ github.workspace }}/Engine"
+        -S "${{ github.workspace }}"
         -B "${{ env.CMAKE_BUILD_DIR }}" 
-        --preset ${{ env.CMAKE_PRESET }}
+        -G "${{ matrix.CMAKE_GENERATOR }}"
+        -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
+        -DCMAKE_CONFIGURATION_TYPES="Debug;Profile;Release"
         -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
 
-    - name: Build
+    - name: Build (Debug)
+      if: ${{ matrix.os != 'macos-latest' }}
       run: >-
-        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config ${{ matrix.build-type }}
+        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug
+
+    - name: Build (Profile)
+      if: ${{ matrix.os != 'macos-latest' }}
+      run: >-
+        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Profile
+
+    - name: Build (Release)
+      if: ${{ matrix.os != 'macos-latest' }}
+      run: >-
+        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Release
