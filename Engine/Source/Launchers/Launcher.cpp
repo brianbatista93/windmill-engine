@@ -9,7 +9,9 @@
 
 i32 WindmillMain(i32 nArgC, tchar *ppArgV[])
 {
-    setlocale(LC_ALL, "en_US.UTF-8");
+    locale_t locale = newlocale(LC_ALL_MASK, "en_US.UTF-8", nullptr);
+    uselocale(locale);
+    free(locale);
 
     TArray<tchar *> arguments(nArgC);
     for (i32 i = 0; i < nArgC; ++i)
