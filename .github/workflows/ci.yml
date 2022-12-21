@@ -52,8 +52,9 @@ jobs:
         cmake
         -S "${{ github.workspace }}"
         -B "${{ env.CMAKE_BUILD_DIR }}" 
-        -G "Ninja"
+        -GNinja
         -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
     - uses: ZedThree/clang-tidy-review@v0.10.1
       id: review
