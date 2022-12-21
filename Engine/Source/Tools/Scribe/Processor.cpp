@@ -179,10 +179,10 @@ tchar *IdentifyAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
     static const tchar *sAttrBegin = {WT("[[WE::")};
     // static const tchar *sAttrEnd = {WT("]]")};
 
-    static i32 sAttrBeginLength = 6;
+    static const i32 sAttrBeginLength = 6;
     // static i32 sAttrEndLength = 2;
 
-    while (*pStr)
+    while (pStr and *pStr)
     {
         if (CStringUtils::Equal(pStr, sAttrBegin, sAttrBeginLength))
         {
@@ -202,7 +202,7 @@ tchar *IdentifyAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
 
 tchar *ProcessAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
 {
-    CString attributeName = GetAttributeName(pStr);
+    const CString attributeName = GetAttributeName(pStr);
     if (auto it = gAttributeFunctions.find(*attributeName); it != gAttributeFunctions.end())
     {
         return it->second(builder, pStr, rLine);

@@ -27,7 +27,7 @@ class CLogFileSink : public ILogSink
   public:
     CLogFileSink(const CPath &filename);
 
-    ~CLogFileSink();
+    ~CLogFileSink() override;
 
     void Log(const SLogMessage *pMessage) override;
 

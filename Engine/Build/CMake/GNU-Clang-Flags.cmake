@@ -5,8 +5,6 @@ add_compile_options (
 	-fvisibility-inlines-hidden		# Hide inline symbols by default
     -fPIC                           # Position independent code
     -fno-exceptions                 # Disable exceptions
-
-	-D_HAS_C9X						# Enable C99 features
  
     -Wall                           # Enable all warnings
     -Werror                         # Treat warnings as errors

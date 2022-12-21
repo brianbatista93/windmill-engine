@@ -22,3 +22,8 @@ indent_size = 4
 [*.{yaml,yml,clang-tidy}]
 indent_style = space
 indent_size = 2
+
+# JSON files
+[*.json]
+indent_style = space
+indent_size = 2

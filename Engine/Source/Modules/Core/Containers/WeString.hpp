@@ -127,7 +127,7 @@ class CString
     {
         we_assert(nStart < GetLength() and (nCount == INVALID_INDEX or nCount <= GetLength()));
         nCount = nCount == INVALID_INDEX ? GetLength() : nCount;
-        return CString(GetArray().GetData() + nStart, nCount);
+        return {GetArray().GetData() + nStart, (usize)nCount};
     }
 
     inline i32 Find(const tchar *pStr, i32 nOffset = 0) const
@@ -187,20 +187,20 @@ class CString
 
     inline bool operator==(const CString &other) const { return CStringUtils::Compare(GetArray().GetData(), *other) == 0; }
 
-    auto begin() { return m_Data.begin(); }
-    const auto begin() const { return m_Data.begin(); }
-    auto end()
+    NDISCARD auto begin() { return m_Data.begin(); }
+    NDISCARD const auto begin() const { return m_Data.begin(); }
+    NDISCARD auto end()
     {
-        auto result = m_Data.end();
+        auto *result = m_Data.end();
         if (m_Data.GetSize())
         {
             --result;
         }
         return result;
     }
-    const auto end() const
+    NDISCARD const auto end() const
     {
-        auto result = m_Data.end();
+        auto *result = m_Data.end();
         if (m_Data.GetSize())
         {
             --result;
@@ -208,10 +208,10 @@ class CString
         return result;
     }
 
-    auto rbegin() { return std::reverse_iterator(m_Data.end()); }
-    const auto rbegin() const { return std::reverse_iterator(m_Data.end()); }
-    auto rend() { return std::reverse_iterator(begin()); }
-    const auto rend() const { return std::reverse_iterator(begin()); }
+    NDISCARD auto rbegin() { return std::reverse_iterator(m_Data.end()); }
+    NDISCARD const auto rbegin() const { return std::reverse_iterator(m_Data.end()); }
+    NDISCARD auto rend() { return std::reverse_iterator(begin()); }
+    NDISCARD const auto rend() const { return std::reverse_iterator(begin()); }
 
   private:
     inline void Init(const tchar *pStr, usize nLength)
@@ -243,7 +243,7 @@ inline namespace StringLiterals
 {
 inline CString operator""_s(const tchar *pStr, usize nLength)
 {
-    return CString(pStr, nLength);
+    return {pStr, nLength};
 }
 } // namespace StringLiterals
 } // namespace Literals

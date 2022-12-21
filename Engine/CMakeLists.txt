@@ -28,8 +28,13 @@ if (ENABLE_UBSAN)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-
-	include ("Build/CMake/Clang-Flags.cmake")
+	if (CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+		include ("Build/CMake/MSVC-Clang-Flags.cmake")
+	elseif (CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU")
+		include ("Build/CMake/GNU-Clang-Flags.cmake")
+	else ()
+		message (FATAL_ERROR "Invalid Cland frontend variant")
+	endif()
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
 	include ("Build/CMake/GCC-Flags.cmake")

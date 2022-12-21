@@ -14,12 +14,12 @@ IFileSystem *CFileSystem::Get()
 bool CWindowsFileSystem::Initialize()
 {
     wchar_t appPathWide[WE_OS_MAX_PATH]{0};
-    usize length = ::GetModuleFileNameW(nullptr, appPathWide, WE_OS_MAX_PATH);
+    const usize length = ::GetModuleFileNameW(nullptr, appPathWide, WE_OS_MAX_PATH);
     if (length == 0)
     {
         return false;
     }
-    CPath appFilePath({appPathWide, length});
+    const CPath appFilePath({appPathWide, length});
     const CPath appPath = appFilePath.GetParentPath();
     mMountedDirs[(u32)EResourceMountType::eAssets] = appPath / WTL("Assets");
     mMountedDirs[(u32)EResourceMountType::eEngine] = appPath;
@@ -45,7 +45,7 @@ void CWindowsFileSystem::Shutdown()
 
 bool CWindowsFileSystem::FileExists(const CPath &path) const
 {
-    DWORD attributes = ::GetFileAttributesW(*path);
+    const DWORD attributes = ::GetFileAttributesW(*path);
     return (attributes != INVALID_FILE_ATTRIBUTES) and (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
 }
 
@@ -77,7 +77,7 @@ class CWindowsFileNative : public IFileNative
     friend CWindowsFileSystem;
 
   public:
-    virtual ~CWindowsFileNative() { Close(); }
+    ~CWindowsFileNative() override { Close(); }
 
     NDISCARD bool IsValid() const override { return mHandle != nullptr and mHandle != INVALID_HANDLE_VALUE; }
     NDISCARD usize GetSize() const override { return mSize; }

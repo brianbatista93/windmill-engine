@@ -44,7 +44,7 @@ i32 WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     ::SetUnhandledExceptionFilter(&DumpStackTrace);
 
-    i32 nErrorCode = WindmillMain(nArgC, pArgV);
+    const i32 nErrorCode = WindmillMain(nArgC, pArgV);
 
     LocalFree(pArgV);
 
