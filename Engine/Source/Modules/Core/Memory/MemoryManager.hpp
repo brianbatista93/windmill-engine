@@ -77,7 +77,7 @@ class CMemoryManager
 #endif // WE_OS_SUPPORT_CALLSTACK_INFO
     };
 
-    std::map<void *, SAllocationInfo> m_CurrentAllocations;
+    std::map<usize, SAllocationInfo> mCurrentAllocations;
 
     CMemoryManager() = default;
 
@@ -87,9 +87,9 @@ class CMemoryManager
 
     void FreeInternal(void *pMemory);
 
-    void AddAllocationInfo(void *pMemory, const SAllocationInfo *pInfo);
+    void AddAllocationInfo(usize nMemoryAddress, const SAllocationInfo *pInfo);
 
-    void EditAllocationInfo(void *pOldMemory, void *pNewMemory, const SAllocationInfo *pInfo);
+    void EditAllocationInfo(usize nOldMemoryAddress, void *pNewMemory, const SAllocationInfo *pInfo);
 
-    void RemoveAllocationInfo(void *pMemory);
+    void RemoveAllocationInfo(usize nMemoryAddress);
 };

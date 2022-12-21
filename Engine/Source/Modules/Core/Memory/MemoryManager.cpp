@@ -25,16 +25,16 @@ CMemoryManager &CMemoryManager::Get()
 
 CMemoryManager::~CMemoryManager()
 {
-    fprintf(stderr, "\n[INFO] Memory manager have exited with [%d] unfreed allocations.\n", (i32)m_CurrentAllocations.size());
+    fprintf(stderr, "\n[INFO] Memory manager have exited with [%d] unfreed allocations.\n", (i32)mCurrentAllocations.size());
 
-    if (!m_CurrentAllocations.empty())
+    if (!mCurrentAllocations.empty())
     {
         std::cerr << std::setfill('=') << std::setw(120) << '\n';
         u32 unfreedBytes = 0;
         fprintf(stderr, "[ERROR] There are still allocations that have not been freed.\n");
-        for (auto &[memory, info] : m_CurrentAllocations)
+        for (auto &[memory, info] : mCurrentAllocations)
         {
-            fprintf(stderr, "0x%08llux (%d bytes|%d) - %s:%d (%s)\n", u64(memory), i32(info.nSize), info.nAlignment, info.pFilename, info.nLine,
+            fprintf(stderr, "0x%08llux (%d bytes|%d) - %s:%d (%s)\n", memory, i32(info.nSize), info.nAlignment, info.pFilename, info.nLine,
                     info.pFunctionName);
 #if WE_OS_SUPPORT_CALLSTACK_INFO
             for (u32 i = 0; i < info.nCallStackFrames; ++i)
@@ -73,7 +73,7 @@ void *CMemoryManager::Allocate(usize nSize, usize nAlignment, const char *pFilen
 
     void *pointer = MallocInternal(nSize, nAlignment);
 
-    AddAllocationInfo(pointer, &info);
+    AddAllocationInfo((usize)pointer, &info);
 
     return pointer;
 }
@@ -96,7 +96,7 @@ void *CMemoryManager::Reallocate(void *pMemory, usize nSize, usize nAlignment, c
 
     void *newPointer = ReallocInternal(pMemory, nSize, nAlignment);
 
-    EditAllocationInfo(pMemory, newPointer, &info);
+    EditAllocationInfo((usize)pMemory, newPointer, &info);
 
     return newPointer;
 }
@@ -105,7 +105,7 @@ void CMemoryManager::Free(void *pMemory)
 {
     if (pMemory != nullptr)
     {
-        RemoveAllocationInfo(pMemory);
+        RemoveAllocationInfo((usize)pMemory);
         FreeInternal(pMemory);
     }
 }
@@ -142,23 +142,23 @@ void CMemoryManager::FreeInternal(void *pMemory)
 #endif // defined(WE_OS_WINDOWS)
 }
 
-void CMemoryManager::AddAllocationInfo(void *pMemory, const SAllocationInfo *pInfo)
+void CMemoryManager::AddAllocationInfo(usize nMemoryAddress, const SAllocationInfo *pInfo)
 {
-    m_CurrentAllocations.emplace(std::make_pair(pMemory, *pInfo));
+    mCurrentAllocations.emplace(std::make_pair(nMemoryAddress, *pInfo));
 }
 
-void CMemoryManager::EditAllocationInfo(void *pOldMemory, void *pNewMemory, const SAllocationInfo *pInfo)
+void CMemoryManager::EditAllocationInfo(usize nOldMemoryAddress, void *pNewMemory, const SAllocationInfo *pInfo)
 {
-    if (pOldMemory != nullptr)
+    if (nOldMemoryAddress != 0)
     {
-        RemoveAllocationInfo(pOldMemory);
+        RemoveAllocationInfo(nOldMemoryAddress);
     }
 
-    AddAllocationInfo(pNewMemory, pInfo);
+    AddAllocationInfo((usize)pNewMemory, pInfo);
 }
 
-void CMemoryManager::RemoveAllocationInfo(void *pMemory)
+void CMemoryManager::RemoveAllocationInfo(usize nMemoryAddress)
 {
-    [[maybe_unused]] usize erased = m_CurrentAllocations.erase(pMemory);
+    [[maybe_unused]] usize erased = mCurrentAllocations.erase(nMemoryAddress);
     we_assert(erased && "Trying to free an unallocated memory.");
 }
