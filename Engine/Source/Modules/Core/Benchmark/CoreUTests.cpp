@@ -11,10 +11,7 @@ int main(int argc, char **argv)
         return 1;
     }
     ::benchmark::Initialize(&argc, argv);
-    if (::benchmark::ReportUnrecognizedArguments(argc, argv))
-    {
-        return 1;
-    }
+    ::benchmark::ReportUnrecognizedArguments(argc, argv);
     ::benchmark::RunSpecifiedBenchmarks();
     ::benchmark::Shutdown();
     return 0;
