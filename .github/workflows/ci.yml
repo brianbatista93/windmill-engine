@@ -50,7 +50,6 @@ jobs:
         clang_tidy_version: 14
         cmake_command:  >-
           cmake
-          -GNinja
           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
           -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
           .
