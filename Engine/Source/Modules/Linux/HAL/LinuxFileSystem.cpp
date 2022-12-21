@@ -151,7 +151,7 @@ class CLinuxFile : public IFileNative
     }
 
   private:
-    CLinuxFile(i32 handle, CPath &filename, bool bCanRead, bool bCanWrite)
+    CLinuxFile(i32 handle, CPath filename, bool bCanRead, bool bCanWrite)
         : mHandle(handle), mCanRead(bCanRead), mCanWrite(bCanWrite), mFilename(std::move(filename))
     {
         struct stat fileStat;
