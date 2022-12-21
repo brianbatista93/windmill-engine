@@ -12,6 +12,5 @@ if (NOT CMAKE_CXX_COMPILER)
 endif ()
 
 add_definitions (-DWE_OS_LINUX)
-add_definitions (-DUNICODE -D_UNICODE)
 add_definitions (-DWE_OS_MEM_DEFAULT_ALIGNMENT=16)
 add_definitions (-DWE_OS_MAX_PATH=512)

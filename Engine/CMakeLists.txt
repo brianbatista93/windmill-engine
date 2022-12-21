@@ -2,13 +2,28 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-option (ENABLE_TESTS_BENCHMARK "Enable tests and benchmark" OFF)
+option (ENABLE_TESTS_BENCHMARK "Enable tests and benchmark" ON)
 if (ENABLE_TESTS_BENCHMARK)
 	set (BENCHMARK_DOWNLOAD_DEPENDENCIES ON)
 	add_subdirectory ("Source/ThirdParty/benchmark")
 endif()
 
 include ("Build/CMake/Engine-Flags.cmake")
+
+option (ENABLE_ASAN "Enable Address sanitizer" OFF)
+option (ENABLE_UBSAN "Enable Undefined Behavior sanitizer" OFF)
+if (ENABLE_ASAN)
+	message (STATUS "AddressSanitizer enabled")
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+	set (CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -fsanitize=address")
+endif ()
+
+if (ENABLE_UBSAN)
+  message (STATUS "Undefined Behavior sanitizer enabled")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined,shift,shift-exponent,integer-divide-by-zero,unreachable,vla-bound,null,return,signed-integer-overflow,bounds,float-divide-by-zero,float-cast-overflow,nonnull-attribute,returns-nonnull-attribute,bool,enum,vptr,pointer-overflow,builtin -fno-sanitize-recover=all")
+  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined,shift,shift-exponent,integer-divide-by-zero,unreachable,vla-bound,null,return,signed-integer-overflow,bounds,float-divide-by-zero,float-cast-overflow,nonnull-attribute,returns-nonnull-attribute,bool,enum,vptr,pointer-overflow,builtin -fno-sanitize-recover=all")
+endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 

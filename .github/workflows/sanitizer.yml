@@ -1,0 +1,87 @@
+name: C/C++ Sanitizer
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  address-sanitizer:
+    name: "Address Sanitizer"
+    runs-on: ubuntu-latest
+    env:
+      CMAKE_BUILD_DIR: ${{ github.workspace }}/Build
+      TOOLCHAIN: ${{ github.workspace }}/Engine/Build/CMake/Toolchain/Linux-PC.cmake
+      CC: clang
+      CXX: clang++
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+        clean: true
+
+    - name: Setup
+      run: |
+        ./Setup.sh
+
+    - name: Configuring projects
+      run: >-
+        cmake
+        -S "${{ github.workspace }}"
+        -B "${{ env.CMAKE_BUILD_DIR }}" 
+        -GNinja
+        -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
+        -DCMAKE_BUILD_TYPE=Debug
+        -DENABLE_TESTS_BENCHMARK=ON
+        -DENABLE_ASAN=ON
+        -v
+        
+    - name: Test
+      shell: bash
+      run: |
+             cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug
+             cd "${{ env.CMAKE_BUILD_DIR }}"
+             ctest
+
+  ub-sanitizer:
+    name: "Undefined Behavior Sanitizer"
+    runs-on: ubuntu-latest
+    env:
+      CMAKE_BUILD_DIR: ${{ github.workspace }}/Build
+      TOOLCHAIN: ${{ github.workspace }}/Engine/Build/CMake/Toolchain/Linux-PC.cmake
+      CC: clang
+      CXX: clang++
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+        clean: true
+
+    - name: Setup
+      run: |
+        ./Setup.sh
+
+    - name: Configuring projects
+      run: >-
+        cmake
+        -S "${{ github.workspace }}"
+        -B "${{ env.CMAKE_BUILD_DIR }}" 
+        -GNinja
+        -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
+        -DCMAKE_BUILD_TYPE=Debug
+        -DENABLE_TESTS_BENCHMARK=ON
+        -DENABLE_UBSAN=ON
+        -v
+        
+    - name: Test
+      shell: bash
+      run: |
+             cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug
+             cd "${{ env.CMAKE_BUILD_DIR }}"
+             ctest

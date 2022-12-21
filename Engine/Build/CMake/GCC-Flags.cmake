@@ -28,13 +28,6 @@ add_compile_options (
     $<$<CONFIG:Debug>:-O0>								# Disable optimizations
     $<$<CONFIG:Debug>:-DDEBUG>							# Define DEBUG macro
     $<$<CONFIG:Debug>:-D_DEBUG>							# Define _DEBUG macro
-    $<$<CONFIG:Debug>:-fsanitize=address>				# Enable address sanitizer
-    $<$<CONFIG:Debug>:-fsanitize=undefined>				# Enable undefined behavior sanitizer
-    $<$<CONFIG:Debug>:-fno-sanitize-recover=all>		# Disable sanitizer recovery
-    $<$<CONFIG:Debug>:-fsanitize=float-divide-by-zero>	# Enable float divide by zero sanitizer
-    $<$<CONFIG:Debug>:-fsanitize=float-cast-overflow>	# Enable float cast overflow sanitizer
-    $<$<CONFIG:Debug>:-fno-sanitize=null>				# Disable null sanitizer
-    $<$<CONFIG:Debug>:-fno-sanitize=alignment>			# Disable alignment sanitizer	
     
 # Profile flags
     $<$<CONFIG:Profile>:-g>			# Enable debug symbols
@@ -50,7 +43,4 @@ add_compile_options (
 
 set(CMAKE_LINK_FLAGS "{$CMAKE_LINK_FLAGS} -Wl, --gc-sections")
 
-add_link_options(
-	$<$<CONFIG:Debug>:-fsanitize=address>
-	$<$<CONFIG:Debug>:-fsanitize=undefined>
-)
+add_definitions (-DUNICODE -D_UNICODE)
