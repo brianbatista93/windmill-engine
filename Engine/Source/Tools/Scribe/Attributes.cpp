@@ -1,6 +1,4 @@
 #include "Attributes.hpp"
 #include "Attributes/AttrProperty.hpp"
 
-AttributesMapType gAttributeFunctions = {
-	{WT("Property"), ProcessProperty}
-};
+const AttributesMapType gAttributeFunctions = {{WT("Property"), ProcessProperty}};

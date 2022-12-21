@@ -44,7 +44,7 @@ class CMath
     {
         return a < b ? a : b;
     }
-    
+
     template <class T>
     static constexpr T Max(T a, T b)
     {

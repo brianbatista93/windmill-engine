@@ -27,7 +27,8 @@ SOFTWARE.
 class CMemoryUtils
 {
   public:
-    template <class T> static void Construct(T *pData, usize nCount)
+    template <class T>
+    static void Construct(T *pData, usize nCount)
     {
         for (usize i = 0; i < nCount; ++i)
         {
@@ -35,7 +36,8 @@ class CMemoryUtils
         }
     }
 
-    template <class T> static void Destroy(T *pData, usize nCount)
+    template <class T>
+    static void Destroy(T *pData, usize nCount)
     {
         for (usize i = 0; i < nCount; ++i)
         {
@@ -43,7 +45,8 @@ class CMemoryUtils
         }
     }
 
-    template <class T> static void Copy(T *pDest, const T *pSrc, usize nCount)
+    template <class T>
+    static void Copy(T *pDest, const T *pSrc, usize nCount)
     {
         if constexpr (std::is_trivially_copyable_v<T>)
         {

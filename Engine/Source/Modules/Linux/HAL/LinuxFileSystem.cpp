@@ -21,15 +21,15 @@ bool CLinuxFileSystem::Initialize()
     const usize length = readlink("/proc/self/exe", appFilePathAnsi, WE_OS_MAX_PATH);
     CPath appFilePath(CString(*TStringCast<wide, ansi>(appFilePathAnsi, length), length));
     CPath appPath = appFilePath.GetParentPath();
-    m_MountedDirs[(u32)EResourceMountType::eAssets] = appPath / WTL("Assets");
-    m_MountedDirs[(u32)EResourceMountType::eDebug] = appPath / WTL("Logs");
+    mMountedDirs[(u32)EResourceMountType::eAssets] = appPath / WTL("Assets");
+    mMountedDirs[(u32)EResourceMountType::eDebug] = appPath / WTL("Logs");
 
     const ansi *homeDir = nullptr;
     if ((homeDir = getenv("HOME")) == nullptr)
     {
         homeDir = getpwuid(getuid())->pw_dir;
     }
-    m_MountedDirs[(u32)EResourceMountType::eHome] = CPath(CString(*TStringCast<wide, ansi>(homeDir, strlen(homeDir)), length));
+    mMountedDirs[(u32)EResourceMountType::eHome] = CPath(CString(*TStringCast<wide, ansi>(homeDir, strlen(homeDir)), length));
 
     return true;
 }
@@ -70,7 +70,7 @@ bool CLinuxFileSystem::CreateDirectory(const CPath &path) const
     TArray<CString> pathNodes = path.ToString().Split(CPath::kSeparator);
 
     CPath directory;
-    for (auto node : pathNodes)
+    for (auto &node : pathNodes)
     {
         directory = directory / *node;
         if (mkdir(*TStringCast<ansi, wide>(*directory, directory.GetLength()), 0775) == -1)
@@ -96,22 +96,22 @@ class CLinuxFile : public IFileNative
   public:
     ~CLinuxFile() { Close(); }
 
-    bool IsValid() const override { return m_Handle != -1; }
+    bool IsValid() const override { return mHandle != -1; }
     usize GetSize() const override { return m_Size; }
     void Close() override
     {
-        close(m_Handle);
-        m_bCanRead = false;
-        m_bCanWrite = false;
+        close(mHandle);
+        mCanRead = false;
+        mCanWrite = false;
     }
-    void Flush() override { fsync(m_Handle); }
-    bool CanRead() const override { return m_bCanRead; }
-    bool CanWrite() const override { return m_bCanWrite; }
+    void Flush() override { fsync(mHandle); }
+    bool CanRead() const override { return mCanRead; }
+    bool CanWrite() const override { return mCanWrite; }
     void Seek(usize nPosition, i32 nMode) override
     {
         we_assert(IsValid());
 
-        lseek(m_Handle, nPosition, nMode);
+        lseek(mHandle, nPosition, nMode);
     }
     usize Read(u8 *pBytes, usize nSize) override
     {
@@ -121,7 +121,7 @@ class CLinuxFile : public IFileNative
         i64 bytesRead = 0;
         while (nSize)
         {
-            bytesRead += read(m_Handle, pBytes, nSize);
+            bytesRead += read(mHandle, pBytes, nSize);
             if (bytesRead != -1 or errno != EFAULT)
             {
                 if (bytesRead != i64(nSize))
@@ -140,7 +140,7 @@ class CLinuxFile : public IFileNative
         we_assert(IsValid());
         we_assert(CanWrite());
 
-        if (write(m_Handle, pBytes, nSize) != ssize_t(nSize))
+        if (write(mHandle, pBytes, nSize) != ssize_t(nSize))
         {
             return 0;
         }
@@ -151,8 +151,8 @@ class CLinuxFile : public IFileNative
     }
 
   private:
-    CLinuxFile(i32 handle, const CPath &filename, bool bCanRead, bool bCanWrite)
-        : m_Handle(handle), m_Size(0), m_bCanRead(bCanRead), m_bCanWrite(bCanWrite), m_Filename(filename)
+    CLinuxFile(i32 handle, CPath filename, bool bCanRead, bool bCanWrite)
+        : mHandle(handle), mCanRead(bCanRead), mCanWrite(bCanWrite), mFilename(std::move(filename))
     {
         struct stat fileStat;
         if (fstat(handle, &fileStat) == 0)
@@ -161,11 +161,11 @@ class CLinuxFile : public IFileNative
         }
     }
 
-    i32 m_Handle;
-    usize m_Size;
-    bool m_bCanRead;
-    bool m_bCanWrite;
-    CPath m_Filename;
+    i32 mHandle;
+    usize m_Size{0};
+    bool mCanRead;
+    bool mCanWrite;
+    const CPath mFilename;
 };
 
 IFileNative *CLinuxFileSystem::OpenRead(const CPath &filename, bool bCanWrite)

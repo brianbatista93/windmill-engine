@@ -1,6 +1,6 @@
 #include "AttrProperty.hpp"
 
-tchar *ProcessProperty(const tchar *pStr, CStringBuilder &, i32 &)
+tchar *ProcessProperty(CStringBuilder & /*unused*/, const tchar *pStr, i32 & /*unused*/)
 {
     pStr += sAttrPropertyLength;
 

@@ -16,7 +16,6 @@ add_compile_options (
  /nologo        # Suppress startup banner
  /Oi			# Enable intrinsic functions
  /permissive-	# Standards conformance mode
- /sdl			# Enable SDL checks
  /utf-8         # Use UTF-8 encoding for source code
  /W4            # Set warning level 4
  /wd4267		# Disable warning C4267: 'argument' : conversion from 'size_t' to 'type', possible loss of data
@@ -32,6 +31,9 @@ add_compile_options (
  /Zc:strictStrings- # Disable strict string literal conversion rules
  /Zc:wchar_t    # wchar_t is native type
  /Zm1000		# Set PCH memory threshold to 1000MB
+
+ /DUNICODE
+ /D_UNICODE
 )
 
 set (CMAKE_RC_FLAGS /nologo)
@@ -50,7 +52,6 @@ add_compile_options (
     $<$<CONFIG:Debug>:/DDEBUG>				# Define DEBUG
     $<$<CONFIG:Debug>:/D_DEBUG>				# Define _DEBUG
     $<$<CONFIG:Debug>:/analyze>				# Enable static code analysis
-    $<$<CONFIG:Debug>:/fsanitize=address>	# Enable address sanitizer
     $<$<CONFIG:Debug>:/DFORCE_ANSI_ALLOCATOR=1> # Force use of ANSI allocator
 
 # Profile flags

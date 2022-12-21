@@ -56,8 +56,8 @@ CStringBuilder &CStringBuilder::AppendLine(const CString &str)
 {
     Append(str);
     Append(WT('\n'));
-    
-	return *this;
+
+    return *this;
 }
 
 CString CStringBuilder::ToString()

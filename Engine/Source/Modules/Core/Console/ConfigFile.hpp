@@ -21,5 +21,4 @@ SOFTWARE.
 
 class CConfigFile
 {
-
 };

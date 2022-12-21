@@ -26,8 +26,8 @@ SOFTWARE.
 #include <map>
 #include <utility>
 
-#include "Types.hpp"
 #include "OS/Utils.hpp"
+#include "Types.hpp"
 
 /**
  * @brief Manager responsible for allocating, freeing and managing memory.
@@ -71,13 +71,13 @@ class CMemoryManager
         i32 nOrder;
 
 #ifdef WE_OS_SUPPORT_CALLSTACK_INFO
-        ansi ppCallStack[32][255];
+        ansi ppCallStack[MAX_CALLSTACKS][MAX_SIMBOLS_LENGTH];
         u32 nCallStackFrames;
-        void *ppCallers[32];
+        void *ppCallers[MAX_CALLSTACKS];
 #endif // WE_OS_SUPPORT_CALLSTACK_INFO
     };
 
-    std::map<void *, SAllocationInfo> m_CurrentAllocations;
+    std::map<usize, SAllocationInfo> mCurrentAllocations;
 
     CMemoryManager() = default;
 
@@ -87,9 +87,9 @@ class CMemoryManager
 
     void FreeInternal(void *pMemory);
 
-    void AddAllocationInfo(void *pMemory, const SAllocationInfo *pInfo);
+    void AddAllocationInfo(usize nMemoryAddress, const SAllocationInfo *pInfo);
 
-    void EditAllocationInfo(void *pOldMemory, void *pNewMemory, const SAllocationInfo *pInfo);
+    void EditAllocationInfo(usize nOldMemoryAddress, void *pNewMemory, const SAllocationInfo *pInfo);
 
-    void RemoveAllocationInfo(void *pMemory);
+    void RemoveAllocationInfo(usize nMemoryAddress);
 };

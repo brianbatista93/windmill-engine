@@ -6,6 +6,6 @@ add_executable (${PROJECT_NAME}
  "Attributes.cpp"
  "Attributes/AttrProperty.cpp")
 
-target_link_libraries (${PROJECT_NAME} PUBLIC
+target_link_libraries (${PROJECT_NAME} PRIVATE
 	"Core"
 )

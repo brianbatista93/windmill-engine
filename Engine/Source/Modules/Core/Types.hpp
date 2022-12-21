@@ -42,7 +42,7 @@ using wide = wchar_t;
 using utf8 = char8_t;
 #else
 using utf8 = ansi;
-#endif // __cpp_char8_t 
+#endif // __cpp_char8_t
 
 using utf16 = char16_t;
 using utf32 = char32_t;
@@ -104,8 +104,7 @@ DECLARE_TYPE(utf32, "utf32", "utf32");
 
 #ifdef __cpp_char8_t
 DECLARE_TYPE(utf8, "utf8", "utf8");
-#endif // __cpp_char8_t 
-
+#endif // __cpp_char8_t
 
 #include <assert.h>
 
@@ -130,3 +129,5 @@ constexpr void set_if_not_null(T *output, T value)
 #elif defined(__GNUC__) || defined(__clang__)
     #define UNREF_PARAM(x) ((void)(x))
 #endif
+
+#define NDISCARD [[nodiscard]]

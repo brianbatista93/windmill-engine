@@ -13,9 +13,9 @@ CStringBuilder WriteHeaderAndGetStringBuilder();
 
 tchar *IgnoreWhiteSpace(const tchar *, i32 &);
 tchar *IgnoreComments(const tchar *, i32 &);
-tchar *ParseDeep(const tchar *, CStringBuilder &, i32 &);
-tchar *IdentifyAttribute(const tchar *, CStringBuilder &, i32 &);
-tchar *ProcessAttribute(const tchar *, CStringBuilder &, i32 &);
+tchar *ParseDeep(CStringBuilder &, const tchar *, i32 &);
+tchar *IdentifyAttribute(CStringBuilder &, const tchar *, i32 &);
+tchar *ProcessAttribute(CStringBuilder &, const tchar *, i32 &);
 
 CString GetAttributeName(const tchar *);
 
@@ -37,14 +37,14 @@ bool ProcessFile(const CPath &filePath, const CPath &output)
         }
     }
 
-    CString fileContent;
+    CString fileContent = {};
     if (!CFile::ReadString(fileContent, filePath))
     {
         WE_ERROR(Scribe, WT("Failed to read file {0}"), *filePath);
         return false;
     }
 
-    CStringBuilder builder = WriteHeaderAndGetStringBuilder();
+    CStringBuilder builder{WriteHeaderAndGetStringBuilder()};
 
     if (!Parse(fileContent, builder))
     {
@@ -72,7 +72,7 @@ bool Parse(const CString &content, CStringBuilder &builder)
     tchar *pPointer = (tchar *)*content;
     pPointer = IgnoreWhiteSpace(pPointer, line);
 
-    return ParseDeep(pPointer, builder, line);
+    return ParseDeep(builder, pPointer, line);
 }
 
 CStringBuilder WriteHeaderAndGetStringBuilder()
@@ -159,17 +159,17 @@ tchar *IgnoreComments(const tchar *pStr, i32 &rLine)
     return (tchar *)pStr;
 }
 
-tchar *ParseDeep(const tchar *pStr, CStringBuilder &builder, i32 &rLine)
+tchar *ParseDeep(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
 {
     while (pStr and *pStr)
     {
-        pStr = IdentifyAttribute(pStr, builder, rLine);
+        pStr = IdentifyAttribute(builder, pStr, rLine);
     }
 
     return (tchar *)pStr;
 }
 
-tchar *IdentifyAttribute(const tchar *pStr, CStringBuilder &builder, i32 &rLine)
+tchar *IdentifyAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
 {
     we_assert(pStr and *pStr);
 
@@ -187,28 +187,25 @@ tchar *IdentifyAttribute(const tchar *pStr, CStringBuilder &builder, i32 &rLine)
         if (CStringUtils::Equal(pStr, sAttrBegin, sAttrBeginLength))
         {
             pStr += sAttrBeginLength;
-            pStr = ProcessAttribute(pStr, builder, rLine);
+            pStr = ProcessAttribute(builder, pStr, rLine);
         }
         else if (*pStr == WT('\n'))
         {
-            ++pStr;
             ++rLine;
         }
-        else
-        {
-            ++pStr;
-        }
+
+        ++pStr;
     }
 
     return (tchar *)pStr;
 }
 
-tchar *ProcessAttribute(const tchar *pStr, CStringBuilder &builder, i32 &rLine)
+tchar *ProcessAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
 {
     CString attributeName = GetAttributeName(pStr);
     if (auto it = gAttributeFunctions.find(*attributeName); it != gAttributeFunctions.end())
     {
-        return it->second(pStr, builder, rLine);
+        return it->second(builder, pStr, rLine);
     }
     else
     {
