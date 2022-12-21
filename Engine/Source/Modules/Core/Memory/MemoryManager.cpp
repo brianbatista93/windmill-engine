@@ -94,10 +94,14 @@ void *CMemoryManager::Reallocate(void *pMemory, usize nSize, usize nAlignment, c
     info.nCallStackFrames = OS::GetStackTrace(2, MAX_CALLSTACKS, info.ppCallStack, MAX_SIMBOLS_LENGTH, info.ppCallers);
 #endif // WE_OS_SUPPORT_CALLSTACK_INFO
 
-    const usize oldMemoryAddress = (usize)pMemory;
+    if (pMemory != nullptr)
+    {
+        RemoveAllocationInfo((usize)pMemory);
+    }
+
     void *newPointer = ReallocInternal(pMemory, nSize, nAlignment);
 
-    EditAllocationInfo(oldMemoryAddress, newPointer, &info);
+    AddAllocationInfo((usize)newPointer, &info);
 
     return newPointer;
 }

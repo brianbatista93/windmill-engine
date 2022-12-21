@@ -151,6 +151,7 @@ jobs:
         ./${{ env.SETUP_FILE }}
 
     - name: Configuring projects
+      if: ${{ matrix.os != 'macos-latest' }}
       run: >-
         cmake
         -S "${{ github.workspace }}"
@@ -161,13 +162,16 @@ jobs:
         -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
 
     - name: Build (Debug)
+      if: ${{ matrix.os != 'macos-latest' }}
       run: >-
         cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug
 
     - name: Build (Profile)
+      if: ${{ matrix.os != 'macos-latest' }}
       run: >-
         cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Profile
 
     - name: Build (Release)
+      if: ${{ matrix.os != 'macos-latest' }}
       run: >-
         cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Release
