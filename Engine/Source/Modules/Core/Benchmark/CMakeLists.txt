@@ -9,4 +9,4 @@ PRIVATE
 )
 
 include (GoogleTest)
-gtest_add_tests (${PROJECT_NAME} "" AUTO)
+gtest_discover_tests (${PROJECT_NAME})
