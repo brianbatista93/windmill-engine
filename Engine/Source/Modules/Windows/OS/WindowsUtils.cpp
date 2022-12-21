@@ -13,8 +13,7 @@ u32 GetStackTrace([[maybe_unused]] u32 nFramesToSkip, [[maybe_unused]] u32 nFram
                   [[maybe_unused]] u32 nSymbolMaxLength, [[maybe_unused]] void *ppCallers[])
 {
     typedef USHORT(WINAPI * CaptureStackBackTraceType)(__in ULONG, __in ULONG, __out PVOID *, __out_opt PULONG);
-    static auto func =
-        (CaptureStackBackTraceType)(GetProcAddress(LoadLibrary(TEXT("kernel32.dll")), "RtlCaptureStackBackTrace"));
+    static auto func = (CaptureStackBackTraceType)(GetProcAddress(LoadLibrary(TEXT("kernel32.dll")), "RtlCaptureStackBackTrace"));
 
     if (func != nullptr)
     {
