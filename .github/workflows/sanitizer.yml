@@ -43,7 +43,7 @@ jobs:
     - name: Test
       shell: bash
       run: |
-             cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug -v
+             cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug
              cd "${{ env.CMAKE_BUILD_DIR }}"
              ctest
 
@@ -80,6 +80,6 @@ jobs:
     - name: Test
       shell: bash
       run: |
-             cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug -v
+             cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug
              cd "${{ env.CMAKE_BUILD_DIR }}"
              ctest
