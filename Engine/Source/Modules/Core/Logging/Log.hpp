@@ -64,9 +64,9 @@ class CLogSystem
     TArray<TUniquePtr<ILogSink>> m_Sinks;
 };
 
-#define DECLARE_EXTERN_LOG_EMITTER(emitter, logLevel) extern CLogEmitter _gLogEmitter##emitter(WT(#emitter), ELogLevel::logLevel)
+#define DECLARE_EXTERN_LOG_EMITTER(emitter, logLevel) extern CLogEmitter _gLogEmitter##emitter(WT(#emitter), ELogLevel::logLevel) // NOLINT
 
-#define DECLARE_STATIC_LOG_EMITTER(emitter, logLevel) static CLogEmitter _gLogEmitter##emitter(WT(#emitter), ELogLevel::logLevel)
+#define DECLARE_STATIC_LOG_EMITTER(emitter, logLevel) static CLogEmitter _gLogEmitter##emitter(WT(#emitter), ELogLevel::logLevel) // NOLINT
 
 #define WE_LOG(emitter, logLevel, pFormat, ...)                                                                                                      \
     CLogSystem::Get().Log(&_gLogEmitter##emitter, ELogLevel::logLevel, __FILE__, __LINE__, __FUNCTION__, pFormat, ##__VA_ARGS__)

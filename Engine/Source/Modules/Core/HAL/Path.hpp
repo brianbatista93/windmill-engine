@@ -90,7 +90,7 @@ class CPath
     friend CPath operator/(const CPath &lhs, const tchar *pRhs)
     {
         CPath result(lhs);
-        return result.Append(pRhs, std::char_traits<tchar>::length(pRhs));
+        return result.Append(pRhs, (i32)std::char_traits<tchar>::length(pRhs));
     }
 
     friend CPath operator+(const CPath &lhs, const tchar *pStr) { return lhs.m_Text + pStr; }

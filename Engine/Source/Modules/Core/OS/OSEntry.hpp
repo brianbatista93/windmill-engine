@@ -25,12 +25,9 @@ SOFTWARE.
 #ifdef WE_OS_WINDOWS
     #define MAIN_ENTRY_BEGIN                                                                                                                         \
         i32 wmain(i32 nArgC, wide **ppArgV)                                                                                                          \
-        {                                                                                                                                            \
-            i32 errorCode = 0;
+        {
 
-    #define MAIN_ENTRY_END                                                                                                                           \
-        return errorCode;                                                                                                                            \
-        }
+    #define MAIN_ENTRY_END }
 #else
     #define MAIN_ENTRY_BEGIN                                                                                                                         \
         i32 main(i32 nArgC, ansi **ppAnsiArgV)                                                                                                       \

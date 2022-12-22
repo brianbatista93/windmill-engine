@@ -58,7 +58,7 @@ bool CFile::WriteString(IFileNative *pFile, const CString &str, EEncoding encodi
             }
         }
         const usize length = CUTF8Encoder::Get().Encode(nullptr, *str, str.GetLength() * sizeof(tchar));
-        TArray<utf8> utf8Str(length);
+        TArray<utf8> utf8Str((i32)length);
         CUTF8Encoder::Get().Encode(utf8Str.GetData(), *str, str.GetLength() * sizeof(tchar));
         return pFile->Write((const u8 *)utf8Str.GetData(), length) == length;
     }
@@ -69,13 +69,13 @@ bool CFile::WriteString(IFileNative *pFile, const CString &str, EEncoding encodi
         {
             return false;
         }
-        const i32 length = str.GetLength() * sizeof(tchar);
+        const i32 length = str.GetLength() * (i32)sizeof(tchar);
         return (i32)pFile->Write((const u8 *)*str, length) == length;
     }
     else
     {
         const usize length = CAnsiEncoder::Get().Encode(nullptr, *str, str.GetLength() * sizeof(tchar));
-        TArray<ansi> ansiStr(length);
+        TArray<ansi> ansiStr((i32)length);
         CAnsiEncoder::Get().Encode(ansiStr.GetData(), *str, str.GetLength() * sizeof(tchar));
         return pFile->Write((const u8 *)ansiStr.GetData(), length) == length;
     }
@@ -91,8 +91,8 @@ bool CFile::ReadBytes(TArray<u8> &bytes, const CPath &filename)
         return false;
     }
 
-    const auto size = fileNative->GetSize();
-    bytes.Resize(size);
+    const usize size = fileNative->GetSize();
+    bytes.Resize((i32)size);
     return fileNative->Read(bytes.GetData(), size) == size;
 }
 
@@ -116,11 +116,7 @@ bool CFile::ReadString(CString &result, const CPath &filename)
 
     auto &resultArray = result.GetArray();
 
-    if (size >= 2 && !(size & 1) && buffer[0] == 0xFF && buffer[1] == 0xFE)
-    {
-        resultArray.AddSlots(i32(size >> 1));
-    }
-    else if (size >= 2 && !(size & 1) && buffer[0] == 0xFE && buffer[1] == 0xFF)
+    if ((size >= 2 && !(size & 1) && buffer[0] == 0xFF && buffer[1] == 0xFE) or (size >= 2 && !(size & 1) && buffer[0] == 0xFE && buffer[1] == 0xFF))
     {
         resultArray.AddSlots(i32(size >> 1));
     }

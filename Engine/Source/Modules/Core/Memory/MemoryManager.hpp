@@ -37,6 +37,7 @@ class CMemoryManager
   public:
     static CMemoryManager &Get();
 
+    // NOLINTNEXTLINE
     ~CMemoryManager();
 
     void *Allocate(usize nSize, usize nAlign, const char *pFilename, i32 nLine, const char *pFunctionName);
