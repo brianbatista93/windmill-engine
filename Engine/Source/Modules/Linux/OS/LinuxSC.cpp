@@ -1,5 +1,5 @@
-#include <wchar.h>
-#include <wctype.h>
+#include <cwchar>
+#include <cwctype>
 
 #include "OS/StringConvertion.hpp"
 

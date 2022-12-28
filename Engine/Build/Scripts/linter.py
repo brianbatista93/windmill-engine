@@ -14,6 +14,6 @@ def main():
         source_files.append(os.path.abspath(filename).replace('\\', '/'))
 
     subprocess.call(['clang-tidy', '--export-fixes=clang-fixes.yml'] + source_files)        
-
+    
 if __name__ == '__main__':
     main()

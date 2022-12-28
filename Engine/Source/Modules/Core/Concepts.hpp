@@ -24,26 +24,28 @@ SOFTWARE.
 #include "Types.hpp"
 
 // clang-format off
+// NOLINTBEGIN
 
 namespace WE::Concept
 {
-template <class T>
-concept IsContainer = requires(T lhs, const T& rhs)
+template <class Type>
+concept IsContainer = requires(Type lhs, const Type& rhs)
 {
-    { lhs.begin() } -> std::same_as<typename T::iterator>;
-    { lhs.end() } -> std::same_as<typename T::iterator>;
-    { rhs.begin() } -> std::same_as<typename T::const_iterator>;
-    { rhs.end() } -> std::same_as<typename T::const_iterator>;
+    { lhs.begin() } -> std::same_as<typename Type::iterator>;
+    { lhs.end() } -> std::same_as<typename Type::iterator>;
+    { rhs.begin() } -> std::same_as<typename Type::const_iterator>;
+    { rhs.end() } -> std::same_as<typename Type::const_iterator>;
 };
 
-template <class T>
-concept IsFormattable = requires(T value)
+template <class Type>
+concept IsFormattable = requires(Type value)
 {
     { value.TryFormat(value, nullptr, nullptr) } -> std::same_as<bool>;
 };
 
-template <class T>
-concept IsNumeric = std::is_arithmetic_v<T>;
+template <class Type>
+concept IsNumeric = std::is_arithmetic_v<Type>;
 } // namespace WE::Concept
 
-// clang-format oon
+// NOLINTEND
+// clang-format on

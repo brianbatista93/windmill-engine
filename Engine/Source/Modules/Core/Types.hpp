@@ -58,7 +58,7 @@ using tchar = ansi;
     #define WTL(x) x##_s
 #endif // WE_OS_WINDOWS
 
-template <class T>
+template <class Type>
 class TType
 {
 };
@@ -113,8 +113,8 @@ DECLARE_TYPE(utf8, "utf8", "utf8");
     #define we_assert(x) assert((x))
 #endif // !we_assert
 
-template <class T>
-constexpr void SetIfNotNull(T *output, T value)
+template <class Type>
+constexpr void SetIfNotNull(Type *output, Type value)
 {
     if (output != nullptr)
     {

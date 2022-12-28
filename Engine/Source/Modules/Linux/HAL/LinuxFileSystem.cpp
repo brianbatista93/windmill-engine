@@ -162,7 +162,7 @@ class CLinuxFile : public IFileNative
     }
 
     i32 mHandle;
-    usize m_Size{0};
+    usize mSize{0};
     bool mCanRead;
     bool mCanWrite;
     const CPath mFilename;
@@ -215,7 +215,7 @@ TArray<CPath> CLinuxFileSystem::ListChildren(const CPath &path) const
     TArray<CPath> result;
 
     DIR *dir = NULL;
-    struct dirent *ent = NULL;
+    struct dirent *ent = nullptr;
 
     if ((dir = opendir(*TStringCast<ansi, wide>(*path, path.GetLength()))) != NULL)
     {
