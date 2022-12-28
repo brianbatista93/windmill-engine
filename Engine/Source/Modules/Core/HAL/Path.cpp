@@ -3,33 +3,33 @@
 
 CPath &CPath::Append(const tchar *pStr, i32 nLength)
 {
-    i32 dataCount = mText.m_Data.GetSize();
+    i32 dataCount = mText.mData.GetSize();
     if (nLength == 0)
     {
-        if (dataCount > 1 and mText.m_Data[dataCount - 2] != WT('/') and mText.m_Data[dataCount - 2] != WT('\\'))
+        if (dataCount > 1 and mText.mData[dataCount - 2] != WT('/') and mText.mData[dataCount - 2] != WT('\\'))
         {
-            mText.m_Data[dataCount - 1] = WT('/');
-            mText.m_Data.Add(WT('\0'));
+            mText.mData[dataCount - 1] = WT('/');
+            mText.mData.Add(WT('\0'));
         }
     }
     else
     {
         if (dataCount > 0)
         {
-            if (dataCount > 1 and mText.m_Data[dataCount - 2] != WT('/') and mText.m_Data[dataCount - 2] != WT('\\') and *pStr != WT('/'))
+            if (dataCount > 1 and mText.mData[dataCount - 2] != WT('/') and mText.mData[dataCount - 2] != WT('\\') and *pStr != WT('/'))
             {
-                mText.m_Data[dataCount - 1] = WT('/');
+                mText.mData[dataCount - 1] = WT('/');
             }
             else
             {
-                mText.m_Data.Pop();
+                mText.mData.Pop();
                 --dataCount;
             }
         }
 
-        mText.m_Data.Reserve(dataCount + nLength);
-        mText.m_Data.Append(pStr, nLength);
-        mText.m_Data.Add(WT('\0'));
+        mText.mData.Reserve(dataCount + nLength);
+        mText.mData.Append(pStr, nLength);
+        mText.mData.Add(WT('\0'));
     }
 
     return *this;
@@ -45,20 +45,20 @@ bool CPath::IsFile() const
     return CFileSystem::FileExists(*this) and !CFileSystem::DirectoryExists(*this);
 }
 
-TArray<CPath> GetAllFilesImpl(const CPath &path)
+CArray<CPath> GetAllFilesImpl(const CPath &path)
 {
     return CFileSystem::ListChildren(path);
 }
 
-TArray<CPath> CPath::GetAllFiles(const tchar *pFilter, bool bRecursive) const
+CArray<CPath> CPath::GetAllFiles(const tchar *pFilter, bool bRecursive) const
 {
     we_assert(!IsEmpty());
     we_assert(IsDirectory());
     we_assert(pFilter and *pFilter);
 
-    TArray<CPath> result;
+    CArray<CPath> result;
 
-    const TArray<CPath> files = GetAllFilesImpl(*this);
+    const CArray<CPath> files = GetAllFilesImpl(*this);
 
     for (const auto &path : files)
     {

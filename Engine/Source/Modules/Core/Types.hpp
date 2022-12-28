@@ -59,13 +59,13 @@ using tchar = ansi;
 #endif // WE_OS_WINDOWS
 
 template <class Type>
-class TType
+class CType
 {
 };
 
 #define DECLARE_TYPE(type, name, shortName)                                                                                                          \
     template <>                                                                                                                                      \
-    class TType<type>                                                                                                                                \
+    class CType<type>                                                                                                                                \
     {                                                                                                                                                \
       public:                                                                                                                                        \
         inline static const char *GetName()                                                                                                          \

@@ -25,35 +25,35 @@ SOFTWARE.
 #include "Allocator.hpp"
 #include "Math/MathUtils.hpp"
 
-template <class T, class Alloc>
-class TArray
+template <class Type, class AllocType>
+class CArray
 {
   public:
-    using ElementType = T;
-    using AllocatorType = Alloc;
+    using ElementType = Type;
+    using AllocatorType = AllocType;
     using IndexType = typename AllocatorType::IndexType;
     using Iterator = ElementType *;
     using ConstIterator = const ElementType *;
 
-    inline TArray() : m_Allocator(), mSize(0), mCapacity(0) {}
-    inline TArray(IndexType nInitialSize) { InitializeWithSize(nInitialSize); }
-    inline TArray(std::initializer_list<ElementType> list) noexcept { InitializeWithRange(list.begin(), list.end()); }
+    inline CArray() : m_Allocator(), mSize(0), mCapacity(0) {}
+    inline CArray(IndexType nInitialSize) { InitializeWithSize(nInitialSize); }
+    inline CArray(std::initializer_list<ElementType> list) noexcept { InitializeWithRange(list.begin(), list.end()); }
     template <typename ItType>
-    inline TArray(ItType first, ItType last)
+    inline CArray(ItType first, ItType last)
     {
         InitializeWithRange(first, last);
     }
 
-    inline TArray(const TArray &other) { CopyFromOther(other); }
-    inline TArray(TArray &&other) noexcept { MoveFromOther(std::move(other)); }
+    inline CArray(const CArray &other) { CopyFromOther(other); }
+    inline CArray(CArray &&other) noexcept { MoveFromOther(std::move(other)); }
 
-    inline ~TArray()
+    inline ~CArray()
     {
         CMemoryUtils::Destroy(GetData(), mSize);
         m_Allocator.ReleaseData();
     }
 
-    inline TArray &operator=(const TArray &other) // NOLINT
+    inline CArray &operator=(const CArray &other) // NOLINT
     {
         if (this != &other)
         {
@@ -70,7 +70,7 @@ class TArray
         return *this;
     }
 
-    inline TArray &operator=(TArray &&other) noexcept
+    inline CArray &operator=(CArray &&other) noexcept
     {
         if (this != &other)
         {
@@ -201,7 +201,7 @@ class TArray
         CMemoryUtils::Copy(GetData() + oldSize, pElements, nSize);
     }
 
-    inline void Append(const TArray &other)
+    inline void Append(const CArray &other)
     {
         const IndexType newSize = mSize + other.mSize;
         const IndexType oldSize = mSize;
@@ -252,10 +252,10 @@ class TArray
     NDISCARD inline ConstIterator rend() const noexcept { return GetData() - 1; }
 
     // Global container functions
-    friend inline ElementType *GetData(TArray arr) { return arr.GetData(); }
-    friend inline usize GetSize(TArray arr) { return usize(arr.GetSize()); }
+    friend inline ElementType *GetData(CArray arr) { return arr.GetData(); }
+    friend inline usize GetSize(CArray arr) { return usize(arr.GetSize()); }
 
-    friend inline bool operator==(const TArray &lhs, const TArray &rhs)
+    friend inline bool operator==(const CArray &lhs, const CArray &rhs)
     {
         if (lhs.GetSize() != rhs.GetSize())
         {
@@ -291,7 +291,7 @@ class TArray
         CMemoryUtils::Copy(GetData(), pBegin, size);
     }
 
-    inline void CopyFromOther(const TArray &other)
+    inline void CopyFromOther(const CArray &other)
     {
         mSize = other.mSize;
         mCapacity = other.mSize;
@@ -302,7 +302,7 @@ class TArray
         }
     }
 
-    inline void MoveFromOther(TArray &&other) noexcept
+    inline void MoveFromOther(CArray &&other) noexcept
     {
         mSize = other.mSize;
         mCapacity = other.mCapacity;

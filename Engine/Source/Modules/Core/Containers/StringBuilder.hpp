@@ -43,14 +43,14 @@ class CStringBuilder
 
     CStringBuilder &AppendLine(const CString &str);
 
-    template <class... TArgs>
-    inline CStringBuilder &AppendFormat(const tchar *pFormat, TArgs &&...vArgs)
+    template <class... TArgsType>
+    inline CStringBuilder &AppendFormat(const tchar *pFormat, TArgsType &&...packedArgs)
     {
-        constexpr usize nArgc = sizeof...(vArgs);
+        constexpr usize nArgc = sizeof...(packedArgs);
 
         if constexpr (nArgc > 0)
         {
-            const CFormatterArgument pArgv[nArgc] = {vArgs...};
+            const CFormatterArgument pArgv[nArgc] = {packedArgs...};
             FormatInternal(pFormat, nArgc, pArgv);
         }
         else
@@ -66,5 +66,5 @@ class CStringBuilder
   private:
     void FormatInternal(const tchar *pFormat, usize nArgc, const CFormatterArgument *pArgs);
 
-    TArray<tchar, TAllocator<i32>> m_Data;
+    CArray<tchar, CAllocator<i32>> mData;
 };

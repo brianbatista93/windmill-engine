@@ -30,16 +30,16 @@ extern usize UTF8ToTChar(tchar *pDst, const utf8 *pSrc, usize nSrcLength);
 } // namespace OS
 
 template <class ToType, class FromType>
-class TStringCast
+class CStringCast
 {
 };
 
 template <>
-class TStringCast<ansi, wide>
+class CStringCast<ansi, wide>
 {
   public:
-    inline TStringCast(const wide *pSrc) : TStringCast(pSrc, std::char_traits<wide>::length(pSrc)) {}
-    inline TStringCast(const wide *pSrc, usize nLength) : mLength(nLength)
+    inline CStringCast(const wide *pSrc) : CStringCast(pSrc, std::char_traits<wide>::length(pSrc)) {}
+    inline CStringCast(const wide *pSrc, usize nLength) : mLength(nLength)
     {
         we_assert(nLength < 1024);
         OS::TCharToUTF8((utf8 *)mBuffer, (const tchar *)pSrc, nLength);
@@ -54,11 +54,11 @@ class TStringCast<ansi, wide>
 };
 
 template <>
-class TStringCast<wide, ansi>
+class CStringCast<wide, ansi>
 {
   public:
-    inline TStringCast(const ansi *pSrc) : TStringCast(pSrc, std::char_traits<ansi>::length(pSrc)) {}
-    inline TStringCast(const ansi *pSrc, usize nLength) : mLength(nLength)
+    inline CStringCast(const ansi *pSrc) : CStringCast(pSrc, std::char_traits<ansi>::length(pSrc)) {}
+    inline CStringCast(const ansi *pSrc, usize nLength) : mLength(nLength)
     {
         we_assert(nLength < 1024);
         OS::UTF8ToTChar((tchar *)mBuffer, (const utf8 *)pSrc, nLength);

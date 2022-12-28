@@ -59,7 +59,7 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
         pos++;
         if (pos == nLength or !isdigit(chr = pFormat[pos]))
         {
-            we_assert(false and "Invalid pFormat string");
+            we_assert(false);
             return;
         }
         size_t index = 0;
@@ -163,7 +163,7 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
             tchar *pBufferPtr = argument.GetType() == CFormatterArgument::kNumeric ? (std::end(buffer) - 1) : buffer;
             if (!argument.TryFormat(&pBufferPtr, *itemFormatSubstring))
             {
-                we_assert(false && "Could not format argument");
+                we_assert(false);
                 return;
             }
 
@@ -171,7 +171,7 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
         }
         break;
         default: {
-            we_assert(false && "Invalid pFormat string");
+            we_assert(false);
         }
         break;
         }

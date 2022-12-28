@@ -3,7 +3,7 @@
 #include "HAL/FileSystem.hpp"
 #include "Logging/Log.hpp"
 
-DeclareStaticLogEmitter(Scribe, eInfo);
+DECLARE_STATIC_LOG_EMITTER(Scribe, eInfo);
 
 CPath gLicenseFile;
 

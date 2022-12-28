@@ -27,36 +27,36 @@ SOFTWARE.
 class CMemoryUtils
 {
   public:
-    template <class T>
-    static void Construct(T *pData, usize nCount)
+    template <class Type>
+    static void Construct(Type *pData, usize nCount)
     {
         for (usize i = 0; i < nCount; ++i)
         {
-            new (pData + i) T();
+            new (pData + i) Type();
         }
     }
 
-    template <class T>
-    static void Destroy(T *pData, usize nCount)
+    template <class Type>
+    static void Destroy(Type *pData, usize nCount)
     {
         for (usize i = 0; i < nCount; ++i)
         {
-            pData[i].~T();
+            pData[i].~Type();
         }
     }
 
-    template <class T>
-    static void Copy(T *pDest, const T *pSrc, usize nCount)
+    template <class Type>
+    static void Copy(Type *pDest, const Type *pSrc, usize nCount)
     {
-        if constexpr (std::is_trivially_copyable_v<T>)
+        if constexpr (std::is_trivially_copyable_v<Type>)
         {
-            memcpy(pDest, pSrc, nCount * sizeof(T));
+            memcpy(pDest, pSrc, nCount * sizeof(Type));
         }
         else
         {
             for (usize i = 0; i < nCount; ++i)
             {
-                new (pDest + i) T(*(pSrc + i));
+                new (pDest + i) Type(*(pSrc + i));
             }
         }
     }

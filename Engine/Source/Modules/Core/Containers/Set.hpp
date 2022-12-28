@@ -25,33 +25,33 @@ SOFTWARE.
 #include "Array.hpp"
 #include "Math/MathUtils.hpp"
 
-template <class T>
+template <class Type>
 struct SSetEntry
 {
     u64 Hash{0};
     i64 Next{-1};
-    T Value;
+    Type Value;
 };
 
-template <class T, class TSize = usize, class TComparer = std::equal_to<T>>
-class TSet
+template <class Type, class TSizeType = usize, class TComparerType = std::equal_to<Type>>
+class CTSet
 {
   public:
-    using ElementType = T;
-    using SizeType = TSize;
+    using ElementType = Type;
+    using SizeType = TSizeType;
     using IndexType = std::make_signed_t<TSize>;
-    using EntryType = SSetEntry<T>;
+    using EntryType = SSetEntry<Type>;
 
-    inline TSet() : mFreeIndex(-1), mCount(0), mFreeCount(0) {}
+    inline CTSet() : mFreeIndex(-1), mCount(0), mFreeCount(0) {}
 
-    inline TSet(SizeType nCapacity)
+    inline CTSet(SizeType nCapacity)
     {
         we_assert(nCapacity > 0);
 
         Init(nCapacity);
     }
 
-    inline TSet(std::initializer_list<ElementType> list)
+    inline CTSet(std::initializer_list<ElementType> list)
     {
         Init(list.size());
 
@@ -95,13 +95,13 @@ class TSet
                     we_assert((-3 - mFreeIndex) < 0);
                     entry.Next = -3 - mFreeIndex;
 
-                    if constexpr (std::is_reference_v<T>)
+                    if constexpr (std::is_reference_v<Type>)
                     {
-                        entry.Value = T();
+                        entry.Value = Type();
                     }
                     else
                     {
-                        entry.Value.~T();
+                        entry.Value.~Type();
                     }
 
                     mFreeIndex = i;
@@ -128,7 +128,7 @@ class TSet
         mFreeCount = 0;
     }
 
-    inline const ElementType *Find(const T &element) const
+    inline const ElementType *Find(const Type &element) const
     {
         if (!m_Buckets.IsEmpty())
         {
@@ -154,7 +154,7 @@ class TSet
         return nullptr;
     }
 
-    inline bool Contains(const T &element) const { return Find(element) != nullptr; }
+    inline bool Contains(const Type &element) const { return Find(element) != nullptr; }
 
   private:
     inline void Init(SizeType nCapacity)
@@ -187,8 +187,8 @@ class TSet
         }
     }
 
-    template <class U>
-    inline bool AddEntry(typename std::type_identity_t<U> value, SizeType *oIndex)
+    template <class UType>
+    inline bool AddEntry(typename std::type_identity_t /*unused*/<U> value, SizeType *oIndex)
     {
         if (m_Buckets.IsEmpty())
         {
@@ -245,10 +245,10 @@ class TSet
         return true;
     }
 
-    TArray<EntryType, TAllocator<IndexType>> m_Entries;
-    TArray<IndexType, TAllocator<IndexType>> m_Buckets;
-    TComparer m_Comparer;
+    CArray<EntryType, CAllocator<IndexType>> mEntries;
+    CArray<IndexType, CAllocator<IndexType>> m_Buckets;
+    TComparerType mComparer;
     IndexType mFreeIndex;
-    TSize mCount;
-    TSize mFreeCount;
+    TSizeType mCount;
+    TSizeType mFreeCount;
 };

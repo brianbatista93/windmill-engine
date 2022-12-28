@@ -21,28 +21,28 @@ SOFTWARE.
 
 #include "Array.hpp"
 
-template <class T, class Alloc>
-class TArrayView
+template <class Type, class AllocType>
+class CArrayView
 {
   public:
-    using SizeType = typename Alloc::IndexType;
+    using SizeType = typename AllocType::IndexType;
 
-    TArrayView() : mBegin(nullptr), mEnd(nullptr) {}
-    TArrayView(TArray<T, Alloc> &arr) : mBegin(arr.begin()), mEnd(arr.end()) {}
-    ~TArrayView()
+    CArrayView() : mBegin(nullptr), mEnd(nullptr) {}
+    CArrayView(CArray<Type, AllocType> &arr) : mBegin(arr.begin()), mEnd(arr.end()) {}
+    ~CArrayView()
     {
         mBegin = nullptr;
         mEnd = nullptr;
     }
 
-    TArrayView(TArrayView &&) noexcept = default;
-    TArrayView(const TArrayView &) = default;
-    TArrayView &operator=(TArrayView &&) noexcept = default;
-    TArrayView &operator=(const TArrayView &) = default;
+    CArrayView(CArrayView &&) noexcept = default;
+    CArrayView(const CArrayView &) = default;
+    CArrayView &operator=(CArrayView &&) noexcept = default;
+    CArrayView &operator=(const CArrayView &) = default;
 
     NDISCARD constexpr bool IsEmpty() const { return mEnd == mBegin; }
 
   private:
-    T *mBegin;
-    T *mEnd;
+    Type *mBegin;
+    Type *mEnd;
 };

@@ -15,7 +15,7 @@ i32 main(i32 nArgC, char *pArgV[])
         return errno;
     }
 
-    TArray<tchar *, TAllocator<i32>> decodedArgV(nArgC);
+    CArray<tchar *, CAllocator<i32>> decodedArgV(nArgC);
 
     auto &decoder = CAnsiEncoder::Get();
 

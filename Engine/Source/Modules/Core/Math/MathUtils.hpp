@@ -35,7 +35,7 @@ class CMath
     template <class Type>
     static constexpr std::make_signed_t<Type> Abs(Type value)
     {
-        const std::make_signed_t<T> sign = value;
+        const std::make_signed_t<Type> sign = value;
         return sign < 0 ? -sign : sign;
     }
 
@@ -54,7 +54,7 @@ class CMath
     template <typename Type>
     static constexpr Type GetPrime(Type value)
     {
-        if constexpr (std::is_signed_v<T>)
+        if constexpr (std::is_signed_v<Type>)
         {
             if (value < 0)
             {

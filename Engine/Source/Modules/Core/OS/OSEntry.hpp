@@ -36,7 +36,7 @@ SOFTWARE.
             tchar *ppArgV[nArgC];                                                                                                                    \
             for (i32 i = 0; i < nArgC; ++i)                                                                                                          \
             {                                                                                                                                        \
-                auto cast = TStringCast<tchar, ansi>(ppAnsiArgV[i]);                                                                                 \
+                auto cast = CStringCast<tchar, ansi>(ppAnsiArgV[i]);                                                                                 \
                 const usize length = cast.GetLength() + 1;                                                                                           \
                 ppArgV[i] = (tchar *)we_malloc(length * sizeof(tchar));                                                                              \
                 memcpy(ppArgV[i], *cast, length * sizeof(tchar));                                                                                    \

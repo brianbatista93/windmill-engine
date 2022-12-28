@@ -24,12 +24,12 @@ SOFTWARE.
 class CLinuxFileSystem final : public IFileSystem
 {
   public:
-    bool Initialize() override;
+    static bool Initialize() override;
     void Shutdown() override;
     bool FileExists(const CPath &path) const override;
     bool DirectoryExists(const CPath &path) const override;
     bool CreateDirectory(const CPath &path) const override;
     IFileNative *OpenRead(const CPath &filename, bool bCanWrite) override;
     IFileNative *OpenWrite(const CPath &filename, bool bAppend, bool bCanRead) override;
-    TArray<CPath> ListChildren(const CPath &path) const override;
+    CArray<CPath> ListChildren(const CPath &path) const override;
 };

@@ -14,7 +14,7 @@ CEngine &CEngine::Get()
     return sInstance;
 }
 
-bool CEngine::Initialize(const TArrayView<tchar *> &arguments)
+bool CEngine::Initialize(const CArrayView<tchar *> &arguments)
 {
     if (!ProcessArguments(arguments))
     {
@@ -46,12 +46,12 @@ void CEngine::Tick()
 {
 }
 
-bool CEngine::ProcessArguments(const TArrayView<tchar *> & /*arguments*/)
+bool CEngine::ProcessArguments(const CArrayView<tchar *> & /*arguments*/)
 {
     return true;
 }
 
-bool EngineInitialize(const TArrayView<tchar *> &arguments)
+bool EngineInitialize(const CArrayView<tchar *> &arguments)
 {
     return CEngine::Get().Initialize(arguments);
 }

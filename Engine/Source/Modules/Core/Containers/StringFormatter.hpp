@@ -38,19 +38,19 @@ class CFormatterArgument
         kFormattable = 3
     };
 
-    template <WE::Concept::IsFormattable T>
-    CFormatterArgument(const T &rValue) : mType(kFormattable)
+    template <WE::Concept::IsFormattable Type>
+    CFormatterArgument(const Type &rValue) : mType(kFormattable)
     {
         mFormatter = [rValue](tchar **pDest, const tchar *pFormat) {
             return TryFormat(rValue, pDest, pFormat);
         };
     }
 
-    template <WE::Concept::IsNumeric T>
-    CFormatterArgument(const T &rValue) : mType(kNumeric)
+    template <WE::Concept::IsNumeric Type>
+    CFormatterArgument(const Type &rValue) : mType(kNumeric)
     {
         mFormatter = [rValue](tchar **pDest, const tchar *pFormat) {
-            return CNumeric::TryFormat<T>(rValue, pDest, pFormat);
+            return CNumeric::TryFormat<Type>(rValue, pDest, pFormat);
         };
     }
 

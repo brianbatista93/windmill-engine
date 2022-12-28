@@ -114,13 +114,13 @@ CString CString::ConcatCS(const tchar *pLhs, const CString &rhs)
     return WE::Internal::ConcatCStringToStrings(pLhs, rhs);
 }
 
-TArray<CString> CString::Split(tchar chr) const
+CArray<CString> CString::Split(tchar chr) const
 {
     we_assert(chr != 0);
 
-    TArray<CString> result;
+    CArray<CString> result;
 
-    const tchar *pStart = m_Data.GetData();
+    const tchar *pStart = mData.GetData();
     const tchar *pEnd = pStart;
     for (; *pEnd; ++pEnd)
     {
@@ -139,16 +139,16 @@ TArray<CString> CString::Split(tchar chr) const
     return result;
 }
 
-TArray<CString> CString::Split(const tchar *pStr) const
+CArray<CString> CString::Split(const tchar *pStr) const
 {
     we_assert(pStr != nullptr);
 
     const i32 length = i32(std::char_traits<tchar>::length(pStr));
 
-    const tchar *pStart = m_Data.GetData();
+    const tchar *pStart = mData.GetData();
     const tchar *pEnd = pStart;
 
-    TArray<CString> result;
+    CArray<CString> result;
     for (; *pEnd; ++pEnd)
     {
         if (CStringUtils::Compare(pEnd, length, pStr) == 0)
@@ -173,7 +173,7 @@ CString::CString(const u8 *pBytes, usize nSize, const IEncoder *pEncoder)
     const usize length = pEncoder->GetLength(pBytes, nSize);
     if (length > 0)
     {
-        m_Data.AddSlots(i32(length) + 1);
-        pEncoder->Decode(m_Data.GetData(), pBytes, length);
+        mData.AddSlots(i32(length) + 1);
+        pEncoder->Decode(mData.GetData(), pBytes, length);
     }
 }

@@ -44,19 +44,19 @@ class CMemoryManager
     void *Reallocate(void *pMemory, usize nSize, usize nAlign, const char *pFilename, i32 nLine, const char *pFunctionName);
     void Free(void *pMemory);
 
-    template <class T, class... Args>
-    static T *New(const char *pFilename, i32 nLine, const char *pFunctionName, Args &&...args)
+    template <class Type, class... ArgsType>
+    static Type *New(const char *pFilename, i32 nLine, const char *pFunctionName, ArgsType &&...packedArgs)
     {
-        T *ptr = (T *)Get().Allocate(sizeof(T), alignof(T), pFilename, nLine, pFunctionName);
-        return new (ptr) T(std::forward<Args>(args)...);
+        Type *ptr = (Type *)Get().Allocate(sizeof(Type), alignof(Type), pFilename, nLine, pFunctionName);
+        return new (ptr) Type(std::forward<ArgsType>(packedArgs)...);
     }
 
-    template <class T>
-    static void Delete(T *ptr)
+    template <class Type>
+    static void Delete(Type *ptr)
     {
         if (ptr)
         {
-            ptr->~T();
+            ptr->~Type();
             Get().Free(ptr);
         }
     }

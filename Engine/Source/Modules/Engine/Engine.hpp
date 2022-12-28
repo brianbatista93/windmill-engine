@@ -26,16 +26,16 @@ class CEngine
   public:
     static CEngine &Get();
 
-    bool Initialize(const TArrayView<tchar *> &arguments);
+    bool Initialize(const CArrayView<tchar *> &arguments);
 
     void Shutdown();
 
     void Tick();
 
   private:
-    bool ProcessArguments(const TArrayView<tchar *> &arguments);
+    bool ProcessArguments(const CArrayView<tchar *> &arguments);
 };
 
-extern bool EngineInitialize(const TArrayView<tchar *> &arguments);
+extern bool EngineInitialize(const CArrayView<tchar *> &arguments);
 extern void EngineShutdown();
 extern void EngineLoop();

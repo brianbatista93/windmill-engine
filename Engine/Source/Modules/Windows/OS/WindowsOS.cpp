@@ -10,14 +10,7 @@ namespace OS
 {
 bool Initialize()
 {
-    if (!CLogSystem::Get().AddSink(we_new(CWindowsOutputLogSink)))
-    {
-        return false;
-    }
-
-    WE_INFO(Windows, WT("Initializing Windows OS"));
-
-    return true;
+    return !!CLogSystem::Get().AddSink(we_new(CWindowsOutputLogSink));
 }
 
 void Shutdown()

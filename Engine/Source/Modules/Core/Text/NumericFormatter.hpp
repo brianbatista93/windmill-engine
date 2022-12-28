@@ -50,7 +50,7 @@ class CNumeric
         EType eType = kInvalid;
         i32 nPrecision = 0;
         bool bIsUpperCase = true;
-        if (!ParseFormat<T>(pFormat, &eType, &nPrecision, &bIsUpperCase))
+        if (!ParseFormat<Type>(pFormat, &eType, &nPrecision, &bIsUpperCase))
         {
             return false;
         }
@@ -109,13 +109,13 @@ class CNumeric
             *pType = kHexadecimal;
             break;
         default: {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_integral_v<Type>)
             {
                 *pType = kDecimal;
                 *pPrecision = 0;
                 return true;
             }
-            else if constexpr (std::is_floating_point_v<T>)
+            else if constexpr (std::is_floating_point_v<Type>)
             {
                 *pType = kFixedPoint;
             }
@@ -174,7 +174,7 @@ class CNumeric
     template <class Type>
     inline static tchar *FormatSigned(Type value, tchar *pDest, i32 *nWrittenCount)
     {
-        using TUnsigned = std::make_unsigned_t<T>;
+        using TUnsigned = std::make_unsigned_t<Type>;
         const TUnsigned nUnsignedValue = (TUnsigned)value;
 
         if (value < 0)
@@ -193,7 +193,7 @@ class CNumeric
     template <class Type>
     inline static bool FormatDecimal(Type value, tchar **pDest, i32 nPrecision)
     {
-        if constexpr (std::is_integral_v<T>)
+        if constexpr (std::is_integral_v<Type>)
         {
             i32 nWrittenCount = 0;
 
@@ -301,7 +301,7 @@ class CNumeric
     template <class Type>
     inline static bool FormatNumber(Type value, tchar **pDest, i32 nPrecision)
     {
-        if constexpr (WE::Concept::IsNumeric<T>)
+        if constexpr (WE::Concept::IsNumeric<Type>)
         {
             f64 doubleValue = f64(value);
             f64 integerPart = 0;

@@ -48,20 +48,20 @@ SOFTWARE.
 
 #ifndef MEMORY_MANAGER_FROM_HEADER
     #ifndef malloc
-        #define malloc(size) static_assert(false, "Please use we_malloc");
+        #define MALLOC(size) static_assert(false, "Please use we_malloc");
     #endif
     #ifndef calloc
-        #define calloc(count, size) static_assert(false, "Please use we_calloc");
+        #define CALLOC(count, size) static_assert(false, "Please use we_calloc");
     #endif
     #ifndef realloc
-        #define realloc(ptr, size) static_assert(false, "Please use we_realloc");
+        #define REALLOC(ptr, size) static_assert(false, "Please use we_realloc");
     #endif
     #ifndef free
-        #define free(ptr) static_assert(false, "Please use we_free");
+        #define FREE(ptr) static_assert(false, "Please use we_free");
     #endif
 
     #ifndef new
-        #define new static_assert(false, "Please use we_placement_new");
+        #define NEW static_assert(false, "Please use we_placement_new");
     #endif
     #ifndef delete
         #define delete static_assert(false, "Please use we_free with explicit destructor call");
@@ -75,12 +75,12 @@ SOFTWARE.
 
 #include <memory>
 
-template <class T>
-class TWEDeleter
+template <class Type>
+class CTweDeleter
 {
   public:
-    constexpr void operator()(T *pObject) const noexcept { we_delete(pObject); }
+    constexpr void operator()(Type *pObject) const noexcept { we_delete(pObject); }
 };
 
-template <class T>
-using TUniquePtr = std::unique_ptr<T, TWEDeleter<T>>;
+template <class Type>
+using TUniquePtr = std::unique_ptr<Type, CTweDeleter<Type>>;

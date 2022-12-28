@@ -8,7 +8,7 @@
 
 i32 WindmillMain(i32 nArgC, tchar *ppArgV[])
 {
-    TArray<tchar *> arguments(nArgC);
+    CArray<tchar *> arguments(nArgC);
     for (i32 i = 0; i < nArgC; ++i)
     {
         arguments[i] = ppArgV[i];

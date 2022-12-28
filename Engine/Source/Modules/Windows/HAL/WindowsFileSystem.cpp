@@ -256,9 +256,9 @@ IFileNative *CWindowsFileSystem::OpenWrite(const CPath &filename, bool bAppend, 
     return result;
 }
 
-TArray<CPath> CWindowsFileSystem::ListChildren(const CPath &path) const
+CArray<CPath> CWindowsFileSystem::ListChildren(const CPath &path) const
 {
-    TArray<CPath> result;
+    CArray<CPath> result;
 
     HANDLE hFind = INVALID_HANDLE_VALUE;
     const CPath searchPath = path + WT("/*");

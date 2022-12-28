@@ -68,5 +68,5 @@ class IFileSystem
     NDISCARD virtual bool CreateDirectory(const CPath &path) const = 0;
     virtual IFileNative *OpenRead(const CPath &filename, bool bCanWrite = false) = 0;
     virtual IFileNative *OpenWrite(const CPath &filename, bool bAppend = false, bool bCanRead = false) = 0;
-    NDISCARD virtual TArray<CPath> ListChildren(const CPath &path) const = 0;
+    NDISCARD virtual CArray<CPath> ListChildren(const CPath &path) const = 0;
 };

@@ -5,7 +5,7 @@
 #include "HAL/FileSystem.hpp"
 #include "Memory/Memory.hpp"
 
-bool CFile::WriteBytes(const TArray<u8> &bytes, const CPath &filename)
+bool CFile::WriteBytes(const CArray<u8> &bytes, const CPath &filename)
 {
     TUniquePtr<IFileNative> fileNative;
     fileNative.reset(CFileSystem::OpenWrite(filename));
@@ -58,7 +58,7 @@ bool CFile::WriteString(IFileNative *pFile, const CString &str, EEncoding encodi
             }
         }
         const usize length = CUTF8Encoder::Get().Encode(nullptr, *str, str.GetLength() * sizeof(tchar));
-        TArray<utf8> utf8Str((i32)length);
+        CArray<utf8> utf8Str((i32)length);
         CUTF8Encoder::Get().Encode(utf8Str.GetData(), *str, str.GetLength() * sizeof(tchar));
         return pFile->Write((const u8 *)utf8Str.GetData(), length) == length;
     }
@@ -75,12 +75,12 @@ bool CFile::WriteString(IFileNative *pFile, const CString &str, EEncoding encodi
     }
 
     const usize length = CAnsiEncoder::Get().Encode(nullptr, *str, str.GetLength() * sizeof(tchar));
-    TArray<ansi> ansiStr((i32)length);
+    CArray<ansi> ansiStr((i32)length);
     CAnsiEncoder::Get().Encode(ansiStr.GetData(), *str, str.GetLength() * sizeof(tchar));
     return pFile->Write((const u8 *)ansiStr.GetData(), length) == length;
 }
 
-bool CFile::ReadBytes(TArray<u8> &bytes, const CPath &filename)
+bool CFile::ReadBytes(CArray<u8> &bytes, const CPath &filename)
 {
     TUniquePtr<IFileNative> fileNative;
     fileNative.reset(CFileSystem::OpenRead(filename));

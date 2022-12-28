@@ -55,7 +55,7 @@ class CPath
 
     NDISCARD inline CString ToString() const { return mText; }
 
-    TArray<CPath> GetAllFiles(const tchar *pFilter, bool bRecursive = false) const;
+    CArray<CPath> GetAllFiles(const tchar *pFilter, bool bRecursive = false) const;
 
     [[nodiscard]] inline CPath GetParentPath() const
     {
@@ -83,13 +83,13 @@ class CPath
 
     friend CPath operator/(const CPath &lhs, const CPath &rhs)
     {
-        CPath result(lhs);
+        CPath result{lhs};
         return result.Append(rhs);
     }
 
     friend CPath operator/(const CPath &lhs, const tchar *pRhs)
     {
-        CPath result(lhs);
+        CPath result{lhs};
         return result.Append(pRhs, (i32)std::char_traits<tchar>::length(pRhs));
     }
 

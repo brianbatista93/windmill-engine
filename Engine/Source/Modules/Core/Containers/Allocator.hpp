@@ -25,12 +25,12 @@ SOFTWARE.
 #include "Types.hpp"
 
 template <class TIndexType>
-class TAllocator
+class CAllocator
 {
   public:
     using IndexType = TIndexType;
 
-    ~TAllocator() { we_assert(mData == nullptr && "The allocator is been destroyed without releasing its data"); }
+    ~CAllocator() { we_assert(mData == nullptr && "The allocator is been destroyed without releasing its data"); }
 
     void *Reallocate(usize nSize)
     {
@@ -44,7 +44,7 @@ class TAllocator
 
     NDISCARD void *GetData() const { return mData; }
 
-    void MoveTo(TAllocator &rOther) noexcept
+    void MoveTo(CAllocator &rOther) noexcept
     {
         rOther.mData = mData;
         mData = nullptr;

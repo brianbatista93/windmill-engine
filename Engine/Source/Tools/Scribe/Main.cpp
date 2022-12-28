@@ -46,11 +46,11 @@ void InitScribe(i32 nArgC, tchar *ppArgV[])
 
     const CPath filePath{ppArgV[1]};
 
-    TArray<CPath> files = {};
+    CArray<CPath> files = {};
 
     if (filePath.IsDirectory())
     {
-        const TArray<CPath> headerFiles{filePath.GetAllFiles(WT("*.hpp"), true)};
+        const CArray<CPath> headerFiles{filePath.GetAllFiles(WT("*.hpp"), true)};
         for (const auto &file : headerFiles)
         {
             files.Add(file);
