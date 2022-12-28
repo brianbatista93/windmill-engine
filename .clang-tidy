@@ -31,7 +31,7 @@ Checks: >
   -readability-implicit-bool-conversion,
   -readability-magic-numbers
 WarningsAsErrors: ''
-HeaderFilterRegex: '(?:Engine(/|\\)Source(/|\\)(Modules|Tools)).*$'
+HeaderFilterRegex: '(?:Engine(\/|\\)Source(\/|\\)(Modules|Tools)).*(hpp|cpp)$'
 FormatStyle:       'file'
 User:              brian
 
@@ -59,7 +59,7 @@ CheckOptions:
     value:           CamelCase
   - key:             readability-identifier-naming.FunctionIgnoredRegexp
     value:           (begin|end|rbegin|rend)
-  - key:             readability-identifier-naming.MemberCase
+  - key:             readability-identifier-naming.PrivateMethodCase
     value:           CamelCase
   - key:             readability-identifier-naming.VariableCase
     value:           camelBack
@@ -67,7 +67,7 @@ CheckOptions:
     value:           camelBack
   - key:             readability-identifier-naming.EnumPrefix
     value:           E
-  - key:             readability-identifier-naming.MemberPrefix
+  - key:             readability-identifier-naming.PrivateMemberPrefix
     value:           m
   - key:             readability-identifier-naming.AbstractClassPrefix
     value:           I

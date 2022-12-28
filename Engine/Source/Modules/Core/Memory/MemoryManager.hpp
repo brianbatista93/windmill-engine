@@ -84,7 +84,7 @@ class CMemoryManager
 
     static void *MallocInternal(usize nSize, usize nAlignment);
 
-    void *ReallocInternal(void *pMemory, usize nSize, usize nAlignment);
+    static void *ReallocInternal(void *pMemory, usize nSize, usize nAlignment);
 
     static void FreeInternal(void *pMemory);
 
