@@ -38,9 +38,9 @@ class CLogSystem
     void RemoveSink(ILogSink *pSink);
     void RemoveAllSinks();
 
-    template <class... Args>
+    template <class... ArgsType>
     inline void Log(const CLogEmitter *pEmitter, ELogLevel logLevel, const char *pFile, i32 nLine, const char *pFunction, const tchar *pFormat,
-                    Args &&...vArgs)
+                    ArgsType &&...packedvArgs)
     {
         if (pEmitter->ShouldLog(logLevel))
         {

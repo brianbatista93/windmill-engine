@@ -3,7 +3,7 @@
 #include "HAL/FileSystem.hpp"
 #include "Logging/Log.hpp"
 
-DECLARE_STATIC_LOG_EMITTER(Scribe, eInfo);
+DeclareStaticLogEmitter(Scribe, eInfo);
 
 CPath gLicenseFile;
 
@@ -202,7 +202,7 @@ tchar *IdentifyAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
 
 tchar *ProcessAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
 {
-    static CAttributeManager sAttributeManager;
+    const static CAttributeManager sAttributeManager;
 
     const CString attributeName = GetAttributeName(pStr);
     if (auto attribute = sAttributeManager.FindAttribute(*attributeName); attribute != nullptr)

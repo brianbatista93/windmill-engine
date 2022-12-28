@@ -42,7 +42,7 @@ class CAttributeManager
 
     void Initialize();
 
-    AttributeFunctionType FindAttribute(const tchar *attributeName)
+    AttributeFunctionType FindAttribute(const tchar *attributeName) const
     {
         auto iter = mAttributes.find(attributeName);
         if (iter != mAttributes.end())
