@@ -39,18 +39,18 @@ class TStringCast<ansi, wide>
 {
   public:
     inline TStringCast(const wide *pSrc) : TStringCast(pSrc, std::char_traits<wide>::length(pSrc)) {}
-    inline TStringCast(const wide *pSrc, usize nLength) : m_nLength(nLength)
+    inline TStringCast(const wide *pSrc, usize nLength) : mLength(nLength)
     {
         we_assert(nLength < 1024);
-        OS::TCharToUTF8((utf8 *)m_pBuffer, (const tchar *)pSrc, nLength);
+        OS::TCharToUTF8((utf8 *)mBuffer, (const tchar *)pSrc, nLength);
     }
 
-    inline const ansi *operator*() const { return m_pBuffer; }
-    inline usize GetLength() const { return m_nLength; }
+    inline const ansi *operator*() const { return mBuffer; }
+    NDISCARD inline usize GetLength() const { return mLength; }
 
   private:
-    ansi m_pBuffer[1024]{0};
-    usize m_nLength;
+    ansi mBuffer[1024]{0};
+    usize mLength;
 };
 
 template <>
@@ -58,16 +58,16 @@ class TStringCast<wide, ansi>
 {
   public:
     inline TStringCast(const ansi *pSrc) : TStringCast(pSrc, std::char_traits<ansi>::length(pSrc)) {}
-    inline TStringCast(const ansi *pSrc, usize nLength) : m_nLength(nLength)
+    inline TStringCast(const ansi *pSrc, usize nLength) : mLength(nLength)
     {
         we_assert(nLength < 1024);
-        OS::UTF8ToTChar((tchar *)m_pBuffer, (const utf8 *)pSrc, nLength);
+        OS::UTF8ToTChar((tchar *)mBuffer, (const utf8 *)pSrc, nLength);
     }
 
-    inline const wide *operator*() const { return m_pBuffer; }
-    inline usize GetLength() const { return m_nLength; }
+    inline const wide *operator*() const { return mBuffer; }
+    NDISCARD inline usize GetLength() const { return mLength; }
 
   private:
-    wide m_pBuffer[1024]{0};
-    usize m_nLength;
+    wide mBuffer[1024]{0};
+    usize mLength;
 };

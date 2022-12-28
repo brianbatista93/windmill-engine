@@ -166,6 +166,6 @@ void CMemoryManager::EditAllocationInfo(usize nOldMemoryAddress, void *pNewMemor
 
 void CMemoryManager::RemoveAllocationInfo(usize nMemoryAddress)
 {
-    [[maybe_unused]] usize erased = mCurrentAllocations.erase(nMemoryAddress);
+    [[maybe_unused]] const usize erased = mCurrentAllocations.erase(nMemoryAddress);
     we_assert(erased && "Trying to free an unallocated memory.");
 }

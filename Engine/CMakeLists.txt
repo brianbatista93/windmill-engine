@@ -46,6 +46,8 @@ endif()
 include ("Build/CMake/CXX-Properties.cmake")
 include ("Build/CMake/Config-Properties.cmake")
 
+include ("Build/CMake/Build-Helper.cmake")
+
 add_subdirectory ("Source/Modules/Core")
 add_subdirectory ("Source/Modules/${PLATFORM_NAME}")
 
@@ -53,8 +55,6 @@ option (BUILD_TOOLS "Build tools" ON)
 if (BUILD_TOOLS)
 	add_subdirectory ("Source/Tools/Scribe")
 endif ()
-
-include ("Build/CMake/Build-Helper.cmake")
 
 add_subdirectory ("Source/Modules/Engine")
 add_subdirectory ("Source/Launchers")
@@ -64,4 +64,8 @@ add_custom_target (
 	COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/Engine/Assets" "${CMAKE_BINARY_DIR}/Assets"
 	COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/Engine/Config" "${CMAKE_BINARY_DIR}/Config"
 	COMMENT "Coping engine resources..."
+)
+
+set_target_properties ("Copy-Engine-Resources" PROPERTIES
+  FOLDER "Helpers"
 )

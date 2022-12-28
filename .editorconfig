@@ -27,3 +27,8 @@ indent_size = 2
 [*.json]
 indent_style = space
 indent_size = 2
+
+# CMake files
+[{CMakeLists.txt,*.cmake}]
+indent_style = space
+indent_size = 2

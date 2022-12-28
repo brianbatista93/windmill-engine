@@ -3,33 +3,33 @@
 
 CPath &CPath::Append(const tchar *pStr, i32 nLength)
 {
-    i32 dataCount = m_Text.m_Data.GetSize();
+    i32 dataCount = mText.m_Data.GetSize();
     if (nLength == 0)
     {
-        if (dataCount > 1 and m_Text.m_Data[dataCount - 2] != WT('/') and m_Text.m_Data[dataCount - 2] != WT('\\'))
+        if (dataCount > 1 and mText.m_Data[dataCount - 2] != WT('/') and mText.m_Data[dataCount - 2] != WT('\\'))
         {
-            m_Text.m_Data[dataCount - 1] = WT('/');
-            m_Text.m_Data.Add(WT('\0'));
+            mText.m_Data[dataCount - 1] = WT('/');
+            mText.m_Data.Add(WT('\0'));
         }
     }
     else
     {
         if (dataCount > 0)
         {
-            if (dataCount > 1 and m_Text.m_Data[dataCount - 2] != WT('/') and m_Text.m_Data[dataCount - 2] != WT('\\') and *pStr != WT('/'))
+            if (dataCount > 1 and mText.m_Data[dataCount - 2] != WT('/') and mText.m_Data[dataCount - 2] != WT('\\') and *pStr != WT('/'))
             {
-                m_Text.m_Data[dataCount - 1] = WT('/');
+                mText.m_Data[dataCount - 1] = WT('/');
             }
             else
             {
-                m_Text.m_Data.Pop();
+                mText.m_Data.Pop();
                 --dataCount;
             }
         }
 
-        m_Text.m_Data.Reserve(dataCount + nLength);
-        m_Text.m_Data.Append(pStr, nLength);
-        m_Text.m_Data.Add(WT('\0'));
+        mText.m_Data.Reserve(dataCount + nLength);
+        mText.m_Data.Append(pStr, nLength);
+        mText.m_Data.Add(WT('\0'));
     }
 
     return *this;
@@ -60,7 +60,7 @@ TArray<CPath> CPath::GetAllFiles(const tchar *pFilter, bool bRecursive) const
 
     const TArray<CPath> files = GetAllFilesImpl(*this);
 
-    for (auto path : files)
+    for (const auto &path : files)
     {
         if (path.IsFile() and CFileSystem::MatchFilter(path, pFilter))
         {

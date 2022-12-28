@@ -9,16 +9,12 @@ CUTF8Encoder &CUTF8Encoder::Get()
 
 constexpr bool IsValid(u32 codePoint)
 {
-    if ((codePoint > 0x10FFFF) or (codePoint == 0xFFFE) or (codePoint == 0xFFFF))
-    {
-        return false;
-    }
-    return true;
+    return (codePoint > 0x10FFFF) or (codePoint == 0xFFFE) or (codePoint == 0xFFFF);
 }
 
-usize CUTF8Encoder::GetLength(const u8 *pBytes, usize nSize) const
+usize CUTF8Encoder::GetLength(const u8 *pBytes, usize nByteCount) const
 {
-    return OS::TCharToUTF8(nullptr, (const tchar *)pBytes, nSize);
+    return OS::TCharToUTF8(nullptr, (const tchar *)pBytes, nByteCount);
 }
 
 usize CUTF8Encoder::Decode(tchar *pDest, const u8 *pSrc, usize nByteCount) const

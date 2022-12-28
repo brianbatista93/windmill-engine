@@ -11,38 +11,6 @@ IFileSystem *CFileSystem::Get()
     return &sInstance;
 }
 
-bool CWindowsFileSystem::Initialize()
-{
-    wchar_t appPathWide[WE_OS_MAX_PATH]{0};
-    const usize length = ::GetModuleFileNameW(nullptr, appPathWide, WE_OS_MAX_PATH);
-    if (length == 0)
-    {
-        return false;
-    }
-    const CPath appFilePath({appPathWide, length});
-    const CPath appPath = appFilePath.GetParentPath();
-    mMountedDirs[(u32)EResourceMountType::eAssets] = appPath / WTL("Assets");
-    mMountedDirs[(u32)EResourceMountType::eEngine] = appPath;
-    mMountedDirs[(u32)EResourceMountType::eDebug] = appPath / WTL("Logs");
-
-#ifndef WE_OS_UWP
-    PWSTR userDocumentsWide = nullptr;
-    const HRESULT result = ::SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &userDocumentsWide);
-    if (FAILED(result))
-    {
-        return false;
-    }
-    mMountedDirs[(u32)EResourceMountType::eHome] = CPath({userDocumentsWide, ::wcslen(userDocumentsWide)});
-    CoTaskMemFree(userDocumentsWide);
-#endif // !WE_OS_UWP
-
-    return true;
-}
-
-void CWindowsFileSystem::Shutdown()
-{
-}
-
 bool CWindowsFileSystem::FileExists(const CPath &path) const
 {
     const DWORD attributes = ::GetFileAttributesW(*path);

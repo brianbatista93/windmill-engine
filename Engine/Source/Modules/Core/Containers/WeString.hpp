@@ -103,13 +103,13 @@ class CString
     friend inline CString operator+(const tchar *pLhs, CString &&rhs) noexcept { return ConcatCS(pLhs, std::move(rhs)); }
     friend inline CString operator+(const tchar *pLhs, const CString &rhs) { return ConcatCS(pLhs, rhs); }
 
-    inline i32 GetLength() const { return m_Data.GetSize() > 0 ? (m_Data.GetSize() - 1) : 0; }
-    inline bool IsEmpty() const { return GetLength() == 0; }
+    NDISCARD inline i32 GetLength() const { return m_Data.GetSize() > 0 ? (m_Data.GetSize() - 1) : 0; }
+    NDISCARD inline bool IsEmpty() const { return GetLength() == 0; }
 
     inline const CharType *operator*() const { return IsEmpty() ? WT("") : m_Data.GetData(); }
 
     inline ArrayType &GetArray() { return m_Data; }
-    inline const ArrayType GetArray() const { return m_Data; }
+    NDISCARD inline ArrayType GetArray() const { return m_Data; }
 
     inline bool StartsWith(const tchar *pStart, i32 nOffset = 0) const
     {
@@ -123,7 +123,7 @@ class CString
         return CStringUtils::EndsWith(GetArray().GetData() + nOffset, pEnd, GetLength());
     }
 
-    inline CString Substring(i32 nStart, i32 nCount = INVALID_INDEX) const
+    NDISCARD inline CString Substring(i32 nStart, i32 nCount = INVALID_INDEX) const
     {
         we_assert(nStart < GetLength() and (nCount == INVALID_INDEX or nCount <= GetLength()));
         nCount = nCount == INVALID_INDEX ? GetLength() : nCount;
@@ -136,7 +136,7 @@ class CString
         return CStringUtils::Find(GetArray().GetData(), pStr, nOffset);
     }
 
-    TArray<CString> Split(tchar chr) const;
+    NDISCARD TArray<CString> Split(tchar chr) const;
     TArray<CString> Split(const tchar *pStr) const;
 
     template <WE::Concept::IsContainer TContainer>
@@ -188,7 +188,7 @@ class CString
     inline bool operator==(const CString &other) const { return CStringUtils::Compare(GetArray().GetData(), *other) == 0; }
 
     NDISCARD auto begin() { return m_Data.begin(); }
-    NDISCARD const auto begin() const { return m_Data.begin(); }
+    NDISCARD auto begin() const { return m_Data.begin(); }
     NDISCARD auto end()
     {
         auto *result = m_Data.end();
@@ -198,9 +198,9 @@ class CString
         }
         return result;
     }
-    NDISCARD const auto end() const
+    NDISCARD auto end() const
     {
-        auto *result = m_Data.end();
+        const auto *result = m_Data.end();
         if (m_Data.GetSize())
         {
             --result;
@@ -209,9 +209,9 @@ class CString
     }
 
     NDISCARD auto rbegin() { return std::reverse_iterator(m_Data.end()); }
-    NDISCARD const auto rbegin() const { return std::reverse_iterator(m_Data.end()); }
+    NDISCARD auto rbegin() const { return std::reverse_iterator(m_Data.end()); }
     NDISCARD auto rend() { return std::reverse_iterator(begin()); }
-    NDISCARD const auto rend() const { return std::reverse_iterator(begin()); }
+    NDISCARD auto rend() const { return std::reverse_iterator(begin()); }
 
   private:
     inline void Init(const tchar *pStr, usize nLength)

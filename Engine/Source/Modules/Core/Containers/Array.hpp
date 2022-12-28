@@ -35,7 +35,7 @@ class TArray
     using Iterator = ElementType *;
     using ConstIterator = const ElementType *;
 
-    inline TArray() : m_Allocator(), m_nSize(0), m_nCapacity(0) {}
+    inline TArray() : m_Allocator(), mSize(0), mCapacity(0) {}
     inline TArray(IndexType nInitialSize) { InitializeWithSize(nInitialSize); }
     inline TArray(std::initializer_list<ElementType> list) noexcept { InitializeWithRange(list.begin(), list.end()); }
     template <typename ItType>
@@ -49,21 +49,21 @@ class TArray
 
     inline ~TArray()
     {
-        CMemoryUtils::Destroy(GetData(), m_nSize);
+        CMemoryUtils::Destroy(GetData(), mSize);
         m_Allocator.ReleaseData();
     }
 
-    inline TArray &operator=(const TArray &other)
+    inline TArray &operator=(const TArray &other) // NOLINT
     {
         if (this != &other)
         {
-            const auto nDifference = CMath::Abs(m_nSize - other.m_nSize);
-            CMemoryUtils::Destroy(GetData() + other.m_nSize, nDifference);
+            const auto nDifference = CMath::Abs(mSize - other.mSize);
+            CMemoryUtils::Destroy(GetData() + other.mSize, nDifference);
 
-            const IndexType sizeInBytes = other.m_nSize * sizeof(ElementType);
-            m_Allocator.Reallocate(sizeInBytes);
-            m_nSize = other.m_nSize;
-            m_nCapacity = other.m_nSize;
+            const IndexType sizeInBytes = other.mSize * sizeof(ElementType);
+            mAllocator.Reallocate(sizeInBytes);
+            mSize = other.mSize;
+            mCapacity = other.mSize;
             memcpy(GetData(), other.GetData(), sizeInBytes);
         }
 
@@ -76,11 +76,11 @@ class TArray
         {
             m_Allocator.ReleaseData();
             other.m_Allocator.MoveTo(m_Allocator);
-            m_nSize = other.m_nSize;
-            m_nCapacity = other.m_nCapacity;
+            mSize = other.mSize;
+            mCapacity = other.mCapacity;
 
-            other.m_nSize = 0;
-            other.m_nCapacity = 0;
+            other.mSize = 0;
+            other.mCapacity = 0;
         }
 
         return *this;
@@ -88,17 +88,17 @@ class TArray
 
     inline void Reserve(IndexType nCapacity)
     {
-        if (nCapacity > m_nCapacity)
+        if (nCapacity > mCapacity)
         {
             m_Allocator.Reallocate(nCapacity * sizeof(ElementType));
-            m_nCapacity = nCapacity;
+            mCapacity = nCapacity;
         }
     }
 
     inline void Clear(bool bShrink = false)
     {
-        CMemoryUtils::Destroy(GetData(), m_nSize);
-        m_nSize = 0;
+        CMemoryUtils::Destroy(GetData(), mSize);
+        mSize = 0;
         if (bShrink)
         {
             ShrinkToFit();
@@ -107,37 +107,37 @@ class TArray
 
     inline void ShrinkToFit()
     {
-        if (m_nCapacity != m_nSize)
+        if (mCapacity != mSize)
         {
-            m_Allocator.Reallocate(m_nSize * sizeof(ElementType));
-            m_nCapacity = m_nSize;
+            m_Allocator.Reallocate(mSize * sizeof(ElementType));
+            mCapacity = mSize;
         }
     }
 
     inline IndexType RemoveAt(IndexType nIndex)
     {
-        we_assert(nIndex < m_nSize && "Index out of bound");
+        we_assert(nIndex < mSize && "Index out of bound");
 
-        for (IndexType i = m_nSize; i > nIndex; --i)
+        for (IndexType i = mSize; i > nIndex; --i)
         {
             GetData()[i] = std::move(GetData()[i - 1]);
         }
 
-        return --m_nSize;
+        return --mSize;
     }
 
-    inline bool IsEmpty() const { return GetSize() == 0; }
-    inline IndexType GetSize() const { return m_nSize; }
-    inline IndexType GetCapacity() const { return m_nCapacity; }
+    NDISCARD inline bool IsEmpty() const { return GetSize() == 0; }
+    NDISCARD inline IndexType GetSize() const { return mSize; }
+    NDISCARD inline IndexType GetCapacity() const { return mCapacity; }
 
     inline ElementType &At(IndexType nIndex)
     {
-        we_assert(nIndex < m_nSize);
+        we_assert(nIndex < mSize);
         return GetData()[nIndex];
     }
-    inline const ElementType &At(IndexType nIndex) const
+    NDISCARD inline const ElementType &At(IndexType nIndex) const
     {
-        we_assert(nIndex < m_nSize);
+        we_assert(nIndex < mSize);
         return GetData()[nIndex];
     }
 
@@ -145,34 +145,34 @@ class TArray
     inline const ElementType &operator[](IndexType nIndex) const { return At(nIndex); }
 
     inline ElementType &Front() { return At(0); }
-    inline const ElementType &Front() const { return At(0); }
+    NDISCARD inline const ElementType &Front() const { return At(0); }
 
-    inline ElementType &Back() { return At(m_nSize - 1); }
-    inline const ElementType &Back() const { return At(m_nSize - 1); }
+    inline ElementType &Back() { return At(mSize - 1); }
+    NDISCARD inline const ElementType &Back() const { return At(mSize - 1); }
 
     inline ElementType *GetData() { return (ElementType *)m_Allocator.GetData(); }
-    inline const ElementType *GetData() const { return (const ElementType *)m_Allocator.GetData(); }
+    NDISCARD inline const ElementType *GetData() const { return (const ElementType *)m_Allocator.GetData(); }
 
     template <class... Args>
     inline IndexType Emplace(IndexType nIndex, Args &&...vArgs) noexcept
     {
-        we_assert(nIndex <= m_nSize && "Index out of bound");
+        we_assert(nIndex <= mSize && "Index out of bound");
 
-        const IndexType newSize = m_nSize + 1;
-        if (newSize > m_nCapacity)
+        const IndexType newSize = mSize + 1;
+        if (newSize > mCapacity)
         {
             const IndexType newCapacity = CalculateGrowth();
             Reserve(newCapacity);
         }
 
-        for (IndexType i = m_nSize; i > nIndex; --i)
+        for (IndexType i = mSize; i > nIndex; --i)
         {
             GetData()[i] = std::move(GetData()[i - 1]);
         }
 
         new (GetData() + nIndex) ElementType(std::forward<Args>(vArgs)...);
 
-        return m_nSize++;
+        return mSize++;
     }
 
     inline IndexType Add(ElementType &&element) { return Emplace(GetSize(), std::move(element)); }
@@ -183,8 +183,8 @@ class TArray
 
     inline IndexType AddSlots(IndexType nCount = 1)
     {
-        const IndexType newSize = m_nSize + nCount;
-        const IndexType oldSize = m_nSize;
+        const IndexType newSize = mSize + nCount;
+        const IndexType oldSize = mSize;
 
         Resize(newSize);
 
@@ -193,8 +193,8 @@ class TArray
 
     inline void Append(const ElementType *pElements, IndexType nSize)
     {
-        const IndexType newSize = m_nSize + nSize;
-        const IndexType oldSize = m_nSize;
+        const IndexType newSize = mSize + nSize;
+        const IndexType oldSize = mSize;
 
         Resize(newSize);
 
@@ -203,8 +203,8 @@ class TArray
 
     inline void Append(const TArray &other)
     {
-        const IndexType newSize = m_nSize + other.m_nSize;
-        const IndexType oldSize = m_nSize;
+        const IndexType newSize = mSize + other.mSize;
+        const IndexType oldSize = mSize;
 
         Resize(newSize);
 
@@ -214,42 +214,42 @@ class TArray
     inline ElementType Pop()
     {
         we_assert(!IsEmpty());
-        ElementType element = std::move(GetData()[m_nSize - 1]);
-        --m_nSize;
+        const ElementType element = std::move(GetData()[mSize - 1]);
+        --mSize;
         return element;
     }
 
     inline void Resize(IndexType nNewSize)
     {
-        if (nNewSize > m_nCapacity)
+        if (nNewSize > mCapacity)
         {
             Reserve(nNewSize);
         }
 
-        if (nNewSize > m_nSize)
+        if (nNewSize > mSize)
         {
-            CMemoryUtils::Construct(GetData() + m_nSize, (usize)(nNewSize - m_nSize));
+            CMemoryUtils::Construct(GetData() + (usize)mSize, (usize)nNewSize - (usize)mSize);
         }
-        else if (nNewSize < m_nSize)
+        else if (nNewSize < mSize)
         {
-            CMemoryUtils::Destroy(GetData() + nNewSize, (usize)(m_nSize - nNewSize));
+            CMemoryUtils::Destroy(GetData() + (usize)nNewSize, (usize)mSize - (usize)nNewSize);
         }
 
-        m_nSize = nNewSize;
+        mSize = nNewSize;
     }
 
     // Stl iterators
     inline Iterator begin() noexcept { return GetData(); }
-    inline ConstIterator begin() const noexcept { return GetData(); }
+    NDISCARD inline ConstIterator begin() const noexcept { return GetData(); }
 
-    inline Iterator end() noexcept { return GetData() + m_nSize; }
-    inline ConstIterator end() const noexcept { return GetData() + m_nSize; }
+    inline Iterator end() noexcept { return GetData() + mSize; }
+    NDISCARD inline ConstIterator end() const noexcept { return GetData() + mSize; }
 
-    inline Iterator rbegin() noexcept { return GetData() + m_nSize - 1; }
-    inline ConstIterator rbegin() const noexcept { return GetData() + m_nSize - 1; }
+    inline Iterator rbegin() noexcept { return GetData() + mSize - 1; }
+    NDISCARD inline ConstIterator rbegin() const noexcept { return GetData() + mSize - 1; }
 
     inline Iterator rend() noexcept { return GetData() - 1; }
-    inline ConstIterator rend() const noexcept { return GetData() - 1; }
+    NDISCARD inline ConstIterator rend() const noexcept { return GetData() - 1; }
 
     // Global container functions
     friend inline ElementType *GetData(TArray arr) { return arr.GetData(); }
@@ -276,8 +276,8 @@ class TArray
   private:
     inline void InitializeWithSize(IndexType nInitialSize)
     {
-        m_nSize = nInitialSize;
-        m_nCapacity = nInitialSize;
+        mSize = nInitialSize;
+        mCapacity = nInitialSize;
         m_Allocator.Reallocate(nInitialSize * sizeof(ElementType));
         CMemoryUtils::Construct(GetData(), nInitialSize);
     }
@@ -285,36 +285,36 @@ class TArray
     inline void InitializeWithRange(const ElementType *pBegin, const ElementType *pEnd)
     {
         const usize size = pEnd - pBegin;
-        m_nSize = IndexType(size);
-        m_nCapacity = IndexType(size);
+        mSize = IndexType(size);
+        mCapacity = IndexType(size);
         m_Allocator.Reallocate(size * sizeof(ElementType));
         CMemoryUtils::Copy(GetData(), pBegin, size);
     }
 
     inline void CopyFromOther(const TArray &other)
     {
-        m_nSize = other.m_nSize;
-        m_nCapacity = other.m_nSize;
-        if (m_nSize > 0)
+        mSize = other.mSize;
+        mCapacity = other.mSize;
+        if (mSize > 0)
         {
-            m_Allocator.Reallocate(m_nSize * sizeof(ElementType));
-            CMemoryUtils::Copy(GetData(), other.GetData(), m_nSize);
+            m_Allocator.Reallocate(mSize * sizeof(ElementType));
+            CMemoryUtils::Copy(GetData(), other.GetData(), mSize);
         }
     }
 
     inline void MoveFromOther(TArray &&other) noexcept
     {
-        m_nSize = other.m_nSize;
-        m_nCapacity = other.m_nCapacity;
+        mSize = other.mSize;
+        mCapacity = other.mCapacity;
 
         other.m_Allocator.MoveTo(m_Allocator);
-        other.m_nSize = 0;
-        other.m_nCapacity = 0;
+        other.mSize = 0;
+        other.mCapacity = 0;
     }
 
-    inline IndexType CalculateGrowth() { return m_nCapacity > 0 ? (m_nCapacity * 2) : 1; }
+    inline IndexType CalculateGrowth() { return mCapacity > 0 ? (mCapacity * 2) : 1; }
 
     AllocatorType m_Allocator;
-    IndexType m_nSize;
-    IndexType m_nCapacity;
+    IndexType mSize;
+    IndexType mCapacity;
 };

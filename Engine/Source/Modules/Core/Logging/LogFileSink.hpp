@@ -32,5 +32,5 @@ class CLogFileSink : public ILogSink
     void Log(const SLogMessage *pMessage) override;
 
   private:
-    class IFileNative *m_pFile;
+    class IFileNative *mFile;
 };

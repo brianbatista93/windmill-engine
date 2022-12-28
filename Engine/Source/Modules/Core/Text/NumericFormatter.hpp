@@ -27,8 +27,8 @@ SOFTWARE.
 class CNumeric
 {
   public:
-    inline static i32 kDefaultPrecision = 6;
-    inline static i32 kDefaultExponentialPrecision = 3;
+    inline constexpr static i32 kDefaultPrecision = 6;
+    inline constexpr static i32 kDefaultExponentialPrecision = 3;
 
     inline static tchar kDecimalPoint = WT('.');
     inline static tchar kThousandsSeparator = WT(',');

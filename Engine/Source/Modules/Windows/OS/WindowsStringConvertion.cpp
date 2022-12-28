@@ -5,7 +5,7 @@ namespace OS
 {
 usize TCharToUTF8(utf8 *pDst, const tchar *pSrc, usize nSrcLength)
 {
-    i32 bufferSize = WideCharToMultiByte(CP_UTF8, 0, pSrc, (i32)nSrcLength, nullptr, 0, nullptr, nullptr);
+    const i32 bufferSize = WideCharToMultiByte(CP_UTF8, 0, pSrc, (i32)nSrcLength, nullptr, 0, nullptr, nullptr);
     if (pDst == nullptr)
     {
         return usize(bufferSize);

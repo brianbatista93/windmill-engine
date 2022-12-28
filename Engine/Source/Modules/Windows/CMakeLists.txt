@@ -1,19 +1,16 @@
-project ("Windows")
-
-add_library (${PROJECT_NAME} STATIC 
- "HAL/WindowsFileSystem.cpp"
- "OS/WindowsStringConvertion.cpp" 
- "OS/WindowsUtils.cpp" 
- "OS/WindowsOS.cpp" 
- "Logging/WindowsOutputLogSink.cpp")
-
-target_link_libraries (${PROJECT_NAME}
-PRIVATE
+add_we_module ("Windows"
+  VERSION "0.0.1"
+  DESCRIPTION "Engine module"
+  DEPENDS
     "Core"
-)
-
-target_include_directories (${PROJECT_NAME}
-	PUBLIC
-		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-		$<INSTALL_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  PUBLIC
+    "WindowsInclude.hpp"
+    "HAL/WindowsFileSystem.hpp"
+    "Logging/WindowsOutputLogSink.hpp"
+  PRIVATE
+    "HAL/WindowsFileSystem.cpp"
+    "OS/WindowsStringConvertion.cpp" 
+    "OS/WindowsUtils.cpp" 
+    "OS/WindowsOS.cpp" 
+    "Logging/WindowsOutputLogSink.cpp"
 )

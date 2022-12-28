@@ -42,7 +42,7 @@ class TSet
     using IndexType = std::make_signed_t<TSize>;
     using EntryType = SSetEntry<T>;
 
-    inline TSet() : m_nFreeIndex(-1), m_nCount(0), m_nFreeCount(0) {}
+    inline TSet() : mFreeIndex(-1), mCount(0), mFreeCount(0) {}
 
     inline TSet(SizeType nCapacity)
     {
@@ -61,9 +61,9 @@ class TSet
         }
     }
 
-    inline bool IsEmpty() const { return m_nCount == 0; }
+    inline bool IsEmpty() const { return mCount == 0; }
 
-    inline SizeType GetCount() const { return m_nCount - m_nFreeCount; }
+    inline SizeType GetCount() const { return mCount - mFreeCount; }
 
     inline bool Add(ElementType &&element) { return AddEntry(std::forward<ElementType>(element), nullptr); }
     inline bool Add(const ElementType &element) { return AddEntry(element, nullptr); }
@@ -92,8 +92,8 @@ class TSet
                         m_Entries[last].Next = entry.Next;
                     }
 
-                    we_assert((-3 - m_nFreeIndex) < 0);
-                    entry.Next = -3 - m_nFreeIndex;
+                    we_assert((-3 - mFreeIndex) < 0);
+                    entry.Next = -3 - mFreeIndex;
 
                     if constexpr (std::is_reference_v<T>)
                     {
@@ -104,8 +104,8 @@ class TSet
                         entry.Value.~T();
                     }
 
-                    m_nFreeIndex = i;
-                    m_nFreeCount++;
+                    mFreeIndex = i;
+                    mFreeCount++;
                     return true;
                 }
 
@@ -123,9 +123,9 @@ class TSet
     {
         m_Entries.Clear(bShrink);
         m_Buckets.Clear(bShrink);
-        m_nFreeIndex = -1;
-        m_nCount = 0;
-        m_nFreeCount = 0;
+        mFreeIndex = -1;
+        mCount = 0;
+        mFreeCount = 0;
     }
 
     inline const ElementType *Find(const T &element) const
@@ -163,9 +163,9 @@ class TSet
 
         m_Entries.Resize(size);
         m_Buckets.Resize(size);
-        m_nFreeIndex = -1;
-        m_nCount = 0;
-        m_nFreeCount = 0;
+        mFreeIndex = -1;
+        mCount = 0;
+        mFreeCount = 0;
     }
 
     inline void Resize(SizeType nNewSize)
@@ -175,7 +175,7 @@ class TSet
         m_Entries.Resize(nNewSize);
         m_Buckets.Resize(nNewSize);
 
-        for (SizeType i = 0; i < m_nCount; i++)
+        for (SizeType i = 0; i < mCount; i++)
         {
             EntryType &entry = m_Entries[i];
             if (entry.Next >= -1)
@@ -205,7 +205,7 @@ class TSet
             EntryType &entry = m_Entries[i];
             if (entry.Hash == hash and m_Comparer(entry.Value, value))
             {
-                set_if_not_null(oIndex, i);
+                SetIfNotNull(oIndex, i);
                 return false;
             }
             i = entry.Next;
@@ -215,22 +215,22 @@ class TSet
         }
 
         i64 index;
-        if (m_nFreeIndex > 0)
+        if (mFreeIndex > 0)
         {
-            index = m_nFreeIndex--;
-            we_assert((-3 - m_Entries[m_nFreeIndex].Next) >= -1);
-            m_nFreeIndex = -3 - m_Entries[m_nFreeIndex].Next;
+            index = mFreeIndex--;
+            we_assert((-3 - m_Entries[mFreeIndex].Next) >= -1);
+            mFreeIndex = -3 - m_Entries[mFreeIndex].Next;
         }
         else
         {
-            size_t count = m_nCount;
+            size_t count = mCount;
             if (count == m_Entries.GetSize())
             {
                 Resize();
                 bucket = m_Buckets.begin() + (hash % m_Buckets.GetSize());
             }
             index = count;
-            m_nCount = count + 1;
+            mCount = count + 1;
         }
 
         {
@@ -239,7 +239,7 @@ class TSet
             entry.Next = *bucket - 1;
             entry.Value = std::move(value);
             *bucket = index + 1;
-            set_if_not_null(oIndex, static_cast<size_t>(index));
+            SetIfNotNull(oIndex, static_cast<size_t>(index));
         }
 
         return true;
@@ -248,7 +248,7 @@ class TSet
     TArray<EntryType, TAllocator<IndexType>> m_Entries;
     TArray<IndexType, TAllocator<IndexType>> m_Buckets;
     TComparer m_Comparer;
-    IndexType m_nFreeIndex;
-    TSize m_nCount;
-    TSize m_nFreeCount;
+    IndexType mFreeIndex;
+    TSize mCount;
+    TSize mFreeCount;
 };

@@ -24,8 +24,6 @@ SOFTWARE.
 class CFileSystem
 {
   public:
-    inline static bool Initialize() { return Get()->Initialize(); }
-    inline static void Shutdown() { Get()->Initialize(); }
     inline static bool FileExists(const CPath &path) { return Get()->FileExists(path); }
     inline static bool DirectoryExists(const CPath &path) { return Get()->DirectoryExists(path); }
     inline static bool CreateDirectory(const CPath &path) { return Get()->CreateDirectory(path); }
@@ -36,8 +34,6 @@ class CFileSystem
     }
     inline static TArray<CPath> ListChildren(const CPath &path) { return Get()->ListChildren(path); }
     static bool MatchFilter(const CPath &path, const tchar *pFilter);
-
-    static bool MapDirectory(EResourceMountType eResourceMountType, EResourceType eResourceType, const CPath &path);
 
   private:
     static class IFileSystem *Get();

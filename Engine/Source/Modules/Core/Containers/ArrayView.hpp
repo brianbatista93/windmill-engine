@@ -27,22 +27,22 @@ class TArrayView
   public:
     using SizeType = typename Alloc::IndexType;
 
-    TArrayView() : m_pBegin(nullptr), m_pEnd(nullptr) {}
-    TArrayView(TArray<T, Alloc> &arr) : m_pBegin(arr.begin()), m_pEnd(arr.end()) {}
+    TArrayView() : mBegin(nullptr), mEnd(nullptr) {}
+    TArrayView(TArray<T, Alloc> &arr) : mBegin(arr.begin()), mEnd(arr.end()) {}
     ~TArrayView()
     {
-        m_pBegin = nullptr;
-        m_pEnd = nullptr;
+        mBegin = nullptr;
+        mEnd = nullptr;
     }
 
-    TArrayView(TArrayView &&) = default;
+    TArrayView(TArrayView &&) noexcept = default;
     TArrayView(const TArrayView &) = default;
-    TArrayView &operator=(TArrayView &&) = default;
+    TArrayView &operator=(TArrayView &&) noexcept = default;
     TArrayView &operator=(const TArrayView &) = default;
 
-    constexpr bool IsEmpty() const { return m_pEnd == m_pBegin; }
+    NDISCARD constexpr bool IsEmpty() const { return mEnd == mBegin; }
 
   private:
-    T *m_pBegin;
-    T *m_pEnd;
+    T *mBegin;
+    T *mEnd;
 };

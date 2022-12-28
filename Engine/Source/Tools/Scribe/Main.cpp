@@ -51,7 +51,7 @@ void InitScribe(i32 nArgC, tchar *ppArgV[])
     if (filePath.IsDirectory())
     {
         const TArray<CPath> headerFiles{filePath.GetAllFiles(WT("*.hpp"), true)};
-        for (auto &file : headerFiles)
+        for (const auto &file : headerFiles)
         {
             files.Add(file);
         }
@@ -89,7 +89,7 @@ MAIN_ENTRY_BEGIN
         return -1;
     }
 
-    CLogRAII logRAII;
+    const CLogRAII logRAII;
 
     try
     {

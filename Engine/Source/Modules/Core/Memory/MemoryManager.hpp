@@ -52,7 +52,7 @@ class CMemoryManager
     }
 
     template <class T>
-    static void Delete(T *ptr, const char *, i32, const char *)
+    static void Delete(T *ptr)
     {
         if (ptr)
         {
@@ -82,11 +82,11 @@ class CMemoryManager
 
     CMemoryManager() = default;
 
-    void *MallocInternal(usize nSize, usize nAlignment);
+    static void *MallocInternal(usize nSize, usize nAlignment);
 
     void *ReallocInternal(void *pMemory, usize nSize, usize nAlignment);
 
-    void FreeInternal(void *pMemory);
+    static void FreeInternal(void *pMemory);
 
     void AddAllocationInfo(usize nMemoryAddress, const SAllocationInfo *pInfo);
 

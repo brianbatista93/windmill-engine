@@ -43,7 +43,7 @@ SOFTWARE.
 #endif // !we_new
 
 #ifndef we_delete
-    #define we_delete(ptr) CMemoryManager::Get().Delete(ptr, __FILE__, __LINE__, __FUNCTION__)
+    #define we_delete(ptr) CMemoryManager::Get().Delete(ptr)
 #endif // !we_delete
 
 #ifndef MEMORY_MANAGER_FROM_HEADER

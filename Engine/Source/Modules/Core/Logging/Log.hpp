@@ -40,7 +40,7 @@ class CLogSystem
 
     template <class... Args>
     inline void Log(const CLogEmitter *pEmitter, ELogLevel logLevel, const char *pFile, i32 nLine, const char *pFunction, const tchar *pFormat,
-                    Args &&...args)
+                    Args &&...vArgs)
     {
         if (pEmitter->ShouldLog(logLevel))
         {
@@ -50,7 +50,7 @@ class CLogSystem
             message.pFilename = pFile;
             message.nLine = nLine;
             message.pFunction = pFunction;
-            message.FormattedMessage = std::move(CString::Format(pFormat, std::forward<Args>(args)...));
+            message.FormattedMessage = std::move(CString::Format(pFormat, std::forward<Args>(vArgs)...));
 
             LogInternal(&message);
         }
@@ -61,7 +61,7 @@ class CLogSystem
   private:
     void LogInternal(const SLogMessage *pMessage);
 
-    TArray<TUniquePtr<ILogSink>> m_Sinks;
+    TArray<TUniquePtr<ILogSink>> mSinks;
 };
 
 #define DECLARE_EXTERN_LOG_EMITTER(emitter, logLevel) extern CLogEmitter _gLogEmitter##emitter(WT(#emitter), ELogLevel::logLevel) // NOLINT

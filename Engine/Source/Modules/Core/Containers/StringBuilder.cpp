@@ -62,5 +62,5 @@ CStringBuilder &CStringBuilder::AppendLine(const CString &str)
 
 CString CStringBuilder::ToString()
 {
-    return CString(m_Data.begin(), m_Data.GetSize());
+    return {m_Data.begin(), (usize)m_Data.GetSize()};
 }

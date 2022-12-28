@@ -45,12 +45,12 @@ class IFileNative
 {
   public:
     virtual ~IFileNative() = default;
-    virtual bool IsValid() const = 0;
-    virtual usize GetSize() const = 0;
+    NDISCARD virtual bool IsValid() const = 0;
+    NDISCARD virtual usize GetSize() const = 0;
     virtual void Close() = 0;
     virtual void Flush() = 0;
-    virtual bool CanRead() const = 0;
-    virtual bool CanWrite() const = 0;
+    NDISCARD virtual bool CanRead() const = 0;
+    NDISCARD virtual bool CanWrite() const = 0;
     virtual void Seek(usize nPosition, i32 mode) = 0;
     virtual usize Read(u8 *pBytes, usize nSize) = 0;
     virtual usize Write(const u8 *pBytes, usize nSize) = 0;
@@ -63,15 +63,10 @@ class IFileSystem
   public:
     virtual ~IFileSystem() = default;
 
-    virtual bool Initialize() = 0;
-    virtual void Shutdown() = 0;
-    virtual bool FileExists(const CPath &path) const = 0;
-    virtual bool DirectoryExists(const CPath &path) const = 0;
-    virtual bool CreateDirectory(const CPath &path) const = 0;
+    NDISCARD virtual bool FileExists(const CPath &path) const = 0;
+    NDISCARD virtual bool DirectoryExists(const CPath &path) const = 0;
+    NDISCARD virtual bool CreateDirectory(const CPath &path) const = 0;
     virtual IFileNative *OpenRead(const CPath &filename, bool bCanWrite = false) = 0;
     virtual IFileNative *OpenWrite(const CPath &filename, bool bAppend = false, bool bCanRead = false) = 0;
-    virtual TArray<CPath> ListChildren(const CPath &path) const = 0;
-
-  protected:
-    CPath mMountedDirs[(u32)EResourceMountType::eCount];
+    NDISCARD virtual TArray<CPath> ListChildren(const CPath &path) const = 0;
 };

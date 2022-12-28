@@ -28,12 +28,12 @@ SOFTWARE.
 namespace WE::Concept
 {
 template <class T>
-concept IsContainer = requires(T a, const T& b)
+concept IsContainer = requires(T lhs, const T& rhs)
 {
-    { a.begin() } -> std::same_as<typename T::iterator>;
-    { a.end() } -> std::same_as<typename T::iterator>;
-    { b.begin() } -> std::same_as<typename T::const_iterator>;
-    { b.end() } -> std::same_as<typename T::const_iterator>;
+    { lhs.begin() } -> std::same_as<typename T::iterator>;
+    { lhs.end() } -> std::same_as<typename T::iterator>;
+    { rhs.begin() } -> std::same_as<typename T::const_iterator>;
+    { rhs.end() } -> std::same_as<typename T::const_iterator>;
 };
 
 template <class T>

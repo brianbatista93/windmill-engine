@@ -26,10 +26,10 @@ class CAnsiEncoder : public IEncoder
   public:
     static CAnsiEncoder &Get();
 
-    virtual const tchar *GetName() override { return WT("ANSI"); }
-    virtual const tchar *GetShortName() override { return WT("ansi"); }
-    virtual usize GetLength(const u8 *pBytes, usize nByteCount) const override;
-    virtual usize Decode(tchar *pDest, const u8 *pSrc, usize nByteCount) const override;
+    const tchar *GetName() override { return WT("ANSI"); }
+    const tchar *GetShortName() override { return WT("ansi"); }
+    usize GetLength(const u8 *pBytes, usize nByteCount) const override;
+    usize Decode(tchar *pDest, const u8 *pSrc, usize nByteCount) const override;
     usize Encode(ansi *pDest, const tchar *pSrc, usize nByteCount) const;
 
   private:

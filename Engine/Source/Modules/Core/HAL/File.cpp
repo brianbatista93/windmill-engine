@@ -62,9 +62,10 @@ bool CFile::WriteString(IFileNative *pFile, const CString &str, EEncoding encodi
         CUTF8Encoder::Get().Encode(utf8Str.GetData(), *str, str.GetLength() * sizeof(tchar));
         return pFile->Write((const u8 *)utf8Str.GetData(), length) == length;
     }
-    else if (forceUnicode)
+
+    if (forceUnicode)
     {
-        const tchar unicodeBOM = (tchar)0xFEFF;
+        const auto unicodeBOM = (tchar)0xFEFF;
         if (pFile->Write((const u8 *)&unicodeBOM, sizeof(tchar)) != sizeof(tchar))
         {
             return false;
@@ -72,13 +73,11 @@ bool CFile::WriteString(IFileNative *pFile, const CString &str, EEncoding encodi
         const i32 length = str.GetLength() * (i32)sizeof(tchar);
         return (i32)pFile->Write((const u8 *)*str, length) == length;
     }
-    else
-    {
-        const usize length = CAnsiEncoder::Get().Encode(nullptr, *str, str.GetLength() * sizeof(tchar));
-        TArray<ansi> ansiStr((i32)length);
-        CAnsiEncoder::Get().Encode(ansiStr.GetData(), *str, str.GetLength() * sizeof(tchar));
-        return pFile->Write((const u8 *)ansiStr.GetData(), length) == length;
-    }
+
+    const usize length = CAnsiEncoder::Get().Encode(nullptr, *str, str.GetLength() * sizeof(tchar));
+    TArray<ansi> ansiStr((i32)length);
+    CAnsiEncoder::Get().Encode(ansiStr.GetData(), *str, str.GetLength() * sizeof(tchar));
+    return pFile->Write((const u8 *)ansiStr.GetData(), length) == length;
 }
 
 bool CFile::ReadBytes(TArray<u8> &bytes, const CPath &filename)
@@ -128,7 +127,7 @@ bool CFile::ReadString(CString &result, const CPath &filename)
             size -= 3;
         }
 
-        usize length = CUTF8Encoder::Get().Decode(nullptr, buffer, size);
+        const usize length = CUTF8Encoder::Get().Decode(nullptr, buffer, size);
         resultArray.AddSlots(i32(length + 1));
         CUTF8Encoder::Get().Decode(resultArray.GetData(), buffer, size);
     }

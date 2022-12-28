@@ -42,7 +42,7 @@ class CFile
     static bool WriteString(IFileNative *pFile, const CString &str, EEncoding encoding = EEncoding::eAuto);
 
     static bool ReadBytes(TArray<u8> &bytes, const CPath &filename);
-    static bool ReadString(CString &str, const CPath &filename);
+    static bool ReadString(CString &result, const CPath &filename);
 
     static bool IsValid(const class IFileNative *pFile);
     static bool Exist(const CPath &filename);

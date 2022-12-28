@@ -1,4 +1,7 @@
 #include "Attributes.hpp"
 #include "Attributes/AttrProperty.hpp"
 
-const AttributesMapType gAttributeFunctions = {{WT("Property"), ProcessProperty}};
+void CAttributeManager::Initialize()
+{
+    mAttributes = {{WT("Property"), std::move(ProcessProperty)}};
+}

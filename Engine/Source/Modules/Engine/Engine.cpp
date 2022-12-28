@@ -21,18 +21,6 @@ bool CEngine::Initialize(const TArrayView<tchar *> &arguments)
         return false;
     }
 
-    if (!CFileSystem::Initialize())
-    {
-        return false;
-    }
-
-    // CFileSystem::MapDirectory(EResourceMountType::eAssets,EResourceType::eTextures CPath(WT("../Assets/Textures")));
-    bool dirMapped = CFileSystem::MapDirectory(EResourceMountType::eEngine, EResourceType::eConfigFile, CPath(WT("../Config")));
-    if (!dirMapped)
-    {
-        return false;
-    }
-
     if (!CLogSystem::Initialize())
     {
         return false;
@@ -52,14 +40,13 @@ void CEngine::Shutdown()
 {
     OS::Shutdown();
     CLogSystem::Shutdown();
-    CFileSystem::Shutdown();
 }
 
 void CEngine::Tick()
 {
 }
 
-bool CEngine::ProcessArguments(const TArrayView<tchar *> &)
+bool CEngine::ProcessArguments(const TArrayView<tchar *> & /*arguments*/)
 {
     return true;
 }

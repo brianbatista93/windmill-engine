@@ -26,7 +26,7 @@ void CLogSystem::Shutdown()
 
 bool CLogSystem::AddSink(ILogSink *pSink)
 {
-    for (auto &existingSink : m_Sinks)
+    for (auto &existingSink : mSinks)
     {
         if (existingSink.get() == pSink)
         {
@@ -34,20 +34,20 @@ bool CLogSystem::AddSink(ILogSink *pSink)
         }
     }
 
-    i32 index = m_Sinks.AddSlots();
-    m_Sinks[index].reset(pSink);
+    const i32 index = mSinks.AddSlots();
+    mSinks[index].reset(pSink);
     return true;
 }
 
 void CLogSystem::RemoveSink(ILogSink *pSink)
 {
-    auto it = std::find_if(m_Sinks.begin(), m_Sinks.end(), [pSink](TUniquePtr<ILogSink> &a) { return a.get() == pSink; });
-    m_Sinks.RemoveAt((i32)(it - m_Sinks.begin()));
+    const auto *iter = std::find_if(mSinks.begin(), mSinks.end(), [pSink](TUniquePtr<ILogSink> &sink) { return sink.get() == pSink; });
+    mSinks.RemoveAt((i32)(iter - mSinks.begin()));
 }
 
 void CLogSystem::RemoveAllSinks()
 {
-    m_Sinks.Clear();
+    mSinks.Clear();
 }
 
 CLogSystem &CLogSystem::Get()
@@ -58,7 +58,7 @@ CLogSystem &CLogSystem::Get()
 
 void CLogSystem::LogInternal(const SLogMessage *pMessage)
 {
-    for (auto &sink : m_Sinks)
+    for (auto &sink : mSinks)
     {
         sink->Log(pMessage);
     }
