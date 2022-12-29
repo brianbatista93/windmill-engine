@@ -4,6 +4,8 @@ else()
   set(BUILDER_HELPER_INCLUDED 1)
 endif()
 
+include ("Build/CMake/Clang-Linter.cmake")
+
 macro (_add_scribe_module project_name)
 #	add_custom_command (
 #		TARGET ${project_name}
@@ -76,6 +78,10 @@ macro (_add_project project_name is_tool)
     PUBLIC
       ${_WE_DEPENDS}
   )
+
+  set (SOURCE_FILES ${_WE_PRIVATE})
+
+  add_linter (${project_name})
   
   if (_WE_VERSION)
     message (STATUS "${FOLDER_NAME} \"${project_name}-v${PROJECT_VERSION}\" added to build.")

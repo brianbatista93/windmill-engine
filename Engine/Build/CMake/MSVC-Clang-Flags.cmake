@@ -1,5 +1,5 @@
 add_compile_options (
-	-fms-compatibility-version=19.17 # Compatibility with VS 2022
+	-fms-compatibility-version=1917 # Compatibility with VS 2022
 	-fdiagnostics-absolute-paths	# Show absolute paths in diagnostics
 	--target=x86_64-pc-windows-msvc	# Target Windows
 	-mssse3							# Use SSSE3 instructions

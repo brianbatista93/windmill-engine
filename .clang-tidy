@@ -31,15 +31,16 @@ Checks: >
   -readability-implicit-bool-conversion,
   -readability-magic-numbers
 WarningsAsErrors: ''
-HeaderFilterRegex: '(?:Engine(\/|\\)Source(\/|\\)(Modules|Tools)).*(hpp|cpp)$'
+HeaderFilterRegex: '(?:Engine(\/|\\)Source(\/|\\)(Modules|Tools))(?!Benchmark).*(hpp)$'
 FormatStyle:       'file'
 User:              brian
+AnalyzeTemporaryDtors: false
 
 CheckOptions:
   - key: bugprone-assert-side-effect.AssertMacros
     value: 'we_assert,we_check'
   - key: bugprone-dangling-handle.HandleClasses
-    value: TArrayView;CStringView
+    value: CArrayView;CStringView
   - key: bugprone-string-constructor.StringNames
     value: CString
   - key: bugprone-suspicious-string-compare.StringCompareLikeFunctions
@@ -49,7 +50,7 @@ CheckOptions:
   - key:  performance-faster-string-find.StringLikeClasses
     value:  CString;CStringView
   - key:  performance-inefficient-vector-operation.VectorLikeClasses
-    value:  TArray;TArrayView
+    value:  CArray;CArrayView
     
   - key:             readability-identifier-naming.ClassCase
     value:           CamelCase
@@ -58,7 +59,7 @@ CheckOptions:
   - key:             readability-identifier-naming.FunctionCase
     value:           CamelCase
   - key:             readability-identifier-naming.FunctionIgnoredRegexp
-    value:           (begin|end|rbegin|rend)
+    value:           '(begin|end|rbegin|rend)'
   - key:             readability-identifier-naming.PrivateMethodCase
     value:           CamelCase
   - key:             readability-identifier-naming.VariableCase
@@ -90,9 +91,14 @@ CheckOptions:
   - key:			 readability-identifier-naming.MacroDefinitionCase
     value:           UPPER_CASE
   - key:			 readability-identifier-naming.MacroDefinitionIgnoredRegexp
-    value:           (wclass|wstruct|wenum|we_.*)
+    value:           '(wclass|wstruct|wenum|we_.*)'
   - key:             readability-function-cognitive-complexity.Threshold
     value:           143
   - key:             readability-magic-numbers.IgnorePowersOf2IntegerValues
     value:           1
+
+  - key:             readability-identifier-naming.TypeTemplateParameterIgnoredRegexp
+    value:           '^([A-Z]|expr-type)$'
+  - key:             readability-identifier-naming.ValueTemplateParameterIgnoredRegexp
+    value:           ^.[A-Z]$
 ...
