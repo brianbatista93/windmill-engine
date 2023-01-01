@@ -73,6 +73,7 @@ jobs:
           *-clang-fixes.yaml
 
     - uses: ZedThree/clang-tidy-review/post@v0.10.0
+      if: ${{ failure() }}
 
   build-and-test:
     needs: code-lint
