@@ -35,8 +35,14 @@ CMemoryManager::~CMemoryManager()
         bytesWriten += fprintf(stderr, "[ERROR] There are still allocations that have not been freed.\n");
         for (auto &[memory, info] : mCurrentAllocations)
         {
+#ifdef WE_OS_WINDOWS
             bytesWriten += fprintf(stderr, "0x%08llux (%d bytes|%d) - %s:%d (%s)\n", u64(memory), i32(info.nSize), info.nAlignment, info.pFilename,
                                    info.nLine, info.pFunctionName);
+#else
+            bytesWriten += fprintf(stderr, "0x%08lux (%d bytes|%d) - %s:%d (%s)\n", u64(memory), i32(info.nSize), info.nAlignment, info.pFilename,
+                                   info.nLine, info.pFunctionName);
+#endif // WE_OS_WINDOWS
+
 #if WE_OS_SUPPORT_CALLSTACK_INFO
             for (u32 i = 0; i < info.nCallStackFrames; ++i)
             {
