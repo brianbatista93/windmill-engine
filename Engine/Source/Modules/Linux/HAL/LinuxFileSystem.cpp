@@ -17,7 +17,7 @@ IFileSystem *CFileSystem::Get()
 
 bool CLinuxFileSystem::FileExists(const CPath &path) const
 {
-    struct stat const stt;
+    struct stat stt;
     if (stat(*CStringCast<ansi, wide>(*path, path.GetLength()), &stt))
     {
         return false;
@@ -28,7 +28,7 @@ bool CLinuxFileSystem::FileExists(const CPath &path) const
 
 bool CLinuxFileSystem::DirectoryExists(const CPath &path) const
 {
-    struct stat const stt;
+    struct stat stt;
     if (stat(*CStringCast<ansi, wide>(*path, path.GetLength()), &stt))
     {
         return false;
