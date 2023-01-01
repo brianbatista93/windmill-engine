@@ -41,7 +41,7 @@ class CFormatterArgument
     template <WE::Concept::IsFormattable Type>
     CFormatterArgument(const Type &rValue) : mType(kFormattable)
     {
-        mFormatter = [rValue](tchar **pDest, const tchar *pFormat) {
+        mFormatter = [this, rValue](tchar **pDest, const tchar *pFormat) {
             return TryFormat(rValue, pDest, pFormat);
         };
     }
@@ -49,7 +49,7 @@ class CFormatterArgument
     template <WE::Concept::IsNumeric Type>
     CFormatterArgument(const Type &rValue) : mType(kNumeric)
     {
-        mFormatter = [rValue](tchar **pDest, const tchar *pFormat) {
+        mFormatter = [this, rValue](tchar **pDest, const tchar *pFormat) {
             return CNumeric::TryFormat<Type>(rValue, pDest, pFormat);
         };
     }
