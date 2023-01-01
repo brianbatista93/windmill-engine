@@ -17,24 +17,24 @@ IFileSystem *CFileSystem::Get()
 
 bool CLinuxFileSystem::FileExists(const CPath &path) const
 {
-    struct stat const s;
-    if (stat(*CStringCast<ansi, wide>(*path, path.GetLength()), &s))
+    struct stat const stt;
+    if (stat(*CStringCast<ansi, wide>(*path, path.GetLength()), &stt))
     {
         return false;
     }
 
-    return S_ISREG(s.st_mode);
+    return S_ISREG(stt.st_mode);
 }
 
 bool CLinuxFileSystem::DirectoryExists(const CPath &path) const
 {
-    struct stat const s;
-    if (stat(*CStringCast<ansi, wide>(*path, path.GetLength()), &s))
+    struct stat const stt;
+    if (stat(*CStringCast<ansi, wide>(*path, path.GetLength()), &stt))
     {
         return false;
     }
 
-    return S_ISDIR(s.st_mode);
+    return S_ISDIR(stt.st_mode);
 }
 
 bool CLinuxFileSystem::CreateDirectory(const CPath &path) const
