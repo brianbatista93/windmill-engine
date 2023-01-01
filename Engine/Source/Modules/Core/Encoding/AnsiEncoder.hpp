@@ -21,17 +21,12 @@ SOFTWARE.
 
 #include "IEncoder.hpp"
 
-class CAnsiEncoder : public IEncoder
+class CAnsiEncoder
 {
   public:
-    static CAnsiEncoder &Get();
-
-    const tchar *GetName() override { return WT("ANSI"); }
-    const tchar *GetShortName() override { return WT("ansi"); }
-    usize GetLength(const u8 *pBytes, usize nByteCount) const override;
-    usize Decode(tchar *pDest, const u8 *pSrc, usize nByteCount) const override;
-    usize Encode(ansi *pDest, const tchar *pSrc, usize nByteCount) const;
-
-  private:
-    CAnsiEncoder() = default;
+    static const tchar *GetName() { return WT("ANSI"); }
+    static const tchar *GetShortName() { return WT("ansi"); }
+    static usize GetLength(const u8 *pBytes, usize nByteCount);
+    static usize Decode(tchar *pDest, const u8 *pSrc, usize nByteCount);
+    static usize Encode(ansi *pDest, const tchar *pSrc, usize nByteCount);
 };

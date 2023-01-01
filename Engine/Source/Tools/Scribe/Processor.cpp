@@ -202,10 +202,10 @@ tchar *IdentifyAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
 
 tchar *ProcessAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
 {
-    const static CAttributeManager sAttributeManager;
+    const static CAttributeManager kAttributeManager;
 
     const CString attributeName = GetAttributeName(pStr);
-    if (auto attribute = sAttributeManager.FindAttribute(*attributeName); attribute != nullptr)
+    if (auto attribute = kAttributeManager.FindAttribute(*attributeName); attribute != nullptr)
     {
         return attribute(builder, pStr, rLine);
     }

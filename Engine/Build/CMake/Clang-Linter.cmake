@@ -1,19 +1,33 @@
+if(CLANG_LINTER_INCLUDED)
+  message(WARNING "Clang-Linter.cmake has already been included!!")
+else()
+  set(CLANG_LINTER_INCLUDED 1)
+endif()
+
+add_custom_target (LintProjects
+  EXCLUDE_FROM_ALL
+)
+
+set_target_properties (LintProjects PROPERTIES FOLDER "Helpers")
+
 function (add_linter target_name)
-  set(lint_timestamp "${CMAKE_CURRENT_BINARY_DIR}/${target_name}.__lint_timestamp__")
+  set(lint_timestamp "${CMAKE_BINARY_DIR}/${target_name}/.lint-timestamp")
   message (STATUS ${lint_timestamp})
   add_custom_command(
     OUTPUT ${lint_timestamp}
     COMMAND clang-tidy
             "--warnings-as-errors='*'"
             --quiet
-            -p ${PROJECT_BINARY_DIR}
-            -export-fixes="${CMAKE_CURRENT_BINARY_DIR}/${target_name}-clang-fixes.yaml"
+            -p ${CMAKE_BINARY_DIR}
+            -export-fixes="${CMAKE_BINARY_DIR}/${target_name}-clang-fixes.yaml"
             ${SOURCE_FILES}
     COMMAND "${CMAKE_COMMAND}" -E touch ${lint_timestamp}
     COMMENT "Linting... ${target_name}"
+    DEPENDS ${target_name}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
-  add_custom_target(${target_name}.__lint__
-      DEPENDS ${lint_timestamp})
+  add_custom_target(${target_name}Lint DEPENDS ${lint_timestamp})
+  set_target_properties (${target_name}Lint PROPERTIES FOLDER "Helpers")
+  add_dependencies (LintProjects ${target_name}Lint)
 endfunction()

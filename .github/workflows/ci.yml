@@ -56,20 +56,12 @@ jobs:
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
         -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN }}"
 
-    - name: "Checking Files"
-      shell: bash
-      run: |
-        ls -la ${{ env.CMAKE_BUILD_DIR }}
-
-    - uses: ZedThree/clang-tidy-review@v0.10.1
-      id: review
-      with:
-        clang_tidy_version: 14
-        build_dir: '${{ env.CMAKE_BUILD_DIR }}/'
-        config_file: '.clang-tidy'
-        include: "**/Modules/*.hpp,**/Modules/*.cpp,**/Tools/*.hpp,**/Tools/*.cpp"
-        exclude: "**/Tests/*,**/Benchmark/*"
-
+    - name: Clang Tidy
+      run: >-
+        cmake
+        --build "${{ env.CMAKE_BUILD_DIR }}"
+        --target LintProjects
+        
     - uses: actions/upload-artifact@v3
       with:
         name: clang-tidy-review
@@ -77,8 +69,9 @@ jobs:
         path: |
           clang-tidy-review-output.json
           clang-tidy-review-metadata.json
-          clang_tidy_review.yaml
-        
+          *-clang-fixes.yaml
+
+    - uses: ZedThree/clang-tidy-review/post@v0.10.0
     #- if: steps.review.outputs.total_comments > 0
       #run: exit 1
 
