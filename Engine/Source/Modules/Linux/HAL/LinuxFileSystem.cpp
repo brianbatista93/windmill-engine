@@ -84,7 +84,7 @@ class CLinuxFile : public IFileNative
     void Flush() override { fsync(mHandle); }
     bool CanRead() const override { return mCanRead; }
     bool CanWrite() const override { return mCanWrite; }
-    void Seek(usize nPosition, i32 nMode) const override
+    void Seek(usize nPosition, i32 nMode) override
     {
         we_assert(IsValid());
 
