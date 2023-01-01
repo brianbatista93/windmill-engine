@@ -13,6 +13,11 @@ set_target_properties (LintProjects PROPERTIES FOLDER "Helpers")
 function (add_linter target_name)
   set(lint_timestamp "${CMAKE_BINARY_DIR}/${target_name}/.lint-timestamp")
   message (STATUS ${lint_timestamp})
+  if (CMAKE_COMPILER_IS_GNUCXX)
+    set (COMPILER_OPTIONS -fno-caret-diagnostics)
+  else()
+    set (COMPILER_OPTIONS)
+  endif()
   add_custom_command(
     OUTPUT ${lint_timestamp}
     COMMAND clang-tidy
@@ -20,6 +25,7 @@ function (add_linter target_name)
             --quiet
             -p ${CMAKE_BINARY_DIR}
             -export-fixes="${CMAKE_BINARY_DIR}/${target_name}-clang-fixes.yaml"
+            --extra-arg="${COMPILER_OPTIONS}"
             ${SOURCE_FILES}
     COMMAND "${CMAKE_COMMAND}" -E touch ${lint_timestamp}
     COMMENT "Linting... ${target_name}"
