@@ -86,10 +86,10 @@ class CString
     inline CString &operator+=(tchar chr) { return Append(chr); }
     inline CString &operator+=(const tchar *pStr) { return Append(pStr); }
 
-    template <class TStrType>
-    inline CString &operator+=(TStrType &&rhs) noexcept
+    template <class StringType>
+    inline CString &operator+=(StringType &&rhs) noexcept
     {
-        return Append(std::forward<TStr>(rhs));
+        return Append(std::forward<StringType>(rhs));
     }
 
     friend inline CString operator+(CString &&lhs, CString &&rhs) noexcept { return ConcatSS(std::move(lhs), std::move(rhs)); }

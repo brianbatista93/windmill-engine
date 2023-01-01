@@ -35,7 +35,7 @@ class CArray
     using Iterator = ElementType *;
     using ConstIterator = const ElementType *;
 
-    inline CArray() : m_Allocator(), mSize(0), mCapacity(0) {}
+    inline CArray() : mAllocator(), mSize(0), mCapacity(0) {}
     inline CArray(IndexType nInitialSize) { InitializeWithSize(nInitialSize); }
     inline CArray(std::initializer_list<ElementType> list) noexcept { InitializeWithRange(list.begin(), list.end()); }
     template <typename ItType>
@@ -50,7 +50,7 @@ class CArray
     inline ~CArray()
     {
         CMemoryUtils::Destroy(GetData(), mSize);
-        m_Allocator.ReleaseData();
+        mAllocator.ReleaseData();
     }
 
     inline CArray &operator=(const CArray &other) // NOLINT
@@ -74,8 +74,8 @@ class CArray
     {
         if (this != &other)
         {
-            m_Allocator.ReleaseData();
-            other.m_Allocator.MoveTo(m_Allocator);
+            mAllocator.ReleaseData();
+            other.mAllocator.MoveTo(mAllocator);
             mSize = other.mSize;
             mCapacity = other.mCapacity;
 
@@ -90,7 +90,7 @@ class CArray
     {
         if (nCapacity > mCapacity)
         {
-            m_Allocator.Reallocate(nCapacity * sizeof(ElementType));
+            mAllocator.Reallocate(nCapacity * sizeof(ElementType));
             mCapacity = nCapacity;
         }
     }
@@ -109,7 +109,7 @@ class CArray
     {
         if (mCapacity != mSize)
         {
-            m_Allocator.Reallocate(mSize * sizeof(ElementType));
+            mAllocator.Reallocate(mSize * sizeof(ElementType));
             mCapacity = mSize;
         }
     }
@@ -150,8 +150,8 @@ class CArray
     inline ElementType &Back() { return At(mSize - 1); }
     NDISCARD inline const ElementType &Back() const { return At(mSize - 1); }
 
-    inline ElementType *GetData() { return (ElementType *)m_Allocator.GetData(); }
-    NDISCARD inline const ElementType *GetData() const { return (const ElementType *)m_Allocator.GetData(); }
+    inline ElementType *GetData() { return (ElementType *)mAllocator.GetData(); }
+    NDISCARD inline const ElementType *GetData() const { return (const ElementType *)mAllocator.GetData(); }
 
     template <class... Args>
     inline IndexType Emplace(IndexType nIndex, Args &&...vArgs) noexcept
@@ -278,7 +278,7 @@ class CArray
     {
         mSize = nInitialSize;
         mCapacity = nInitialSize;
-        m_Allocator.Reallocate(nInitialSize * sizeof(ElementType));
+        mAllocator.Reallocate(nInitialSize * sizeof(ElementType));
         CMemoryUtils::Construct(GetData(), nInitialSize);
     }
 
@@ -287,7 +287,7 @@ class CArray
         const usize size = pEnd - pBegin;
         mSize = IndexType(size);
         mCapacity = IndexType(size);
-        m_Allocator.Reallocate(size * sizeof(ElementType));
+        mAllocator.Reallocate(size * sizeof(ElementType));
         CMemoryUtils::Copy(GetData(), pBegin, size);
     }
 
@@ -297,7 +297,7 @@ class CArray
         mCapacity = other.mSize;
         if (mSize > 0)
         {
-            m_Allocator.Reallocate(mSize * sizeof(ElementType));
+            mAllocator.Reallocate(mSize * sizeof(ElementType));
             CMemoryUtils::Copy(GetData(), other.GetData(), mSize);
         }
     }
@@ -307,14 +307,14 @@ class CArray
         mSize = other.mSize;
         mCapacity = other.mCapacity;
 
-        other.m_Allocator.MoveTo(m_Allocator);
+        other.mAllocator.MoveTo(mAllocator);
         other.mSize = 0;
         other.mCapacity = 0;
     }
 
     inline IndexType CalculateGrowth() { return mCapacity > 0 ? (mCapacity * 2) : 1; }
 
-    AllocatorType m_Allocator;
+    AllocatorType mAllocator;
     IndexType mSize;
     IndexType mCapacity;
 };
