@@ -15,30 +15,7 @@ IFileSystem *CFileSystem::Get()
     return &sInstance;
 }
 
-bool CLinuxFileSystem::Initialize()
-{
-    ansi appFilePathAnsi[WE_OS_MAX_PATH]{0};
-    const usize length = readlink("/proc/self/exe", appFilePathAnsi, WE_OS_MAX_PATH);
-    CPath appFilePath(CString(*CStringCast<wide, ansi>(appFilePathAnsi, length), length));
-    CPath appPath = appFilePath.GetParentPath();
-    mMountedDirs[(u32)EResourceMountType::eAssets] = appPath / WTL("Assets");
-    mMountedDirs[(u32)EResourceMountType::eDebug] = appPath / WTL("Logs");
-
-    const ansi *homeDir = = getenv("HOME");
-    if (homeDir == nullptr)
-    {
-        homeDir = getpwuid(getuid())->pw_dir;
-    }
-    mMountedDirs[(u32)EResourceMountType::eHome] = CPath(CString(*CStringCast<wide, ansi>(homeDir, strlen(homeDir)), length));
-
-    return true;
-}
-
-void CLinuxFileSystem::Shutdown()
-{
-}
-
-static bool CLinuxFileSystem::FileExists(const CPath &path)
+bool CLinuxFileSystem::FileExists(const CPath &path) const
 {
     struct stat const s;
     if (stat(*CStringCast<ansi, wide>(*path, path.GetLength()), &s))
@@ -49,7 +26,7 @@ static bool CLinuxFileSystem::FileExists(const CPath &path)
     return S_ISREG(s.st_mode);
 }
 
-static bool CLinuxFileSystem::DirectoryExists(const CPath &path)
+bool CLinuxFileSystem::DirectoryExists(const CPath &path) const
 {
     struct stat const s;
     if (stat(*CStringCast<ansi, wide>(*path, path.GetLength()), &s))
@@ -60,7 +37,7 @@ static bool CLinuxFileSystem::DirectoryExists(const CPath &path)
     return S_ISDIR(s.st_mode);
 }
 
-static bool CLinuxFileSystem::CreateDirectory(const CPath &path)
+bool CLinuxFileSystem::CreateDirectory(const CPath &path) const
 {
     if (DirectoryExists(path))
     {
@@ -97,7 +74,7 @@ class CLinuxFile : public IFileNative
     ~CLinuxFile() { Close(); }
 
     bool IsValid() const override { return mHandle != -1; }
-    usize GetSize() const override { return m_Size; }
+    usize GetSize() const override { return mSize; }
     void Close() override
     {
         close(mHandle);
@@ -157,7 +134,7 @@ class CLinuxFile : public IFileNative
         struct stat fileStat;
         if (fstat(handle, &fileStat) == 0)
         {
-            m_Size = fileStat.st_size;
+            mSize = fileStat.st_size;
         }
     }
 
