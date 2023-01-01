@@ -43,6 +43,9 @@ macro (_add_project project_name is_tool)
 
   if (${is_tool})
     add_executable (${project_name})
+    target_compile_options (${project_name} PRIVATE
+      $<$<CXX_COMPILER_ID:GNU>:-fexceptions>
+    )
     set (FOLDER_NAME "Tool")
   else ()
     add_library (${project_name} STATIC)

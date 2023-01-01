@@ -23,7 +23,6 @@ function (add_linter target_name)
             ${SOURCE_FILES}
     COMMAND "${CMAKE_COMMAND}" -E touch ${lint_timestamp}
     COMMENT "Linting... ${target_name}"
-    DEPENDS ${target_name}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
