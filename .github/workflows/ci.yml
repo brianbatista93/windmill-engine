@@ -61,24 +61,14 @@ jobs:
         cmake
         --build "${{ env.CMAKE_BUILD_DIR }}"
         --target LintProjects
-
-    - name: Save metadata
-      if: ${{ failure() }}
-      run: >-
-        echo {\"pr_number\": ${{ github.event.number }}} > ${{ env.CMAKE_BUILD_DIR }}/clang-tidy-review-metadata.json
         
     - uses: actions/upload-artifact@v3
       if: ${{ failure() }}
       with:
         name: clang-tidy-review
-        retention-days: 1
+        retention-days: 2
         path: |
-          clang-tidy-review-output.json
-          clang-tidy-review-metadata.json
           **/*-clang-fixes.yaml
-
-    - uses: ZedThree/clang-tidy-review/post@v0.10.0
-      if: ${{ failure() }}
 
   build-and-test:
     needs: code-lint
