@@ -69,7 +69,7 @@ macro (_add_project project_name is_tool)
     _add_scribe_module (${project_name})
   endif()
   
-  if (ENABLE_TESTS_BENCHMARK)
+  if (${ENABLE_TESTS_BENCHMARK} AND EXISTS "${PROJECT_SOURCE_DIR}/Benchmark")
     add_subdirectory ("Benchmark")
   endif ()
 
