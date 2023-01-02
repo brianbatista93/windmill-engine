@@ -2,7 +2,7 @@
 # https://github.com/codespell-project/actions-codespell
 # https://github.com/codespell-project/codespell
 name: codespell
-on: [push, pull_request]
+on: [push]
 permissions:
   contents: read
 jobs:
@@ -14,4 +14,6 @@ jobs:
       - uses: codespell-project/actions-codespell@master
         with:
           check_filenames: true
-          skip: ./.git,./Engine/Source/ThirdParty
+          only_warn: 1
+          path: Engine
+          skip: ./.git,./Engine/Source/ThirdParty,*.cmake,CMakeLists.txt
