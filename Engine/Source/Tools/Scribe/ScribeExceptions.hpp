@@ -21,8 +21,8 @@ SOFTWARE.
 
 #include <exception>
 
-class CScribeException : public std::exception
+class CScribeException : public std::runtime_error
 {
   public:
-    CScribeException(const char *pMessage) : std::exception(pMessage) {}
+    CScribeException(const char *pMessage) : std::runtime_error(pMessage) {}
 };
