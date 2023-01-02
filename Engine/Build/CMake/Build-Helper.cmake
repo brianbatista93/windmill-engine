@@ -69,8 +69,8 @@ macro (_add_project project_name is_tool)
     _add_scribe_module (${project_name})
   endif()
   
-  if (${ENABLE_TESTS_BENCHMARK} AND EXISTS "${PROJECT_SOURCE_DIR}/Benchmark")
-    add_subdirectory ("Benchmark")
+  if (${ENABLE_WINDMILL_TESTS} AND EXISTS "${PROJECT_SOURCE_DIR}/Tests")
+    add_subdirectory ("Tests")
   endif ()
 
   set_target_properties (${project_name} PROPERTIES

@@ -2,9 +2,9 @@ cmake_minimum_required (VERSION 3.16)
 
 project (WindmillEngine)
 
-option (ENABLE_TESTS_BENCHMARK "Enable tests and benchmark" ON)
+option (ENABLE_WINDMILL_TESTS "Enable unit tests" ON)
 
-if (ENABLE_TESTS_BENCHMARK)
+if (ENABLE_WINDMILL_TESTS)
 	include(CTest)
 	enable_testing()
 endif()
