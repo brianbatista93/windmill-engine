@@ -17,14 +17,12 @@ i32 main(i32 nArgC, char *pArgV[])
 
     CArray<tchar *, CAllocator<i32>> decodedArgV(nArgC);
 
-    auto &decoder = CAnsiEncoder::Get();
-
     for (i32 i = 0; i < nArgC; ++i)
     {
         usize length = strlen(pArgV[i]);
-        usize destLength = decoder.GetLength((const u8 *)pArgV[i], length);
+        usize destLength = CAnsiEncoder::GetLength((const u8 *)pArgV[i], length);
         decodedArgV[i] = (tchar *)we_malloc(destLength * sizeof(tchar));
-        decoder.Decode(decodedArgV[i], (u8 *)pArgV[i], length);
+        CAnsiEncoder::Decode(decodedArgV[i], (u8 *)pArgV[i], length);
     }
 
     return WindmillMain(decodedArgV.GetSize(), decodedArgV.GetData());

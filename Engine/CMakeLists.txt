@@ -11,8 +11,6 @@ endif()
 
 include ("Build/CMake/Engine-Flags.cmake")
 
-option (ENABLE_ASAN "Enable Address sanitizer" OFF)
-option (ENABLE_UBSAN "Enable Undefined Behavior sanitizer" OFF)
 if (ENABLE_ASAN)
 	message (STATUS "AddressSanitizer enabled")
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
