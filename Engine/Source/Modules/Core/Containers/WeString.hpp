@@ -53,7 +53,18 @@ class CString
 
     inline CString(const tchar *pStr, usize nLength) : mData(i32(nLength) + 1) { Init(pStr, mData.GetSize()); }
 
-    CString(const u8 *pBytes, usize nSize, const class IEncoder *pEncoder);
+    template <class EncoderType>
+    CString(const u8 *pBytes, usize nSize)
+    {
+        we_assert(pBytes != nullptr);
+
+        const usize length = EncoderType::GetLength(pBytes, nSize);
+        if (length > 0)
+        {
+            mData.AddSlots(i32(length) + 1);
+            EncoderType::Decode(mData.GetData(), pBytes, length);
+        }
+    }
 
     template <class ItType>
     CString(ItType *begin, ItType *end) : mData(i32(end - begin))

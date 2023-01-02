@@ -165,15 +165,3 @@ CArray<CString> CString::Split(const tchar *pStr) const
 
     return result;
 }
-
-CString::CString(const u8 *pBytes, usize nSize, const IEncoder *pEncoder)
-{
-    we_assert(pBytes != nullptr and pEncoder != nullptr);
-
-    const usize length = pEncoder->GetLength(pBytes, nSize);
-    if (length > 0)
-    {
-        mData.AddSlots(i32(length) + 1);
-        pEncoder->Decode(mData.GetData(), pBytes, length);
-    }
-}
