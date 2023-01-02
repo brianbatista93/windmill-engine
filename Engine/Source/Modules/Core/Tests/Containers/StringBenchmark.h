@@ -19,44 +19,24 @@ SOFTWARE.
 
 #pragma once
 
-#include <benchmark/benchmark.h>
 #include <gtest/gtest.h>
 
 #include "Containers/WeString.hpp"
 #include "Encoding/AnsiEncoder.hpp"
 #include "Types.hpp"
 
-static void BM_StringEmptyCreation(benchmark::State &rState)
-{
-    for (auto _ : rState)
-    {
-        CString empty;
-    }
-}
-BENCHMARK(BM_StringEmptyCreation);
-
-static void BM_StringLiteralCreation(benchmark::State &rState)
-{
-    for (auto _ : rState)
-    {
-        CString lit = WTL("The quick brown fox jumps over the lazy dog");
-        benchmark::DoNotOptimize(lit);
-    }
-}
-BENCHMARK(BM_StringLiteralCreation);
-
 TEST(String, EmptyInit)
 {
     CString empty;
-    EXPECT_TRUE(empty.IsEmpty());
-    EXPECT_EQ(empty.GetLength(), 0);
+    EXPECT_TRUE(empty.IsEmpty()) << "Empty string should be empty";
+    EXPECT_EQ(empty.GetLength(), 0) << "Empty string should have length 0";
 }
 
 TEST(String, Literals)
 {
     CString lit = WTL("The quick brown fox jumps over the lazy dog.");
-    EXPECT_FALSE(lit.IsEmpty());
-    EXPECT_EQ(lit.GetLength(), 44);
+    EXPECT_FALSE(lit.IsEmpty()) << "Literal string should not be empty";
+    EXPECT_EQ(lit.GetLength(), 44) << "Literal string should have length 44";
 }
 
 TEST(String, AppendChar)

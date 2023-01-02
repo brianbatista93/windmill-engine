@@ -19,7 +19,6 @@ SOFTWARE.
 
 #pragma once
 
-#include <benchmark/benchmark.h>
 #include <gtest/gtest.h>
 
 #include "Containers/ContainerFwd.hpp"
@@ -56,34 +55,6 @@ class CObject
   private:
     int m_nDummy;
 };
-
-static void BM_ArrayEmptyCreation(benchmark::State &rState)
-{
-    for (auto _ : rState)
-    {
-        CArray<CObject> emptyArray;
-    }
-}
-BENCHMARK(BM_ArrayEmptyCreation);
-
-static void BM_ArraySizedCreation(benchmark::State &rState)
-{
-    for (auto _ : rState)
-    {
-        CArray<CObject> sizedArray(1024);
-    }
-}
-BENCHMARK(BM_ArraySizedCreation);
-
-static void BM_ArrayAdd(benchmark::State &rState)
-{
-    CArray<i32> arr;
-    for (auto _ : rState)
-    {
-        arr.Add(1);
-    }
-}
-BENCHMARK(BM_ArrayAdd);
 
 TEST(Array, EmptyInit)
 {

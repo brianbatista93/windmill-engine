@@ -1,18 +1,9 @@
+#pragma warning(push, 0)
+#pragma warning(disable : 6326)
+
 #include "Containers/ArrayBenchmark.h"
 #include "Containers/SetBenchmark.h"
 #include "Containers/StringBenchmark.h"
 #include "HAL/PathBenchmark.h"
 
-int main(int argc, char **argv)
-{
-    ::testing::InitGoogleTest();
-    if (RUN_ALL_TESTS() != 0)
-    {
-        return 1;
-    }
-    ::benchmark::Initialize(&argc, argv);
-    ::benchmark::ReportUnrecognizedArguments(argc, argv);
-    ::benchmark::RunSpecifiedBenchmarks();
-    ::benchmark::Shutdown();
-    return 0;
-}
+#pragma warning(pop)

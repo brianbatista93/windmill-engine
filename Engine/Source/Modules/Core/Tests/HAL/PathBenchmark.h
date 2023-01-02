@@ -19,7 +19,6 @@ SOFTWARE.
 
 #pragma once
 
-#include <benchmark/benchmark.h>
 #include <gtest/gtest.h>
 
 #include "HAL/Path.hpp"
