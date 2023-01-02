@@ -1,8 +1,5 @@
-# GitHub Action to automate the identification of common misspellings in text files.
-# https://github.com/codespell-project/actions-codespell
-# https://github.com/codespell-project/codespell
 name: codespell
-on: [push]
+on: [pull_request]
 permissions:
   contents: read
 jobs:
@@ -14,6 +11,5 @@ jobs:
       - uses: codespell-project/actions-codespell@master
         with:
           check_filenames: true
-          only_warn: 1
           path: Engine
           skip: ./.git,./Engine/Source/ThirdParty,*.cmake,CMakeLists.txt
