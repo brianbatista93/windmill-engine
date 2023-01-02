@@ -54,7 +54,7 @@ class CString
     inline CString(const tchar *pStr, usize nLength) : mData(i32(nLength) + 1) { Init(pStr, mData.GetSize()); }
 
     template <class EncoderType>
-    CString(EncoderType /*unused*/, const u8 *pBytes, usize nSize)
+    CString(const u8 *pBytes, usize nSize, [[maybe_unused]] EncoderType /*unused*/ encoder)
     {
         we_assert(pBytes != nullptr);
 
