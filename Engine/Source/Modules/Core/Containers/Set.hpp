@@ -38,7 +38,6 @@ class CTSet
 {
   public:
     using ElementType = Type;
-    using SizeType = SizeType;
     using IndexType = std::make_signed_t<SizeType>;
     using EntryType = SSetEntry<Type>;
 
