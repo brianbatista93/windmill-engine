@@ -52,10 +52,12 @@ void CEngine::Tick()
 {
 }
 
+// NOLINTBEGIN
 bool CEngine::ProcessArguments(const CArrayView<tchar *> & /*arguments*/)
 {
     return true;
 }
+// NOLINTEND
 
 bool EngineInitialize(const CArrayView<tchar *> &arguments)
 {
