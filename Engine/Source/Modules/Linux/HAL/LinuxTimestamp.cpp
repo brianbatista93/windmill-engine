@@ -3,7 +3,7 @@
 
 #include "LinuxTimestamp.hpp"
 
-// NOLINGBEGIN(bugprone-narrowing-conversions)
+// NOLINTBEGIN(bugprone-narrowing-conversions)
 
 u64 CLinuxTimestamp::GetTicks()
 {
@@ -70,4 +70,4 @@ void CLinuxTimestamp::GetUTCTime(i32 &year, i32 &month, i32 &dayOfWeek, i32 &day
     msec = time.tv_usec / 1000;
 }
 
-// NOLINGEND(bugprone-narrowing-conversions)
+// NOLINTEND(bugprone-narrowing-conversions)
