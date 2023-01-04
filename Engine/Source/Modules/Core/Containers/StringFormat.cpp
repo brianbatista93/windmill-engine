@@ -58,7 +58,7 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
 
         pos++;
         chr = pFormat[pos];
-        we_assert(pos == nLength || !isdigit(chr));
+        we_assert(pos != nLength && isdigit(chr));
 
         size_t index = 0;
         do
