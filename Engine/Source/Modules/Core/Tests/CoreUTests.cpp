@@ -5,5 +5,6 @@
 #include "Containers/SetBenchmark.h"
 #include "Containers/StringBenchmark.h"
 #include "HAL/PathBenchmark.h"
+#include "HAL/TimestampTest.h"
 
 #pragma warning(pop)

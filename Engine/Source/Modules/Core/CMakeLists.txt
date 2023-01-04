@@ -1,3 +1,5 @@
+configure_file ("HAL/Timestamp.hpp.in" "${GENERATED_FILES_DIR}/Core/HAL/Timestamp.hpp" @ONLY)
+
 add_we_module ("Core"
   VERSION "0.0.1"
   DESCRIPTION "Core module"
@@ -22,6 +24,8 @@ add_we_module ("Core"
     "HAL/File.hpp"
     "HAL/FileSystem.hpp"
     "HAL/Interfaces/IFileSystem.hpp"
+    "OS/ITimestamp.hpp"
+    "HAL/Timestamp.hpp"
     "HAL/Path.hpp"
     "Logging/ILogSink.hpp"
     "Logging/Log.hpp"
@@ -60,4 +64,9 @@ add_we_module ("Core"
      "Logging/StdLogSink.cpp"
      "Memory/MemoryManager.cpp"
      "Console/ConfigFile.cpp"
+)
+
+target_include_directories ("Core"
+  PUBLIC
+      $<BUILD_INTERFACE:${GENERATED_FILES_DIR}/Core>
 )
