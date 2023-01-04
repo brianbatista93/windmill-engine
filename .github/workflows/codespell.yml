@@ -1,4 +1,4 @@
-name: codespell
+name: "Code spell"
 on: [pull_request]
 permissions:
   contents: read
