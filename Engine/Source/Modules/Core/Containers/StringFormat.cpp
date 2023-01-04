@@ -57,11 +57,9 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
         }
 
         pos++;
-        if (pos == nLength or !isdigit(chr = pFormat[pos]))
-        {
-            we_assert(false);
-            return;
-        }
+        chr = pFormat[pos];
+        we_assert(pos == nLength || !isdigit(chr));
+
         size_t index = 0;
         do
         {
@@ -161,17 +159,15 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
             thread_local tchar buffer[128];
             memset(buffer, 0, 128 * sizeof(tchar));
             tchar *pBufferPtr = argument.GetType() == CFormatterArgument::kNumeric ? (std::end(buffer) - 1) : buffer;
-            if (!argument.TryFormat(&pBufferPtr, *itemFormatSubstring))
-            {
-                we_assert(false);
-                return;
-            }
+
+            [[maybe_unused]] const bool formatted = !argument.TryFormat(&pBufferPtr, *itemFormatSubstring);
+            we_assert(formatted && "Could not format argument");
 
             formattedString = CString((const tchar *)pBufferPtr);
         }
         break;
         default: {
-            we_assert(false);
+            return;
         }
         break;
         }
