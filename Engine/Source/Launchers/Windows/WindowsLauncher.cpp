@@ -4,21 +4,21 @@
     #include <crtdbg.h>
 #endif // WE_DEBUG
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "Types.hpp"
 
 extern "C"
 {
     // https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
-    __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+    __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001; // NOLINT
     // https://gpuopen.com/amdpowerxpressrequesthighperformance/
-    __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+    __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1; // NOLINT
 }
 
 extern i32 WindmillMain(i32 nArgC, tchar *ppArgV[]);
 
-void InvalidParameterHandler(const tchar *pExpression, const tchar *pFunction, const tchar *pFile, u32 nLine, uintptr_t Reserved);
+void InvalidParameterHandler(const tchar *pExpression, const tchar *pFunction, const tchar *pFile, u32 nLine, uintptr_t /*nReserved*/);
 
 static LONG WINAPI DumpStackTrace(EXCEPTION_POINTERS *pExceptionInfo);
 
@@ -44,14 +44,14 @@ i32 WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     ::SetUnhandledExceptionFilter(&DumpStackTrace);
 
-    i32 nErrorCode = WindmillMain(nArgC, pArgV);
+    const i32 nErrorCode = WindmillMain(nArgC, pArgV);
 
     LocalFree(pArgV);
 
     return nErrorCode;
 }
 
-void InvalidParameterHandler(const tchar *pExpression, const tchar *pFunction, const tchar *pFile, u32 nLine, uintptr_t)
+void InvalidParameterHandler(const tchar *pExpression, const tchar *pFunction, const tchar *pFile, u32 nLine, uintptr_t /*nReserved*/)
 {
     wprintf(TEXT("SECURE CRT: Invalid parameter detected.\nExpression: %s Function: %s. File: %s Line: %u\n"),
             pExpression ? pExpression : TEXT("Unknown"), pFunction ? pFunction : TEXT("Unknown"), pFile ? pFile : TEXT("Unknown"), nLine);

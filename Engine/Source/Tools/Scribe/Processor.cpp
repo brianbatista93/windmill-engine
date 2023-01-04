@@ -5,19 +5,19 @@
 
 DECLARE_STATIC_LOG_EMITTER(Scribe, eInfo);
 
-CPath gLicenseFile;
+CPath gLicenseFile; // NOLINT
 
 bool Parse(const CString &content, CStringBuilder &builder);
 
 CStringBuilder WriteHeaderAndGetStringBuilder();
 
-tchar *IgnoreWhiteSpace(const tchar *, i32 &);
-tchar *IgnoreComments(const tchar *, i32 &);
-tchar *ParseDeep(CStringBuilder &, const tchar *, i32 &);
-tchar *IdentifyAttribute(CStringBuilder &, const tchar *, i32 &);
-tchar *ProcessAttribute(CStringBuilder &, const tchar *, i32 &);
+tchar *IgnoreWhiteSpace(const tchar *pStr, i32 &rLine);
+tchar *IgnoreComments(const tchar *pStr, i32 &rLine);
+tchar *ParseDeep(CStringBuilder &builder, const tchar *pStr, i32 &rLine);
+tchar *IdentifyAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine);
+tchar *ProcessAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine);
 
-CString GetAttributeName(const tchar *);
+CString GetAttributeName(const tchar * /*attributeName*/);
 
 bool ProcessFile(const CPath &filePath, const CPath &output)
 {
@@ -69,7 +69,7 @@ bool Parse(const CString &content, CStringBuilder &builder)
     }
 
     i32 line = 1;
-    tchar *pPointer = (tchar *)*content;
+    auto *pPointer = (tchar *)*content;
     pPointer = IgnoreWhiteSpace(pPointer, line);
 
     return ParseDeep(builder, pPointer, line);
@@ -179,14 +179,14 @@ tchar *IdentifyAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
     static const tchar *sAttrBegin = {WT("[[WE::")};
     // static const tchar *sAttrEnd = {WT("]]")};
 
-    static i32 sAttrBeginLength = 6;
+    constexpr static i32 kAttrBeginLength = 6;
     // static i32 sAttrEndLength = 2;
 
-    while (*pStr)
+    while (pStr and *pStr)
     {
-        if (CStringUtils::Equal(pStr, sAttrBegin, sAttrBeginLength))
+        if (CStringUtils::Equal(pStr, sAttrBegin, kAttrBeginLength))
         {
-            pStr += sAttrBeginLength;
+            pStr += kAttrBeginLength;
             pStr = ProcessAttribute(builder, pStr, rLine);
         }
         else if (*pStr == WT('\n'))
@@ -202,17 +202,17 @@ tchar *IdentifyAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
 
 tchar *ProcessAttribute(CStringBuilder &builder, const tchar *pStr, i32 &rLine)
 {
-    CString attributeName = GetAttributeName(pStr);
-    if (auto it = gAttributeFunctions.find(*attributeName); it != gAttributeFunctions.end())
+    const static CAttributeManager kAttributeManager;
+
+    const CString attributeName = GetAttributeName(pStr);
+    if (auto attribute = kAttributeManager.FindAttribute(*attributeName); attribute != nullptr)
     {
-        return it->second(builder, pStr, rLine);
+        return attribute(builder, pStr, rLine);
     }
-    else
-    {
-        // TODO: Fix the attribute name
-        WE_ERROR(Scribe, WT("Could not find attribute: {0}"), *attributeName);
-        return nullptr;
-    }
+
+    // TODO: Fix the attribute name
+    WE_ERROR(Scribe, WT("Could not find attribute: {0}"), *attributeName);
+    return nullptr;
 }
 
 CString GetAttributeName(const tchar *pStr)
@@ -220,7 +220,9 @@ CString GetAttributeName(const tchar *pStr)
     const tchar *start = pStr;
 
     while (*pStr and isalpha(*pStr))
+    {
         ++pStr;
+    }
 
-    return CString(start, (pStr - start));
+    return {start, (usize)(pStr - start)};
 }

@@ -19,13 +19,48 @@ SOFTWARE.
 
 #pragma once
 
-#include <benchmark/benchmark.h>
-#include <gtest/gtest.h>
+#include "Containers/StringView.hpp"
 
-#include "HAL/Path.hpp"
-
-TEST(Path, EmptyInit)
+class CLineIterator
 {
-    CPath path;
-    EXPECT_TRUE(path.IsEmpty());
-}
+  public:
+    CLineIterator(const CStringView &view) noexcept : mView(view) {}
+
+    bool GetLine(CStringView &line)
+    {
+        if (mView.IsEmpty())
+        {
+            return false;
+        }
+
+        usize extraChars = 0;
+        tchar *oldBegin = mView.begin();
+        tchar *begin = mView.begin();
+        tchar *end = mView.end();
+
+        for (; begin != end; ++begin)
+        {
+            if (*begin == '\r')
+            {
+                ++extraChars;
+                continue;
+            }
+
+            if (*begin == '\n')
+            {
+                ++begin;
+                ++extraChars;
+                break;
+            }
+        }
+
+        mView = {begin, end};
+
+        line = {oldBegin, begin - extraChars};
+
+        return true;
+    }
+
+  private:
+    CStringView mView;
+};

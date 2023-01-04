@@ -35,76 +35,76 @@ class CPath
     CPath &operator=(const CPath &) = default;
     CPath &operator=(CPath &&) noexcept = default;
 
-    CPath(CString &&source) : m_Text(std::move(source)) { PreprocessPath(); }
+    CPath(CString &&source) : mText(std::move(source)) { PreprocessPath(); }
 
-    explicit CPath(const tchar *pStr) : m_Text(pStr) { PreprocessPath(); }
+    explicit CPath(const tchar *pStr) : mText(pStr) { PreprocessPath(); }
 
     CPath &operator=(CString &&source) noexcept
     {
-        m_Text = std::move(source);
+        mText = std::move(source);
         PreprocessPath();
         return *this;
     }
 
-    inline const CString::CharType *operator*() const { return *m_Text; }
+    inline const CString::CharType *operator*() const { return *mText; }
 
-    [[nodiscard]] inline bool IsEmpty() const { return m_Text.IsEmpty(); }
-    [[nodiscard]] inline i32 GetLength() const { return m_Text.GetLength(); }
+    [[nodiscard]] inline bool IsEmpty() const { return mText.IsEmpty(); }
+    [[nodiscard]] inline i32 GetLength() const { return mText.GetLength(); }
     [[nodiscard]] bool IsDirectory() const;
     [[nodiscard]] bool IsFile() const;
 
-    inline const CString ToString() const { return m_Text; }
+    NDISCARD inline CString ToString() const { return mText; }
 
-    TArray<CPath> GetAllFiles(const tchar *pFilter, bool bRecursive = false) const;
+    CArray<CPath> GetAllFiles(const tchar *pFilter, bool bRecursive = false) const;
 
     [[nodiscard]] inline CPath GetParentPath() const
     {
         we_assert(!IsEmpty());
-        auto it = std::find_if(m_Text.rbegin(), m_Text.rend(), [](tchar c) { return c == kSeparator; });
-        usize length = std::distance(it, m_Text.rend());
-        we_assert((i32)length <= m_Text.GetLength());
-        return CPath(CString(*m_Text, length - 1));
+        auto iter = std::find_if(mText.rbegin(), mText.rend(), [](tchar chr) { return chr == kSeparator; });
+        const usize length = std::distance(iter, mText.rend());
+        we_assert((i32)length <= mText.GetLength());
+        return {CString(*mText, length - 1)};
     }
 
     [[nodiscard]] inline CPath GetFileName() const
     {
         we_assert(!IsEmpty());
-        auto it = std::find_if(m_Text.rbegin(), m_Text.rend(), [](tchar c) { return c == kSeparator; });
-        return CPath(CString(it.base()));
+        auto iter = std::find_if(mText.rbegin(), mText.rend(), [](tchar chr) { return chr == kSeparator; });
+        return {CString(iter.base())};
     }
 
     [[nodiscard]] inline CPath GetFileNameWithoutExtension() const
     {
         we_assert(!IsEmpty());
-        auto itExt = std::find_if(m_Text.rbegin(), m_Text.rend(), [](tchar c) { return c == '.'; });
-        auto it = std::find_if(itExt, m_Text.rend(), [](tchar c) { return c == kSeparator; });
-        return CPath(CString(it.base(), itExt.base()));
+        auto iterExt = std::find_if(mText.rbegin(), mText.rend(), [](tchar chr) { return chr == '.'; });
+        auto iter = std::find_if(iterExt, mText.rend(), [](tchar chr) { return chr == kSeparator; });
+        return {CString(iter.base(), iterExt.base())};
     }
 
     friend CPath operator/(const CPath &lhs, const CPath &rhs)
     {
-        CPath result(lhs);
+        CPath result{lhs};
         return result.Append(rhs);
     }
 
     friend CPath operator/(const CPath &lhs, const tchar *pRhs)
     {
-        CPath result(lhs);
-        return result.Append(pRhs, std::char_traits<tchar>::length(pRhs));
+        CPath result{lhs};
+        return result.Append(pRhs, (i32)std::char_traits<tchar>::length(pRhs));
     }
 
-    friend CPath operator+(const CPath &lhs, const tchar *pStr) { return lhs.m_Text + pStr; }
+    friend CPath operator+(const CPath &lhs, const tchar *pStr) { return lhs.mText + pStr; }
     CPath &operator+=(const tchar *pStr)
     {
-        m_Text.Append(pStr);
+        mText.Append(pStr);
         return *this;
     }
 
     CPath &Append(const tchar *pStr, i32 nLength);
-    CPath &Append(const CPath &other) { return Append(*other.m_Text, other.m_Text.GetLength()); }
+    CPath &Append(const CPath &other) { return Append(*other.mText, other.mText.GetLength()); }
 
   private:
-    void PreprocessPath() { std::replace(m_Text.begin(), m_Text.end(), WT('\\'), kSeparator); }
+    void PreprocessPath() { std::replace(mText.begin(), mText.end(), WT('\\'), kSeparator); }
 
-    CString m_Text;
+    CString mText;
 };

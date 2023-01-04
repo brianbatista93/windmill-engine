@@ -1,115 +1,61 @@
 {
-	"version": 5,
-	"configurePresets": [
-		{
-			"name": "output-base",
-			"hidden": true,
-			"binaryDir": "${sourceDir}/out/build/${presetName}",
-			"installDir": "${sourceDir}/out/install/${presetName}",
-			"cacheVariables": {
-				"CMAKE_CONFIGURATION_TYPES": "Debug;Profile;Release"
-			}
-		},
-		{
-			"name": "linux-base",
-			"hidden": true,
-			"generator": "Ninja Multi-Config",
-			"cacheVariables": {
-				"ENABLE_TESTS_BENCHMARK": false,
-				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/Linux-PC.cmake",
-				"CMAKE_DEFAULT_BUILD_TYPE": "Release"
-			},
-			"vendor": {
-				"microsoft.com/VisualStudioSettings/CMake/1.0": {
-					"hostOS": [ "Linux" ]
-				},
-				"microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-					"sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
-				}
-			}
-		},
-		{
-			"name": "linux-build",
-			"displayName": "Linux",
-			"description": "Target the Windows Subsystem for Linux (WSL) or a remote Linux system.",
-			"inherits": [ "output-base", "linux-base" ]
-		},
-		{
-			"name": "windows-base",
-			"hidden": true,
-			"cacheVariables": {
-				"ENABLE_TESTS_BENCHMARK": false
-			},
-			"vendor": {
-				"microsoft.com/VisualStudioSettings/CMake/1.0": {
-					"hostOS": [ "Windows" ]
-				},
-				"microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-					"sourceDir": "$env{USERPROFILE}/.vs/$ms{projectDirName}"
-				}
-			}
-		},
-		{
-			"name": "windows-pc-base",
-			"hidden": true,
-			"generator": "Ninja Multi-Config",
-			"architecture": {
-				"value": "x64",
-				"strategy": "external"
-			},
-			"cacheVariables": {
-				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-PC.cmake",
-				"CMAKE_CXX_CLANG_TIDY": "clang-tidy;--extra-arg=-Wno-error=unknown-warning-option",
-				"CMAKE_EXPORT_COMPILE_COMMANDS": true
-			}
-		},
-		{
-			"name": "windows-uwp-base",
-			"hidden": true,
-			"generator": "Ninja Multi-Config",
-			"architecture": {
-				"value": "x64",
-				"strategy": "external"
-			},
-			"cacheVariables": {
-				"CMAKE_BUILD_TYPE": "Release",
-				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-Store.cmake"
-			}
-		},
-		{
-			"name": "windows-pc-build",
-			"displayName": "Windows x64",
-			"description": "Target Windows with the Visual Studio development environment. (x64)",
-			"inherits": [ "output-base", "windows-pc-base" ]
-		},
-		{
-			"name": "windows-uwp-build",
-			"displayName": "Windows UWP",
-			"description": "Target Windows with the Visual Studio development environment. (UWP)",
-			"inherits": [ "output-base", "windows-uwp-base" ]
-		},
-		{
-			"name": "macos-base",
-			"hidden": true,
-			"generator": "Ninja Multi-Config",
-			"cacheVariables": {
-				"ENABLE_TESTS_BENCHMARK": false,
-				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/macOS-PC.cmake"
-			},
-			"vendor": {
-				"microsoft.com/VisualStudioSettings/CMake/1.0": {
-					"hostOS": [ "macOS" ]
-				},
-				"microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-					"sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
-				}
-			}
-		},
-		{
-			"name": "macos-build",
-			"displayName": "macOS",
-			"description": "Target macOS with the Xcode development environment.",
-			"inherits": [ "output-base", "macos-base" ]
+  "version": 5,
+  "configurePresets": [
+    {
+      "name": "windmill-base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/Intermediate/ProjectFiles/${presetName}",
+      "installDir": "${sourceDir}/Intermediate/InstallFiles/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug;Profile;Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": true
+      }
+    },
+    {
+      "inherits": "windmill-base",
+      "name": "windows-vs17-msvc",
+      "displayName": "Windows (MSVC)",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_TOOLCHAIN_FILE": { 
+			"value": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-PC.cmake",
+			"type": "FILEPATH"
 		}
-	]
+      },
+      "generator": "Visual Studio 17 2022",
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": { "hostOS": [ "Windows" ] },
+        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": { "sourceDir": "$env{USERPROFILE}/.vs/$ms{projectDirName}" }
+      }
+    },
+    {
+      "inherits": "windmill-base",
+      "name": "windows-vs17-clang",
+      "displayName": "Windows (Clang)",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-PC.cmake",
+        "CMAKE_C_COMPILER": "clang-cl",
+        "CMAKE_CXX_COMPILER": "clang-cl"
+      },
+      "toolset": "ClangCL",
+      "generator": "Ninja",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [ "Windows" ],
+          "intelliSenseMode": "windows-clang-x64",
+          "enableClangTidyCodeAnalysis": true
+        },
+        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": { "sourceDir": "$env{USERPROFILE}/.vs/$ms{projectDirName}" }
+      }
+    }
+  ]
 }

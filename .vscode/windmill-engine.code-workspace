@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"C_Cpp.codeAnalysis.clangTidy.enabled": true,
+		"C_Cpp.errorSquiggles": "enabledIfIncludesResolve",
+		"cmake.allowCommentsInPresetsFile": true,
+		"cmake.copyCompileCommands": "${workspaceFolder}/.vscode/compile_commands.json",
+		"cmake.configureArgs": [
+			"-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+		]
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-vscode.cpptools",
+			"ms-vscode.cmake-tools"
+		],
+		"unwantedRecommendations": [
+			"ms-vscode-remote.remote-containers"
+		]
+	}
+}

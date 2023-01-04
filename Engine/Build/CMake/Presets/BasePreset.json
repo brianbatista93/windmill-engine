@@ -1,0 +1,15 @@
+{
+	"version": 5,
+	"configurePresets": [
+		{
+			"name": "output-base",
+			"hidden": true,
+			"binaryDir": "${sourceDir}/out/build/${presetName}",
+			"installDir": "${sourceDir}/out/install/${presetName}",
+			"cacheVariables": {
+				"CMAKE_CONFIGURATION_TYPES": "Debug;Profile;Release",
+				"CMAKE_EXPORT_COMPILE_COMMANDS": true
+			}
+		}
+	]
+}

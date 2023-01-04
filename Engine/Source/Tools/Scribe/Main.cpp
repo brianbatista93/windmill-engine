@@ -1,4 +1,5 @@
 #include <cerrno>
+#include <iostream>
 
 #include "Containers/Array.hpp"
 #include "HAL/File.hpp"
@@ -7,18 +8,18 @@
 #include "Logging/LogFileSink.hpp"
 #include "Logging/StdLogSink.hpp"
 #include "OS/OSEntry.hpp"
+#include "ScribeExceptions.hpp"
 
 DECLARE_STATIC_LOG_EMITTER(Scribe, eInfo);
 
 extern bool ProcessFile(const CPath &filePath, const CPath &output);
 extern CPath gLicenseFile;
 
-i32 InitScribe(i32 nArgC, tchar *ppArgV[])
+void InitScribe(i32 nArgC, tchar *ppArgV[])
 {
     if (nArgC == 1)
     {
-        WE_ERROR(Scribe, WT("No input specified"));
-        return EINVAL;
+        throw CScribeException("No input file specified");
     }
 
     CPath outputDirectory = {};
@@ -40,18 +41,17 @@ i32 InitScribe(i32 nArgC, tchar *ppArgV[])
 
     if (outputDirectory.IsEmpty())
     {
-        WE_ERROR(Scribe, WT("No output directory specified"));
-        return EINVAL;
+        throw CScribeException("No output directory specified");
     }
 
     const CPath filePath{ppArgV[1]};
 
-    TArray<CPath> files = {};
+    CArray<CPath> files = {};
 
     if (filePath.IsDirectory())
     {
-        const TArray<CPath> headerFiles{filePath.GetAllFiles(WT("*.hpp"), true)};
-        for (auto file : headerFiles)
+        const CArray<CPath> headerFiles{filePath.GetAllFiles(WT("*.hpp"), true)};
+        for (const auto &file : headerFiles)
         {
             files.Add(file);
         }
@@ -61,39 +61,51 @@ i32 InitScribe(i32 nArgC, tchar *ppArgV[])
         files.Add(filePath);
     }
 
-    for (auto file : files)
+    for (auto &file : files)
     {
         if (!ProcessFile(file, outputDirectory))
         {
-            return -1;
+            throw CScribeException("Failed to process file");
         }
     }
-
-    return 0;
 }
 
 MAIN_ENTRY_BEGIN
 {
+
+    class CLogRAII
+    {
+      public:
+        ~CLogRAII() { CLogSystem::Shutdown(); }
+    };
+
     if (!CLogSystem::Initialize())
     {
         return ENOTTY;
     }
 
-    if (!CLogSystem::Get().AddSink(we_new(CLogFileSink, CPath(WT("./Scribe.log")))))
+    if (!CLogSystem::Get().AddSink(we_new(CLogFileSink, CPath(WT("./Scribe.log")))) or !CLogSystem::Get().AddSink(we_new(CStdLogSink)))
     {
-        errorCode = -1;
+        return -1;
     }
 
-    if (!CLogSystem::Get().AddSink(we_new(CStdLogSink)))
+    const CLogRAII logRAII;
+
+    try
     {
-        errorCode = -1;
+        InitScribe(nArgC, ppArgV);
+    }
+    catch (CScribeException &e)
+    {
+        WE_ERROR(Scribe, WT("%s"), (const tchar *)e.what());
+        return -1;
+    }
+    catch (std::exception &e)
+    {
+        std::cerr << "Unhandled exception : " << e.what() << std::endl;
+        return -1;
     }
 
-    if (errorCode == 0)
-    {
-        errorCode = InitScribe(nArgC, ppArgV);
-    }
-
-    CLogSystem::Shutdown();
+    return 0;
 }
 MAIN_ENTRY_END

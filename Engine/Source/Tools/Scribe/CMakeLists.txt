@@ -1,11 +1,15 @@
-project ("Scribe")
-
-add_executable (${PROJECT_NAME}
- "Main.cpp"
- "Processor.cpp"
- "Attributes.cpp"
- "Attributes/AttrProperty.cpp")
-
-target_link_libraries (${PROJECT_NAME} PRIVATE
-	"Core"
+add_we_tool ("Scribe"
+  VERSION "0.0.1"
+  DESCRIPTION "Engine module"
+  DEPENDS
+    "Core"
+  PUBLIC
+    "Attributes.hpp"
+    "Attributes/AttrProperty.hpp"
+    "ScribeExceptions.hpp"
+  PRIVATE
+    "Main.cpp"
+    "Processor.cpp"
+    "Attributes.cpp"
+    "Attributes/AttrProperty.cpp"
 )

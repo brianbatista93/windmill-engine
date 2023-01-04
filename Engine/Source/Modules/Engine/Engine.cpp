@@ -14,21 +14,9 @@ CEngine &CEngine::Get()
     return sInstance;
 }
 
-bool CEngine::Initialize(const TArrayView<tchar *> &arguments)
+bool CEngine::Initialize(const CArrayView<tchar *> &arguments)
 {
     if (!ProcessArguments(arguments))
-    {
-        return false;
-    }
-
-    if (!CFileSystem::Initialize())
-    {
-        return false;
-    }
-
-    // CFileSystem::MapDirectory(EResourceMountType::eAssets,EResourceType::eTextures CPath(WT("../Assets/Textures")));
-    bool dirMapped = CFileSystem::MapDirectory(EResourceMountType::eEngine, EResourceType::eConfigFile, CPath(WT("../Config")));
-    if (!dirMapped)
     {
         return false;
     }
@@ -45,26 +33,33 @@ bool CEngine::Initialize(const TArrayView<tchar *> &arguments)
         return false;
     }
 
-    return false;
+    if (!mConfigFile.Load(WTL("../Config/Engine.ini")))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 void CEngine::Shutdown()
 {
+    mConfigFile.Save();
     OS::Shutdown();
     CLogSystem::Shutdown();
-    CFileSystem::Shutdown();
 }
 
 void CEngine::Tick()
 {
 }
 
-bool CEngine::ProcessArguments(const TArrayView<tchar *> &)
+// NOLINTBEGIN
+bool CEngine::ProcessArguments(const CArrayView<tchar *> & /*arguments*/)
 {
     return true;
 }
+// NOLINTEND
 
-bool EngineInitialize(const TArrayView<tchar *> &arguments)
+bool EngineInitialize(const CArrayView<tchar *> &arguments)
 {
     return CEngine::Get().Initialize(arguments);
 }

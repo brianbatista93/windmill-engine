@@ -1,10 +1,10 @@
 #include "StringFormatter.hpp"
 #include "WeString.hpp"
 
-CFormatterArgument::CFormatterArgument(const tchar *pValue) : m_eType(kString), m_pString(pValue)
+CFormatterArgument::CFormatterArgument(const tchar *pValue) : mType(kString), mString(pValue)
 {
 }
 
-CFormatterArgument::CFormatterArgument(CString value) : m_eType(kString), m_pString(*value)
+CFormatterArgument::CFormatterArgument(const CString &value) : mType(kString), mString(*value)
 {
 }

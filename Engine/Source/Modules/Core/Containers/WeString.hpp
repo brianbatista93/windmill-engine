@@ -34,7 +34,7 @@ class CString
 
   public:
     using CharType = tchar;
-    using ArrayType = TArray<CharType, DefaultAllocator>;
+    using ArrayType = CArray<CharType, DefaultAllocator>;
 
     enum
     {
@@ -49,22 +49,33 @@ class CString
 
     CString(std::nullptr_t) = delete;
 
-    inline explicit CString(const tchar *pStr) : m_Data(i32(std::char_traits<tchar>::length(pStr)) + 1) { Init(pStr, m_Data.GetSize()); }
+    inline CString(const tchar *pStr) : mData(i32(std::char_traits<tchar>::length(pStr)) + 1) { Init(pStr, mData.GetSize()); }
 
-    inline CString(const tchar *pStr, usize nLength) : m_Data(i32(nLength) + 1) { Init(pStr, m_Data.GetSize()); }
+    inline CString(const tchar *pStr, usize nLength) : mData(i32(nLength) + 1) { Init(pStr, mData.GetSize()); }
 
-    CString(const u8 *pBytes, usize nSize, const class IEncoder *pEncoder);
-
-    template <class It>
-    CString(It *begin, It *end) : m_Data(i32(end - begin))
+    template <class EncoderType>
+    CString(const u8 *pBytes, usize nSize, [[maybe_unused]] EncoderType /*unused*/ encoder)
     {
-        Init(begin, m_Data.GetSize());
+        we_assert(pBytes != nullptr);
+
+        const usize length = EncoderType::GetLength(pBytes, nSize);
+        if (length > 0)
+        {
+            mData.AddSlots(i32(length) + 1);
+            EncoderType::Decode(mData.GetData(), pBytes, length);
+        }
+    }
+
+    template <class ItType>
+    CString(ItType *begin, ItType *end) : mData(i32(end - begin))
+    {
+        Init(begin, mData.GetSize());
     }
 
     inline CString &Append(tchar chr)
     {
-        const i32 index = m_Data.AddSlots() - 1;
-        m_Data[index] = chr;
+        const i32 index = mData.AddSlots() - 1;
+        mData[index] = chr;
         return *this;
     }
 
@@ -76,8 +87,8 @@ class CString
 
     inline CString &Append(const tchar *pStr, i32 nLength)
     {
-        const i32 index = m_Data.AddSlots(nLength) - 1;
-        memcpy(m_Data.GetData() + index, pStr, nLength * sizeof(tchar));
+        const i32 index = mData.AddSlots(nLength) - 1;
+        memcpy(mData.GetData() + index, pStr, nLength * sizeof(tchar));
         return *this;
     }
 
@@ -86,10 +97,10 @@ class CString
     inline CString &operator+=(tchar chr) { return Append(chr); }
     inline CString &operator+=(const tchar *pStr) { return Append(pStr); }
 
-    template <class TStr>
-    inline CString &operator+=(TStr &&rhs) noexcept
+    template <class StringType>
+    inline CString &operator+=(StringType &&rhs) noexcept
     {
-        return Append(std::forward<TStr>(rhs));
+        return Append(std::forward<StringType>(rhs));
     }
 
     friend inline CString operator+(CString &&lhs, CString &&rhs) noexcept { return ConcatSS(std::move(lhs), std::move(rhs)); }
@@ -103,13 +114,13 @@ class CString
     friend inline CString operator+(const tchar *pLhs, CString &&rhs) noexcept { return ConcatCS(pLhs, std::move(rhs)); }
     friend inline CString operator+(const tchar *pLhs, const CString &rhs) { return ConcatCS(pLhs, rhs); }
 
-    inline i32 GetLength() const { return m_Data.GetSize() > 0 ? (m_Data.GetSize() - 1) : 0; }
-    inline bool IsEmpty() const { return GetLength() == 0; }
+    NDISCARD inline i32 GetLength() const { return mData.GetSize() > 0 ? (mData.GetSize() - 1) : 0; }
+    NDISCARD inline bool IsEmpty() const { return GetLength() == 0; }
 
-    inline const CharType *operator*() const { return IsEmpty() ? WT("") : m_Data.GetData(); }
+    inline const CharType *operator*() const { return IsEmpty() ? WT("") : mData.GetData(); }
 
-    inline ArrayType &GetArray() { return m_Data; }
-    inline const ArrayType GetArray() const { return m_Data; }
+    inline ArrayType &GetArray() { return mData; }
+    NDISCARD inline ArrayType GetArray() const { return mData; }
 
     inline bool StartsWith(const tchar *pStart, i32 nOffset = 0) const
     {
@@ -123,11 +134,11 @@ class CString
         return CStringUtils::EndsWith(GetArray().GetData() + nOffset, pEnd, GetLength());
     }
 
-    inline CString Substring(i32 nStart, i32 nCount = INVALID_INDEX) const
+    NDISCARD inline CString Substring(i32 nStart, i32 nCount = INVALID_INDEX) const
     {
         we_assert(nStart < GetLength() and (nCount == INVALID_INDEX or nCount <= GetLength()));
         nCount = nCount == INVALID_INDEX ? GetLength() : nCount;
-        return CString(GetArray().GetData() + nStart, nCount);
+        return {GetArray().GetData() + nStart, (usize)nCount};
     }
 
     inline i32 Find(const tchar *pStr, i32 nOffset = 0) const
@@ -136,11 +147,11 @@ class CString
         return CStringUtils::Find(GetArray().GetData(), pStr, nOffset);
     }
 
-    TArray<CString> Split(tchar chr) const;
-    TArray<CString> Split(const tchar *pStr) const;
+    NDISCARD CArray<CString> Split(tchar chr) const;
+    CArray<CString> Split(const tchar *pStr) const;
 
-    template <WE::Concept::IsContainer TContainer>
-    inline static CString Join(tchar separator, const TContainer &container)
+    template <WE::Concept::IsContainer TContainerType>
+    inline static CString Join(tchar separator, const TContainerType &container)
     {
         CStringBuilder builder;
         bool bIsFirst = true;
@@ -158,8 +169,8 @@ class CString
         return builder.ToString();
     }
 
-    template <WE::Concept::IsContainer TContainer>
-    inline static CString Join(const tchar *separator, const TContainer &container)
+    template <WE::Concept::IsContainer TContainerType>
+    inline static CString Join(const tchar *separator, const TContainerType &container)
     {
         CStringBuilder builder;
         bool bIsFirst = true;
@@ -177,49 +188,51 @@ class CString
         return builder.ToString();
     }
 
-    template <class... TArgs>
-    inline static CString Format(const tchar *pFormat, TArgs &&...args)
+    template <class... ArgsType>
+    inline static CString Format(const tchar *pFormat, ArgsType &&...packedArgs)
     {
         CStringBuilder builder(256);
-        builder.AppendFormat(pFormat, std::forward<TArgs>(args)...);
+        builder.AppendFormat(pFormat, std::forward<ArgsType>(packedArgs)...);
         return builder.ToString();
     }
 
     inline bool operator==(const CString &other) const { return CStringUtils::Compare(GetArray().GetData(), *other) == 0; }
 
-    auto begin() { return m_Data.begin(); }
-    const auto begin() const { return m_Data.begin(); }
-    auto end()
+    NDISCARD auto begin() { return mData.begin(); }
+    NDISCARD auto begin() const { return mData.begin(); }
+    NDISCARD auto end()
     {
-        auto result = m_Data.end();
-        if (m_Data.GetSize())
+        auto *result = mData.end();
+        if (mData.GetSize())
         {
             --result;
         }
         return result;
     }
-    const auto end() const
+    NDISCARD auto end() const
     {
-        auto result = m_Data.end();
-        if (m_Data.GetSize())
+        const auto *result = mData.end();
+        if (mData.GetSize())
         {
             --result;
         }
         return result;
     }
 
-    auto rbegin() { return std::reverse_iterator(m_Data.end()); }
-    const auto rbegin() const { return std::reverse_iterator(m_Data.end()); }
-    auto rend() { return std::reverse_iterator(begin()); }
-    const auto rend() const { return std::reverse_iterator(begin()); }
+    NDISCARD auto rbegin() { return std::reverse_iterator(mData.end()); }
+    NDISCARD auto rbegin() const { return std::reverse_iterator(mData.end()); }
+    NDISCARD auto rend() { return std::reverse_iterator(begin()); }
+    NDISCARD auto rend() const { return std::reverse_iterator(begin()); }
+
+    friend u64 GetHash(const CString &str) { return CStringUtils::GetHash(*str, str.GetLength()); }
 
   private:
     inline void Init(const tchar *pStr, usize nLength)
     {
         if (nLength > 0)
         {
-            memcpy(m_Data.GetData(), pStr, nLength * sizeof(CharType));
-            m_Data[i32(nLength) - 1] = tchar(0);
+            memcpy(mData.GetData(), pStr, nLength * sizeof(CharType));
+            mData[i32(nLength) - 1] = tchar(0);
         }
     }
 
@@ -234,7 +247,7 @@ class CString
     static CString ConcatCS(const tchar *pLhs, CString &&rhs) noexcept;
     static CString ConcatCS(const tchar *pLhs, const CString &rhs);
 
-    ArrayType m_Data;
+    ArrayType mData;
 };
 
 inline namespace Literals
@@ -243,7 +256,7 @@ inline namespace StringLiterals
 {
 inline CString operator""_s(const tchar *pStr, usize nLength)
 {
-    return CString(pStr, nLength);
+    return {pStr, nLength};
 }
 } // namespace StringLiterals
 } // namespace Literals

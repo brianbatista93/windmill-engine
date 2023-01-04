@@ -25,6 +25,33 @@ SOFTWARE.
 #include "Containers/StringBuilder.hpp"
 #include "Types.hpp"
 
-using AttributesMapType = std::map<std::basic_string<tchar>, std::function<tchar *(CStringBuilder &, const tchar *, i32 &)>>;
+class CAttributeManager
+{
+  public:
+    using AttributeFunctionType = std::function<tchar *(CStringBuilder &, const tchar *, i32 &)>;
+    using AttributesMapType = std::map<std::basic_string<tchar>, AttributeFunctionType>;
 
-extern const AttributesMapType gAttributeFunctions;
+    CAttributeManager() = default;
+    ~CAttributeManager() = default;
+
+    CAttributeManager(const CAttributeManager &) = delete;
+    CAttributeManager &operator=(const CAttributeManager &) = delete;
+
+    CAttributeManager(CAttributeManager &&) = delete;
+    CAttributeManager &operator=(CAttributeManager &&) = delete;
+
+    void Initialize();
+
+    AttributeFunctionType FindAttribute(const tchar *attributeName) const
+    {
+        auto iter = mAttributes.find(attributeName);
+        if (iter != mAttributes.end())
+        {
+            return iter->second;
+        }
+        return nullptr;
+    }
+
+  private:
+    AttributesMapType mAttributes;
+};

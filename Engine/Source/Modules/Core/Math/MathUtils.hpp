@@ -30,31 +30,31 @@ class CMath
     /**
      * @brief Checks if a number is a power of two
      */
-    static constexpr bool IsPowerOfTwo(auto value) { return (value & (value - 1)) == 0; }
+    inline static constexpr bool IsPowerOfTwo(auto value) { return (value & (value - 1)) == 0; }
 
-    template <class T>
-    static constexpr std::make_signed_t<T> Abs(T value)
+    template <class Type>
+    inline static constexpr std::make_signed_t<Type> Abs(Type value)
     {
-        const std::make_signed_t<T> sign = value;
+        const std::make_signed_t<Type> sign = value;
         return sign < 0 ? -sign : sign;
     }
 
-    template <class T>
-    static constexpr T Min(T a, T b)
+    template <class Type>
+    inline static constexpr Type Min(Type a, Type b)
     {
         return a < b ? a : b;
     }
 
-    template <class T>
-    static constexpr T Max(T a, T b)
+    template <class Type>
+    inline static constexpr Type Max(Type a, Type b)
     {
         return a > b ? a : b;
     }
 
-    template <typename T>
-    static constexpr T GetPrime(T value)
+    template <typename Type>
+    static constexpr Type GetPrime(Type value)
     {
-        if constexpr (std::is_signed_v<T>)
+        if constexpr (std::is_signed_v<Type>)
         {
             if (value < 0)
             {
@@ -74,18 +74,18 @@ class CMath
 
         while (true)
         {
-            bool is_prime = true;
+            bool isPrime = true;
 
-            for (T i = 3; i * i <= value; i += 2)
+            for (Type i = 3; i * i <= value; i += 2)
             {
                 if (value % i == 0)
                 {
-                    is_prime = false;
+                    isPrime = false;
                     break;
                 }
             }
 
-            if (is_prime)
+            if (isPrime)
             {
                 return value;
             }

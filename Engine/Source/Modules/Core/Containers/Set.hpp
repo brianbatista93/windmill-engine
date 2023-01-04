@@ -25,33 +25,32 @@ SOFTWARE.
 #include "Array.hpp"
 #include "Math/MathUtils.hpp"
 
-template <class T>
+template <class Type>
 struct SSetEntry
 {
     u64 Hash{0};
     i64 Next{-1};
-    T Value;
+    Type Value;
 };
 
-template <class T, class TSize = usize, class TComparer = std::equal_to<T>>
-class TSet
+template <class Type, class SizeType = usize, class ComparerType = std::equal_to<Type>>
+class CSet
 {
   public:
-    using ElementType = T;
-    using SizeType = TSize;
-    using IndexType = std::make_signed_t<TSize>;
-    using EntryType = SSetEntry<T>;
+    using ElementType = Type;
+    using IndexType = std::make_signed_t<SizeType>;
+    using EntryType = SSetEntry<ElementType>;
 
-    inline TSet() : m_nFreeIndex(-1), m_nCount(0), m_nFreeCount(0) {}
+    inline CSet() : mFreeIndex(-1), mCount(0), mFreeCount(0) {}
 
-    inline TSet(SizeType nCapacity)
+    inline CSet(SizeType nCapacity)
     {
         we_assert(nCapacity > 0);
 
         Init(nCapacity);
     }
 
-    inline TSet(std::initializer_list<ElementType> list)
+    inline CSet(std::initializer_list<ElementType> list)
     {
         Init(list.size());
 
@@ -61,27 +60,27 @@ class TSet
         }
     }
 
-    inline bool IsEmpty() const { return m_nCount == 0; }
+    inline bool IsEmpty() const { return mCount == 0; }
 
-    inline SizeType GetCount() const { return m_nCount - m_nFreeCount; }
+    inline SizeType GetCount() const { return mCount - mFreeCount; }
 
-    inline bool Add(ElementType &&element) { return AddEntry(std::forward<ElementType>(element), nullptr); }
-    inline bool Add(const ElementType &element) { return AddEntry(element, nullptr); }
+    inline bool Add(ElementType &&element) { return AddEntry<ElementType &&>(std::forward<ElementType>(element), nullptr); }
+    inline bool Add(const ElementType &element) { return AddEntry<const ElementType>(element, nullptr); }
 
     inline bool Remove(const ElementType &element)
     {
-        if (!m_Buckets.IsEmpty())
+        if (!mBuckets.IsEmpty())
         {
             const u64 hash = GetHash(element);
-            i64 *bucket = m_Buckets.begin() + (hash % m_Buckets.GetSize());
+            i64 *bucket = mBuckets.begin() + (hash % mBuckets.GetSize());
             i64 i = *bucket - 1;
             i64 last = -1;
             u64 collision_count_ = 0;
 
             while (i >= 0)
             {
-                EntryType &entry = m_Entries[i];
-                if (entry.Hash == hash and m_Comparer(entry.Value, element))
+                EntryType &entry = mEntries[i];
+                if (entry.Hash == hash and mComparer(entry.Value, element))
                 {
                     if (last < 0)
                     {
@@ -89,30 +88,30 @@ class TSet
                     }
                     else
                     {
-                        m_Entries[last].Next = entry.Next;
+                        mEntries[last].Next = entry.Next;
                     }
 
-                    we_assert((-3 - m_nFreeIndex) < 0);
-                    entry.Next = -3 - m_nFreeIndex;
+                    we_assert((-3 - mFreeIndex) < 0);
+                    entry.Next = -3 - mFreeIndex;
 
-                    if constexpr (std::is_reference_v<T>)
+                    if constexpr (std::is_reference_v<Type>)
                     {
-                        entry.Value = T();
+                        entry.Value = Type();
                     }
                     else
                     {
-                        entry.Value.~T();
+                        entry.Value.~Type();
                     }
 
-                    m_nFreeIndex = i;
-                    m_nFreeCount++;
+                    mFreeIndex = i;
+                    mFreeCount++;
                     return true;
                 }
 
                 last = i;
                 i = entry.Next;
                 collision_count_++;
-                we_assert(collision_count_ <= m_Entries.GetSize());
+                we_assert(collision_count_ <= mEntries.GetSize());
             }
         }
 
@@ -121,134 +120,138 @@ class TSet
 
     inline void Clear(bool bShrink = false)
     {
-        m_Entries.Clear(bShrink);
-        m_Buckets.Clear(bShrink);
-        m_nFreeIndex = -1;
-        m_nCount = 0;
-        m_nFreeCount = 0;
+        mEntries.Clear(bShrink);
+        mBuckets.Clear(bShrink);
+        mFreeIndex = -1;
+        mCount = 0;
+        mFreeCount = 0;
     }
 
-    inline const ElementType *Find(const T &element) const
+    inline ElementType *Find(const ElementType &element)
     {
-        if (!m_Buckets.IsEmpty())
+        if (!mBuckets.IsEmpty())
         {
             const u64 hash = GetHash(element);
-            const i64 *bucket = m_Buckets.begin() + (hash % m_Buckets.GetSize());
+            const i64 *bucket = mBuckets.begin() + (hash % mBuckets.GetSize());
             i64 i = *bucket - 1;
-            u64 collision_count_ = 0;
+            IndexType collision_count_ = 0;
 
             while (i >= 0)
             {
-                const EntryType *entry = (m_Entries.GetData() + i);
-                if (entry->Hash == hash and m_Comparer(entry->Value, element))
+                EntryType *entry = (mEntries.GetData() + i);
+                if (entry->Hash == hash and mComparer(entry->Value, element))
                 {
                     return &entry->Value;
                 }
 
                 i = entry->Next;
                 collision_count_++;
-                we_assert(collision_count_ <= m_Entries.GetSize());
+                we_assert(collision_count_ <= mEntries.GetSize());
             }
         }
 
         return nullptr;
     }
 
-    inline bool Contains(const T &element) const { return Find(element) != nullptr; }
+    inline const ElementType *Find(const ElementType &element) const { return const_cast<CSet *>(this)->Find(element); }
+
+    inline bool Contains(const ElementType &element) const { return Find(element) != nullptr; }
 
   private:
     inline void Init(SizeType nCapacity)
     {
         const SizeType size = CMath::GetPrime(nCapacity);
 
-        m_Entries.Resize(size);
-        m_Buckets.Resize(size);
-        m_nFreeIndex = -1;
-        m_nCount = 0;
-        m_nFreeCount = 0;
+        mEntries.Resize(size);
+        mBuckets.Resize(size);
+        mFreeIndex = -1;
+        mCount = 0;
+        mFreeCount = 0;
     }
 
-    inline void Resize(SizeType nNewSize)
+    inline void Resize() { Resize(mCount * 2); }
+
+    inline void Resize(IndexType nNewSize)
     {
-        we_assert(nNewSize >= m_Entries.GetSize());
+        we_assert(nNewSize >= mEntries.GetSize());
 
-        m_Entries.Resize(nNewSize);
-        m_Buckets.Resize(nNewSize);
+        mEntries.Resize(nNewSize);
+        mBuckets.Resize(nNewSize);
 
-        for (SizeType i = 0; i < m_nCount; i++)
+        for (SizeType i = 0; i < mCount; i++)
         {
-            EntryType &entry = m_Entries[i];
+            EntryType &entry = mEntries[i];
             if (entry.Next >= -1)
             {
-                i64 &bucket = m_Buckets[entry.Hash % m_Buckets.GetSize()];
+                i64 &bucket = mBuckets[entry.Hash % mBuckets.GetSize()];
                 entry.Next = bucket - 1;
                 bucket = i + 1;
             }
         }
     }
 
-    template <class U>
-    inline bool AddEntry(typename std::type_identity_t<U> value, SizeType *oIndex)
+    template <class UType>
+    inline bool AddEntry(typename std::type_identity_t<UType> value, SizeType *oIndex)
     {
-        if (m_Buckets.IsEmpty())
+        if (mBuckets.IsEmpty())
         {
             Init(1);
         }
 
-        u32 collision_count = 0;
+        u32 collisionCount = 0;
         const u64 hash = GetHash(value);
-        i64 *bucket = m_Buckets.begin() + (hash % m_Buckets.GetSize());
+        i64 *bucket = mBuckets.begin() + (hash % mBuckets.GetSize());
         i64 i = *bucket - 1;
 
         while (i >= 0)
         {
-            EntryType &entry = m_Entries[i];
-            if (entry.Hash == hash and m_Comparer(entry.Value, value))
+            EntryType &entry = mEntries[i];
+            if (entry.Hash == hash and mComparer(entry.Value, value))
             {
-                set_if_not_null(oIndex, i);
+                SetIfNotNull(oIndex, (SizeType)i);
                 return false;
             }
             i = entry.Next;
 
-            collision_count++;
-            we_assert(collision_count <= m_Entries.GetSize());
+            collisionCount++;
+            we_assert(collisionCount <= mEntries.GetSize());
         }
 
         i64 index;
-        if (m_nFreeIndex > 0)
+        if (mFreeIndex > 0)
         {
-            index = m_nFreeIndex--;
-            we_assert((-3 - m_Entries[m_nFreeIndex].Next) >= -1);
-            m_nFreeIndex = -3 - m_Entries[m_nFreeIndex].Next;
+            index = mFreeIndex--;
+            we_assert((-3 - mEntries[mFreeIndex].Next) >= -1);
+            mFreeIndex = -3 - mEntries[mFreeIndex].Next;
         }
         else
         {
-            size_t count = m_nCount;
-            if (count == m_Entries.GetSize())
+            IndexType count = mCount;
+            if (count == mEntries.GetSize())
             {
                 Resize();
-                bucket = m_Buckets.begin() + (hash % m_Buckets.GetSize());
+                bucket = mBuckets.begin() + (hash % mBuckets.GetSize());
             }
             index = count;
-            m_nCount = count + 1;
+            mCount = count + 1;
         }
 
         {
-            EntryType &entry = m_Entries[index];
+            EntryType &entry = mEntries[index];
             entry.Hash = hash;
             entry.Next = *bucket - 1;
             entry.Value = std::move(value);
             *bucket = index + 1;
-            set_if_not_null(oIndex, static_cast<size_t>(index));
+            SetIfNotNull(oIndex, static_cast<size_t>(index));
         }
 
         return true;
     }
 
-    TArray<EntryType, TAllocator<IndexType>> m_Entries;
-    TArray<IndexType, TAllocator<IndexType>> m_Buckets;
-    TComparer m_Comparer;
-    IndexType m_nFreeIndex;
-    TSize m_nCount;
-    TSize m_nFreeCount;
+    CArray<EntryType, CAllocator<IndexType>> mEntries;
+    CArray<IndexType, CAllocator<IndexType>> mBuckets;
+    ComparerType mComparer;
+    IndexType mFreeIndex;
+    SizeType mCount;
+    SizeType mFreeCount;
 };

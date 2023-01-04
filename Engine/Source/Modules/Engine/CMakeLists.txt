@@ -1,12 +1,13 @@
-project ("Engine")
-
-add_library (${PROJECT_NAME} STATIC
- "Engine.cpp"
- "Classes/Texture.cpp")
-
-target_link_libraries (${PROJECT_NAME}
-PUBLIC
+add_we_module ("Engine"
+  VERSION "0.0.1"
+  DESCRIPTION "Engine module"
+  IS_SCRIBE_PROJECT
+  DEPENDS
     "Core"
+  PUBLIC
+    "Engine.hpp"
+    "Classes/Texture.hpp"
+  PRIVATE
+    "Engine.cpp"
+    "Classes/Texture.cpp"
 )
-
-scribe_module (${PROJECT_NAME})

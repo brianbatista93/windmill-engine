@@ -5,7 +5,7 @@
 #include "HAL/FileSystem.hpp"
 #include "Memory/Memory.hpp"
 
-bool CFile::WriteBytes(const TArray<u8> &bytes, const CPath &filename)
+bool CFile::WriteBytes(const CArray<u8> &bytes, const CPath &filename)
 {
     TUniquePtr<IFileNative> fileNative;
     fileNative.reset(CFileSystem::OpenWrite(filename));
@@ -57,31 +57,30 @@ bool CFile::WriteString(IFileNative *pFile, const CString &str, EEncoding encodi
                 return false;
             }
         }
-        const usize length = CUTF8Encoder::Get().Encode(nullptr, *str, str.GetLength() * sizeof(tchar));
-        TArray<utf8> utf8Str(length);
-        CUTF8Encoder::Get().Encode(utf8Str.GetData(), *str, str.GetLength() * sizeof(tchar));
+        const usize length = CUTF8Encoder::Encode(nullptr, *str, str.GetLength() * sizeof(tchar));
+        CArray<utf8> utf8Str((i32)length);
+        CUTF8Encoder::Encode(utf8Str.GetData(), *str, str.GetLength() * sizeof(tchar));
         return pFile->Write((const u8 *)utf8Str.GetData(), length) == length;
     }
-    else if (forceUnicode)
+
+    if (forceUnicode)
     {
-        const tchar unicodeBOM = (tchar)0xFEFF;
+        const auto unicodeBOM = (tchar)0xFEFF;
         if (pFile->Write((const u8 *)&unicodeBOM, sizeof(tchar)) != sizeof(tchar))
         {
             return false;
         }
-        const i32 length = str.GetLength() * sizeof(tchar);
+        const i32 length = str.GetLength() * (i32)sizeof(tchar);
         return (i32)pFile->Write((const u8 *)*str, length) == length;
     }
-    else
-    {
-        const usize length = CAnsiEncoder::Get().Encode(nullptr, *str, str.GetLength() * sizeof(tchar));
-        TArray<ansi> ansiStr(length);
-        CAnsiEncoder::Get().Encode(ansiStr.GetData(), *str, str.GetLength() * sizeof(tchar));
-        return pFile->Write((const u8 *)ansiStr.GetData(), length) == length;
-    }
+
+    const usize length = CAnsiEncoder::Encode(nullptr, *str, str.GetLength() * sizeof(tchar));
+    CArray<ansi> ansiStr((i32)length);
+    CAnsiEncoder::Encode(ansiStr.GetData(), *str, str.GetLength() * sizeof(tchar));
+    return pFile->Write((const u8 *)ansiStr.GetData(), length) == length;
 }
 
-bool CFile::ReadBytes(TArray<u8> &bytes, const CPath &filename)
+bool CFile::ReadBytes(CArray<u8> &bytes, const CPath &filename)
 {
     TUniquePtr<IFileNative> fileNative;
     fileNative.reset(CFileSystem::OpenRead(filename));
@@ -91,8 +90,8 @@ bool CFile::ReadBytes(TArray<u8> &bytes, const CPath &filename)
         return false;
     }
 
-    const auto size = fileNative->GetSize();
-    bytes.Resize(size);
+    const usize size = fileNative->GetSize();
+    bytes.Resize((i32)size);
     return fileNative->Read(bytes.GetData(), size) == size;
 }
 
@@ -106,6 +105,11 @@ bool CFile::ReadString(CString &result, const CPath &filename)
     }
 
     usize size = fileNative->GetSize();
+    if (size == 0)
+    {
+        result = {};
+        return true;
+    }
 
     u8 *bufferMem = (u8 *)we_calloc(size, sizeof(u8));
     u8 *buffer = bufferMem;
@@ -116,11 +120,7 @@ bool CFile::ReadString(CString &result, const CPath &filename)
 
     auto &resultArray = result.GetArray();
 
-    if (size >= 2 && !(size & 1) && buffer[0] == 0xFF && buffer[1] == 0xFE)
-    {
-        resultArray.AddSlots(i32(size >> 1));
-    }
-    else if (size >= 2 && !(size & 1) && buffer[0] == 0xFE && buffer[1] == 0xFF)
+    if ((size >= 2 && !(size & 1) && buffer[0] == 0xFF && buffer[1] == 0xFE) or (size >= 2 && !(size & 1) && buffer[0] == 0xFE && buffer[1] == 0xFF))
     {
         resultArray.AddSlots(i32(size >> 1));
     }
@@ -132,9 +132,9 @@ bool CFile::ReadString(CString &result, const CPath &filename)
             size -= 3;
         }
 
-        usize length = CUTF8Encoder::Get().Decode(nullptr, buffer, size);
+        const usize length = CUTF8Encoder::Decode(nullptr, buffer, size);
         resultArray.AddSlots(i32(length + 1));
-        CUTF8Encoder::Get().Decode(resultArray.GetData(), buffer, size);
+        CUTF8Encoder::Decode(resultArray.GetData(), buffer, size);
     }
 
     we_free(bufferMem);

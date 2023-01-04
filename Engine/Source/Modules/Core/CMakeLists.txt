@@ -1,33 +1,63 @@
-project ("Core")
-
-add_library (${PROJECT_NAME} STATIC
- "Containers/String.cpp"
- "Containers/StringBuilder.cpp"
- "Containers/StringFormat.cpp"
- "Containers/StringFormatter.cpp" 
- "Containers/StringUtils.cpp"
- "Encoding/AnsiEncoder.cpp" 
- "Encoding/UTF8Encoder.cpp"
- "Globals.cpp"
- "HAL/File.cpp"
- "HAL/FileSystem.cpp"
- "HAL/Path.cpp"
- "Logging/Log.cpp"
- "Logging/LogFileSink.cpp"
- "Logging/StdLogSink.cpp"
- "Memory/MemoryManager.cpp" "Console/ConfigFile.cpp")
-
-target_include_directories (${PROJECT_NAME}
-	PUBLIC
-		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-		$<INSTALL_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+add_we_module ("Core"
+  VERSION "0.0.1"
+  DESCRIPTION "Core module"
+  DEPENDS
+    "${PLATFORM_NAME}"
+  PUBLIC
+    "Concepts.hpp"
+    "Console/ConfigFile.hpp"
+    "Containers/Allocator.hpp"
+    "Containers/Array.hpp"
+    "Containers/ArrayView.hpp"
+    "Containers/ContainerFwd.hpp"
+    "Containers/Set.hpp"
+    "Containers/StringBuilder.hpp"
+    "Containers/StringFormatter.hpp"
+    "Containers/StringUtils.hpp"
+    "Containers/WeString.hpp"
+    "Encoding/AnsiEncoder.hpp"
+    "Encoding/IEncoder.hpp"
+    "Encoding/UTF8Encoder.hpp"
+    "Globals.hpp"
+    "HAL/File.hpp"
+    "HAL/FileSystem.hpp"
+    "HAL/Interfaces/IFileSystem.hpp"
+    "HAL/Path.hpp"
+    "Logging/ILogSink.hpp"
+    "Logging/Log.hpp"
+    "Logging/LogEmitter.hpp"
+    "Logging/LogFileSink.hpp"
+    "Logging/LogLevel.hpp"
+    "Logging/LogMessage.hpp"
+    "Logging/StdLogSink.hpp"
+    "Math/MathUtils.hpp"
+    "Memory/Memory.hpp"
+    "Memory/MemoryManager.hpp"
+    "Memory/MemoryUtils.hpp"
+    "OS/OS.hpp"
+    "OS/OSEntry.hpp"
+    "OS/StringConvertion.hpp"
+    "OS/Utils.hpp"
+    "Text/NumericFormatter.hpp"
+    "Types.hpp"
+    "Hashing/CRC32.hpp"
+    "Containers/Map.hpp"
+  PRIVATE
+     "Hashing/CRC32.cpp"
+     "Containers/String.cpp"
+     "Containers/StringBuilder.cpp"
+     "Containers/StringFormat.cpp"
+     "Containers/StringFormatter.cpp" 
+     "Containers/StringUtils.cpp"
+     "Encoding/AnsiEncoder.cpp" 
+     "Encoding/UTF8Encoder.cpp"
+     "Globals.cpp"
+     "HAL/File.cpp"
+     "HAL/FileSystem.cpp"
+     "HAL/Path.cpp"
+     "Logging/Log.cpp"
+     "Logging/LogFileSink.cpp"
+     "Logging/StdLogSink.cpp"
+     "Memory/MemoryManager.cpp"
+     "Console/ConfigFile.cpp"
 )
-
-target_link_libraries (${PROJECT_NAME}
-PUBLIC 
-	"${PLATFORM_NAME}"
-)
-
-if (ENABLE_TESTS_BENCHMARK)
-	add_subdirectory ("Benchmark")
-endif ()

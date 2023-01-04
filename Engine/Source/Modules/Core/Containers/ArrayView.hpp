@@ -21,28 +21,28 @@ SOFTWARE.
 
 #include "Array.hpp"
 
-template <class T, class Alloc>
-class TArrayView
+template <class Type, class AllocType>
+class CArrayView
 {
   public:
-    using SizeType = typename Alloc::IndexType;
+    using SizeType = typename AllocType::IndexType;
 
-    TArrayView() : m_pBegin(nullptr), m_pEnd(nullptr) {}
-    TArrayView(TArray<T, Alloc> &arr) : m_pBegin(arr.begin()), m_pEnd(arr.end()) {}
-    ~TArrayView()
+    CArrayView() : mBegin(nullptr), mEnd(nullptr) {}
+    CArrayView(CArray<Type, AllocType> &arr) : mBegin(arr.begin()), mEnd(arr.end()) {}
+    ~CArrayView()
     {
-        m_pBegin = nullptr;
-        m_pEnd = nullptr;
+        mBegin = nullptr;
+        mEnd = nullptr;
     }
 
-    TArrayView(TArrayView &&) = default;
-    TArrayView(const TArrayView &) = default;
-    TArrayView &operator=(TArrayView &&) = default;
-    TArrayView &operator=(const TArrayView &) = default;
+    CArrayView(CArrayView &&) noexcept = default;
+    CArrayView(const CArrayView &) = default;
+    CArrayView &operator=(CArrayView &&) noexcept = default;
+    CArrayView &operator=(const CArrayView &) = default;
 
-    constexpr bool IsEmpty() const { return m_pEnd == m_pBegin; }
+    NDISCARD constexpr bool IsEmpty() const { return mEnd == mBegin; }
 
   private:
-    T *m_pBegin;
-    T *m_pEnd;
+    Type *mBegin;
+    Type *mEnd;
 };

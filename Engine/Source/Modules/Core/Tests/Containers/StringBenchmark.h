@@ -19,44 +19,24 @@ SOFTWARE.
 
 #pragma once
 
-#include <benchmark/benchmark.h>
 #include <gtest/gtest.h>
 
 #include "Containers/WeString.hpp"
 #include "Encoding/AnsiEncoder.hpp"
 #include "Types.hpp"
 
-static void BM_StringEmptyCreation(benchmark::State &rState)
-{
-    for (auto _ : rState)
-    {
-        CString empty;
-    }
-}
-BENCHMARK(BM_StringEmptyCreation);
-
-static void BM_StringLiteralCreation(benchmark::State &rState)
-{
-    for (auto _ : rState)
-    {
-        CString lit = WTL("The quick brown fox jumps over the lazy dog");
-        benchmark::DoNotOptimize(lit);
-    }
-}
-BENCHMARK(BM_StringLiteralCreation);
-
 TEST(String, EmptyInit)
 {
     CString empty;
-    EXPECT_TRUE(empty.IsEmpty());
-    EXPECT_EQ(empty.GetLength(), 0);
+    EXPECT_TRUE(empty.IsEmpty()) << "Empty string should be empty";
+    EXPECT_EQ(empty.GetLength(), 0) << "Empty string should have length 0";
 }
 
 TEST(String, Literals)
 {
     CString lit = WTL("The quick brown fox jumps over the lazy dog.");
-    EXPECT_FALSE(lit.IsEmpty());
-    EXPECT_EQ(lit.GetLength(), 44);
+    EXPECT_FALSE(lit.IsEmpty()) << "Literal string should not be empty";
+    EXPECT_EQ(lit.GetLength(), 44) << "Literal string should have length 44";
 }
 
 TEST(String, AppendChar)
@@ -138,7 +118,7 @@ TEST(String, CAnsiEncoder)
     u8 bytes[] = {0x54, 0x68, 0x65, 0x20, 0x71, 0x75, 0x69, 0x63, 0x6b, 0x20, 0x62, 0x72, 0x6f, 0x77, 0x6e, 0x20, 0x66, 0x6f, 0x78, 0x20, 0x6a, 0x75,
                   0x6d, 0x70, 0x73, 0x20, 0x6f, 0x76, 0x65, 0x72, 0x20, 0x74, 0x68, 0x65, 0x20, 0x6c, 0x61, 0x7a, 0x79, 0x20, 0x64, 0x6f, 0x67, 0x2e};
 
-    CString text(bytes, 44, &CAnsiEncoder::Get());
+    CString text(bytes, 44, CAnsiEncoder{});
     EXPECT_EQ(text, WTL("The quick brown fox jumps over the lazy dog."));
 }
 

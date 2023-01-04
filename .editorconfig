@@ -22,3 +22,24 @@ indent_size = 4
 [*.{yaml,yml,clang-tidy}]
 indent_style = space
 indent_size = 2
+
+# JSON files
+[*.json]
+indent_style = space
+indent_size = 2
+
+# CMake files
+[{CMakeLists.txt,*.cmake}]
+indent_style = space
+indent_size = 2
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+indent_style = space
+indent_size = 2
+
+# Ini files
+[*.ini]
+indent_style = space
+indent_size = 1

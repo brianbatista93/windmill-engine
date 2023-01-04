@@ -11,41 +11,9 @@ IFileSystem *CFileSystem::Get()
     return &sInstance;
 }
 
-bool CWindowsFileSystem::Initialize()
-{
-    wchar_t appPathWide[WE_OS_MAX_PATH]{0};
-    usize length = ::GetModuleFileNameW(nullptr, appPathWide, WE_OS_MAX_PATH);
-    if (length == 0)
-    {
-        return false;
-    }
-    CPath appFilePath({appPathWide, length});
-    const CPath appPath = appFilePath.GetParentPath();
-    mMountedDirs[(u32)EResourceMountType::eAssets] = appPath / WTL("Assets");
-    mMountedDirs[(u32)EResourceMountType::eEngine] = appPath;
-    mMountedDirs[(u32)EResourceMountType::eDebug] = appPath / WTL("Logs");
-
-#ifndef WE_OS_UWP
-    PWSTR userDocumentsWide = nullptr;
-    const HRESULT result = ::SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &userDocumentsWide);
-    if (FAILED(result))
-    {
-        return false;
-    }
-    mMountedDirs[(u32)EResourceMountType::eHome] = CPath({userDocumentsWide, ::wcslen(userDocumentsWide)});
-    CoTaskMemFree(userDocumentsWide);
-#endif // !WE_OS_UWP
-
-    return true;
-}
-
-void CWindowsFileSystem::Shutdown()
-{
-}
-
 bool CWindowsFileSystem::FileExists(const CPath &path) const
 {
-    DWORD attributes = ::GetFileAttributesW(*path);
+    const DWORD attributes = ::GetFileAttributesW(*path);
     return (attributes != INVALID_FILE_ATTRIBUTES) and (attributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
 }
 
@@ -77,7 +45,7 @@ class CWindowsFileNative : public IFileNative
     friend CWindowsFileSystem;
 
   public:
-    virtual ~CWindowsFileNative() { Close(); }
+    ~CWindowsFileNative() override { Close(); }
 
     NDISCARD bool IsValid() const override { return mHandle != nullptr and mHandle != INVALID_HANDLE_VALUE; }
     NDISCARD usize GetSize() const override { return mSize; }
@@ -288,9 +256,9 @@ IFileNative *CWindowsFileSystem::OpenWrite(const CPath &filename, bool bAppend, 
     return result;
 }
 
-TArray<CPath> CWindowsFileSystem::ListChildren(const CPath &path) const
+CArray<CPath> CWindowsFileSystem::ListChildren(const CPath &path) const
 {
-    TArray<CPath> result;
+    CArray<CPath> result;
 
     HANDLE hFind = INVALID_HANDLE_VALUE;
     const CPath searchPath = path + WT("/*");

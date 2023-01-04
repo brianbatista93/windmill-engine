@@ -23,23 +23,30 @@ CMemoryManager &CMemoryManager::Get()
     return sInstance;
 }
 
+// NOLINTNEXTLINE
 CMemoryManager::~CMemoryManager()
 {
-    fprintf(stderr, "\n[INFO] Memory manager have exited with [%d] unfreed allocations.\n", (i32)mCurrentAllocations.size());
+    usize bytesWriten = fprintf(stderr, "\n[INFO] Memory manager have exited with [%d] unfreed allocations.\n", (i32)mCurrentAllocations.size());
 
     if (!mCurrentAllocations.empty())
     {
         std::cerr << std::setfill('=') << std::setw(120) << '\n';
         u32 unfreedBytes = 0;
-        fprintf(stderr, "[ERROR] There are still allocations that have not been freed.\n");
+        bytesWriten += fprintf(stderr, "[ERROR] There are still allocations that have not been freed.\n");
         for (auto &[memory, info] : mCurrentAllocations)
         {
-            fprintf(stderr, "0x%08llux (%d bytes|%d) - %s:%d (%s)\n", u64(memory), i32(info.nSize), info.nAlignment, info.pFilename, info.nLine,
-                    info.pFunctionName);
+#ifdef WE_OS_WINDOWS
+            bytesWriten += fprintf(stderr, "0x%08llux (%d bytes|%d) - %s:%d (%s)\n", u64(memory), i32(info.nSize), info.nAlignment, info.pFilename,
+                                   info.nLine, info.pFunctionName);
+#else
+            bytesWriten += fprintf(stderr, "0x%08lux (%d bytes|%d) - %s:%d (%s)\n", u64(memory), i32(info.nSize), info.nAlignment, info.pFilename,
+                                   info.nLine, info.pFunctionName);
+#endif // WE_OS_WINDOWS
+
 #if WE_OS_SUPPORT_CALLSTACK_INFO
             for (u32 i = 0; i < info.nCallStackFrames; ++i)
             {
-                fprintf(stderr, "\t> %s\n", info.ppCallStack[i]);
+                bytesWriten += fprintf(stderr, "\t> %s\n", info.ppCallStack[i]);
             }
 #endif // WE_OS_SUPPORT_CALLSTACK_INFO
 
@@ -50,6 +57,7 @@ CMemoryManager::~CMemoryManager()
 
         std::cerr.imbue(std::locale(""));
         std::cerr << "[ERROR] Total unfreed memory: " << i32(unfreedBytes << 20) << " (bytes)" << std::endl;
+        std::cerr << "[VERB] Total fprintf memory: " << i32(bytesWriten << 20) << " (bytes)" << std::endl;
     }
 }
 
@@ -164,6 +172,6 @@ void CMemoryManager::EditAllocationInfo(usize nOldMemoryAddress, void *pNewMemor
 
 void CMemoryManager::RemoveAllocationInfo(usize nMemoryAddress)
 {
-    [[maybe_unused]] usize erased = mCurrentAllocations.erase(nMemoryAddress);
+    [[maybe_unused]] const usize erased = mCurrentAllocations.erase(nMemoryAddress);
     we_assert(erased && "Trying to free an unallocated memory.");
 }

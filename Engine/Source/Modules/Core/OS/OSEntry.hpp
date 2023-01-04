@@ -25,12 +25,9 @@ SOFTWARE.
 #ifdef WE_OS_WINDOWS
     #define MAIN_ENTRY_BEGIN                                                                                                                         \
         i32 wmain(i32 nArgC, wide **ppArgV)                                                                                                          \
-        {                                                                                                                                            \
-            i32 errorCode = 0;
+        {
 
-    #define MAIN_ENTRY_END                                                                                                                           \
-        return errorCode;                                                                                                                            \
-        }
+    #define MAIN_ENTRY_END }
 #else
     #define MAIN_ENTRY_BEGIN                                                                                                                         \
         i32 main(i32 nArgC, ansi **ppAnsiArgV)                                                                                                       \
@@ -39,7 +36,7 @@ SOFTWARE.
             tchar *ppArgV[nArgC];                                                                                                                    \
             for (i32 i = 0; i < nArgC; ++i)                                                                                                          \
             {                                                                                                                                        \
-                auto cast = TStringCast<tchar, ansi>(ppAnsiArgV[i]);                                                                                 \
+                auto cast = CStringCast<tchar, ansi>(ppAnsiArgV[i]);                                                                                 \
                 const usize length = cast.GetLength() + 1;                                                                                           \
                 ppArgV[i] = (tchar *)we_malloc(length * sizeof(tchar));                                                                              \
                 memcpy(ppArgV[i], *cast, length * sizeof(tchar));                                                                                    \

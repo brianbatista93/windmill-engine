@@ -1,29 +1,23 @@
 ---
-WarningsAsErrors: ''
-HeaderFilterRegex: 'Engine/Source/.*(hpp|cpp)[^ThirdParty/]'
-FormatStyle:     file
-User:            user
 Checks: >
+  -*,
   bugprone-*,
-  performance-*,
+  -bugprone-bool-pointer-implicit-conversion,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-assignment-in-if-condition,
   cert-*,
+  concurrency-mt-unsafe,
   misc-*,
-  concurrency-*,
-  readability-*,
-  modernize-loop-convert,
+  -misc-no-recursion,
+  modernize-deprecated-headers,
+  modernize-deprecated-ios-base-aliases,
   modernize-pass-by-value,
   modernize-raw-string-literal,
   modernize-redundant-void-arg,
-  modernize-replace-auto-ptr,
-  modernize-replace-disallow-copy-and-assign-macro,
-  modernize-replace-random-shuffle,
   modernize-return-braced-init-list,
-  modernize-shrink-to-fit,
-  modernize-unary-static-assert,
   modernize-use-auto,
   modernize-use-bool-literals,
   modernize-use-default-member-init,
-  modernize-use-emplace,
   modernize-use-equals-default,
   modernize-use-equals-delete,
   modernize-use-nodiscard,
@@ -31,20 +25,42 @@ Checks: >
   modernize-use-nullptr,
   modernize-use-override,
   modernize-use-transparent-functors,
-  modernize-use-uncaught-exceptions,
-  modernize-use-using
-
-WarningsAsErrors: >
-  bugprone-*,
+  modernize-use-using,
+  performance-*,
+  readability-*,
+  -readability-implicit-bool-conversion,
+  -readability-magic-numbers
+WarningsAsErrors: ''
+HeaderFilterRegex: '(?:Engine(\/|\\)Source(\/|\\)(Modules|Tools))(?!Benchmark).*(hpp)$'
+FormatStyle:       'file'
+User:              brian
+AnalyzeTemporaryDtors: false
 
 CheckOptions:
+  - key: bugprone-assert-side-effect.AssertMacros
+    value: 'we_assert,we_check'
+  - key: bugprone-dangling-handle.HandleClasses
+    value: CArrayView;CStringView
+  - key: bugprone-string-constructor.StringNames
+    value: CString
+  - key: bugprone-suspicious-string-compare.StringCompareLikeFunctions
+    value: CStringUtils::Compare
+  - key:  modernize-use-nodiscard.ReplacementString
+    value:  NDISCARD
+  - key:  performance-faster-string-find.StringLikeClasses
+    value:  CString;CStringView
+  - key:  performance-inefficient-vector-operation.VectorLikeClasses
+    value:  CArray;CArrayView
+    
   - key:             readability-identifier-naming.ClassCase
     value:           CamelCase
   - key:             readability-identifier-naming.EnumCase
     value:           CamelCase
   - key:             readability-identifier-naming.FunctionCase
     value:           CamelCase
-  - key:             readability-identifier-naming.MemberCase
+  - key:             readability-identifier-naming.FunctionIgnoredRegexp
+    value:           '(begin|end|rbegin|rend)'
+  - key:             readability-identifier-naming.PrivateMethodCase
     value:           CamelCase
   - key:             readability-identifier-naming.VariableCase
     value:           camelBack
@@ -52,7 +68,7 @@ CheckOptions:
     value:           camelBack
   - key:             readability-identifier-naming.EnumPrefix
     value:           E
-  - key:             readability-identifier-naming.MemberPrefix
+  - key:             readability-identifier-naming.PrivateMemberPrefix
     value:           m
   - key:             readability-identifier-naming.AbstractClassPrefix
     value:           I
@@ -75,19 +91,14 @@ CheckOptions:
   - key:			 readability-identifier-naming.MacroDefinitionCase
     value:           UPPER_CASE
   - key:			 readability-identifier-naming.MacroDefinitionIgnoredRegexp
-    value:           ^[wclass|wstruct|wenum]
+    value:           '(wclass|wstruct|wenum|we_.*)'
   - key:             readability-function-cognitive-complexity.Threshold
     value:           143
-  - key:             performance-inefficient-vector-operation.VectorLikeClasses
-    value:           TDynArray
-  - key:             cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
-    value:           true
-  - key:             cppcoreguidelines-macro-usage.AllowedRegexp
-    value:           ^[DECLARE_|DEFINE_]*
-  - key:             modernize-use-nodiscard.ReplacementString
-    value:           NDISCARD
-  - key:             misc-unused-parameters.StrictMode
-    value:           true
-  - key:             modernize-use-override.IgnoreDestructors
-    value:           true
+  - key:             readability-magic-numbers.IgnorePowersOf2IntegerValues
+    value:           1
+
+  - key:             readability-identifier-naming.TypeTemplateParameterIgnoredRegexp
+    value:           '^([A-Z]|expr-type)$'
+  - key:             readability-identifier-naming.ValueTemplateParameterIgnoredRegexp
+    value:           ^.[A-Z]$
 ...

@@ -1,5 +1,7 @@
-#include "StringUtils.hpp"
 #include <string>
+
+#include "Hashing/CRC32.hpp"
+#include "StringUtils.hpp"
 
 bool CStringUtils::StartsWith(const tchar *__restrict pStr, const tchar *__restrict pStart)
 {
@@ -16,13 +18,13 @@ bool CStringUtils::StartsWith(const tchar *__restrict pStr, const tchar *__restr
 
 bool CStringUtils::EndsWith(const tchar *__restrict pStr, const tchar *__restrict pEnd, i32 nLength)
 {
-    i32 endLength = i32(std::char_traits<tchar>::length(pEnd));
+    const i32 endLength = i32(std::char_traits<tchar>::length(pEnd));
     if (endLength < nLength)
     {
-        const tchar *it = &pStr[nLength - endLength];
-        while (*it)
+        const tchar *iter = &pStr[nLength - endLength];
+        while (*iter)
         {
-            if (*it++ != *pEnd++)
+            if (*iter++ != *pEnd++)
             {
                 return false;
             }
@@ -42,18 +44,18 @@ i32 CStringUtils::Compare(const tchar *__restrict pLhsStr, const tchar *__restri
 {
     for (i32 i = 0;; ++i)
     {
-        const tchar c1 = pLhsStr[i];
-        const tchar c2 = pRhsStr[i];
+        const tchar chr1 = pLhsStr[i];
+        const tchar chr2 = pRhsStr[i];
 
-        if (c1 < c2)
+        if (chr1 < chr2)
         {
             return -1;
         }
-        if (c1 > c2)
+        if (chr1 > chr2)
         {
             return 1;
         }
-        if (c1 == 0)
+        if (chr1 == 0)
         {
             break;
         }
@@ -66,24 +68,46 @@ i32 CStringUtils::Compare(const tchar *__restrict pLhsStr, i32 nLength, const tc
 {
     for (i32 i = 0; i < nLength; ++i)
     {
-        const tchar c1 = pLhsStr[i];
-        const tchar c2 = pRhsStr[i];
+        const tchar chr1 = pLhsStr[i];
+        const tchar chr2 = pRhsStr[i];
 
-        if (c1 < c2)
+        if (chr1 < chr2)
         {
             return -1;
         }
-        if (c1 > c2)
+        if (chr1 > chr2)
         {
             return 1;
         }
-        if (c1 == 0)
+        if (chr1 == 0)
         {
             break;
         }
     }
 
     return 0;
+}
+
+i32 CStringUtils::Find(const tchar *__restrict pStr, tchar findChar, i32 nOffset)
+{
+    const i32 length = i32(std::char_traits<tchar>::length(pStr));
+
+    return Find(pStr, length, findChar, nOffset);
+}
+
+i32 CStringUtils::Find(const tchar *__restrict pStr, i32 nStrLength, tchar findChar, i32 nOffset)
+{
+    pStr += nOffset;
+    i32 result = 0;
+    for (; pStr && *pStr && result < nStrLength; ++pStr, ++result)
+    {
+        if (*pStr == findChar)
+        {
+            return result;
+        }
+    }
+
+    return -1;
 }
 
 i32 CStringUtils::Find(const tchar *__restrict pStr, const tchar *__restrict pFind, i32 nOffset)
@@ -103,16 +127,16 @@ i32 CStringUtils::Find(const tchar *__restrict pStr, i32 nStrLength, const tchar
 
     for (i32 i = nOffset; i < nStrLength - nFindLength; ++i)
     {
-        i32 j;
-        for (j = 0; j < nFindLength; ++j)
+        i32 index;
+        for (index = 0; index < nFindLength; ++index)
         {
-            if (pStr[i + j] != pFind[j])
+            if (pStr[i + index] != pFind[index])
             {
                 break;
             }
         }
 
-        if (j == nFindLength)
+        if (index == nFindLength)
         {
             return i;
         }
@@ -121,7 +145,12 @@ i32 CStringUtils::Find(const tchar *__restrict pStr, i32 nStrLength, const tchar
     return -1;
 }
 
-bool CStringUtils::IsDigit(tchar ch)
+bool CStringUtils::IsDigit(tchar chr)
 {
-    return ch >= WT('0') && ch <= WT('9');
+    return chr >= WT('0') && chr <= WT('9');
+}
+
+u64 CStringUtils::GetHash(const tchar *pStr, i32 nLength)
+{
+    return CRC32::Calculate(pStr, nLength * sizeof(tchar));
 }

@@ -3,7 +3,7 @@
 
 bool CFormatterArgument::TryFormat(tchar **pDest, const tchar *pFormat) const
 {
-    return m_pFormatter(pDest, pFormat);
+    return mFormatter(pDest, pFormat);
 }
 
 void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFormatterArgument *pArgs)
@@ -20,22 +20,22 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
     }
 
     i32 pos = 0;
-    tchar ch = 0;
+    tchar chr = 0;
 
     while (true)
     {
         while (pos < nLength)
         {
-            ch = pFormat[pos];
+            chr = pFormat[pos];
 
             pos++;
 
-            if (ch == WT('}'))
+            if (chr == WT('}'))
             {
                 we_assert(pos < nLength and pFormat[pos] == WT('}') && "Invalid pFormat string");
                 pos++;
             }
-            else if (ch == WT('{'))
+            else if (chr == WT('{'))
             {
                 if (pos < nLength && pFormat[pos] == WT('{'))
                 {
@@ -48,7 +48,7 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
                 }
             }
 
-            Append(ch);
+            Append(chr);
         }
 
         if (pos == nLength)
@@ -57,30 +57,28 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
         }
 
         pos++;
-        if (pos == nLength or !isdigit(ch = pFormat[pos]))
-        {
-            we_assert(false and "Invalid pFormat string");
-            return;
-        }
+        chr = pFormat[pos];
+        we_assert(pos == nLength || !isdigit(chr));
+
         size_t index = 0;
         do
         {
-            index = index * 10 + ch - WT('0');
+            index = index * 10 + chr - WT('0');
             pos++;
             we_assert(pos != nLength && "Invalid pFormat string");
-            ch = pFormat[pos];
-        } while (isdigit(ch) and index < nIndexLimit);
+            chr = pFormat[pos];
+        } while (isdigit(chr) and index < nIndexLimit);
 
         we_assert(index < nArgc && "Invalid pFormat index");
 
-        while (pos < nLength and isspace(ch = pFormat[pos]))
+        while (pos < nLength and isspace(chr = pFormat[pos]))
         {
             pos++;
         }
 
         bool leftPad = false;
         i32 width = 0;
-        if (ch == WT(','))
+        if (chr == WT(','))
         {
             pos++;
 
@@ -91,69 +89,69 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
 
             we_assert(pos != nLength && "Invalid pFormat string");
 
-            ch = pFormat[pos];
-            if (ch == WT('-'))
+            chr = pFormat[pos];
+            if (chr == WT('-'))
             {
                 leftPad = true;
                 pos++;
 
                 we_assert(pos != nLength && "Invalid pFormat string");
-                ch = pFormat[pos];
+                chr = pFormat[pos];
             }
 
-            we_assert(isdigit(ch) && "Invalid pFormat string");
+            we_assert(isdigit(chr) && "Invalid pFormat string");
 
             do
             {
-                width = width * 10 + ch - WT('0');
+                width = width * 10 + chr - WT('0');
                 pos++;
                 we_assert(pos != nLength && "Invalid pFormat string");
-                ch = pFormat[pos];
-            } while (isdigit(ch) and width < nWidthLimit);
+                chr = pFormat[pos];
+            } while (isdigit(chr) and width < nWidthLimit);
         }
 
-        while (pos < nLength and isspace(ch = pFormat[pos]))
+        while (pos < nLength and isspace(chr = pFormat[pos]))
         {
             pos++;
         }
 
         const CFormatterArgument argument = pArgs[index];
-        CString item_format_sub;
+        CString itemFormatSubstring;
 
-        if (ch == WT(':'))
+        if (chr == WT(':'))
         {
             pos++;
-            i32 startPos = pos;
+            const i32 startPos = pos;
 
             while (true)
             {
                 we_assert(pos != nLength && "Invalid pFormat string");
-                ch = pFormat[pos];
+                chr = pFormat[pos];
 
-                if (ch == WT('}'))
+                if (chr == WT('}'))
                 {
                     break;
                 }
 
-                we_assert(ch != WT('{') && "Invalid pFormat string");
+                we_assert(chr != WT('{') && "Invalid pFormat string");
 
                 pos++;
             }
 
             if (pos > startPos)
             {
-                item_format_sub = CString(pFormat, usize(nLength)).Substring(startPos, pos - startPos);
+                itemFormatSubstring = CString(pFormat, usize(nLength)).Substring(startPos, pos - startPos);
             }
         }
-        we_assert(ch == WT('}') && "Invalid pFormat string");
+        we_assert(chr == WT('}') && "Invalid pFormat string");
 
         pos++;
-        CString s;
+        CString formattedString;
 
         switch (argument.GetType())
         {
         case CFormatterArgument::kString: {
-            s = CString(argument.GetString());
+            formattedString = CString(argument.GetString());
         }
         break;
         case CFormatterArgument::kNumeric:
@@ -161,28 +159,26 @@ void CStringBuilder::FormatInternal(const tchar *pFormat, usize nArgc, const CFo
             thread_local tchar buffer[128];
             memset(buffer, 0, 128 * sizeof(tchar));
             tchar *pBufferPtr = argument.GetType() == CFormatterArgument::kNumeric ? (std::end(buffer) - 1) : buffer;
-            if (!argument.TryFormat(&pBufferPtr, *item_format_sub))
-            {
-                we_assert(false && "Could not format argument");
-                return;
-            }
 
-            s = CString((const tchar *)pBufferPtr);
+            [[maybe_unused]] const bool formatted = !argument.TryFormat(&pBufferPtr, *itemFormatSubstring);
+            we_assert(formatted && "Could not format argument");
+
+            formattedString = CString((const tchar *)pBufferPtr);
         }
         break;
         default: {
-            we_assert(false && "Invalid pFormat string");
+            return;
         }
         break;
         }
 
-        const i32 pad = width - s.GetLength();
+        const i32 pad = width - formattedString.GetLength();
         if (!leftPad and (pad > 0))
         {
             Append(WT(' '), pad);
         }
 
-        Append(s);
+        Append(formattedString);
         if (leftPad and (pad > 0))
         {
             Append(WT(' '), pad);

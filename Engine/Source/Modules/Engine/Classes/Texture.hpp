@@ -25,10 +25,8 @@ SOFTWARE.
 #define wstruct(...) struct
 #define wenum(...) enum
 
-wclass() CTexture
-{
-  private:
-    [[WE::Property(Config)]] float mWidth;
-
-    [[WE::Property(Config)]] float mHeight;
+wclass() CTexture{
+    // private :
+    // [[WE::Property(Config)]] float mWidth;
+    // [[WE::Property(Config)]] float mHeight;
 };

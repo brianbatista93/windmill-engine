@@ -19,17 +19,19 @@ SOFTWARE.
 
 #pragma once
 
-#include <stddef.h>
+#include <cstddef>
+#include <cstdint>
+#include <utility>
 
-using u8 = unsigned char;
-using u16 = unsigned short;
-using u32 = unsigned int;
-using u64 = unsigned long long;
+using u8 = std::uint8_t;
+using u16 = std::uint16_t;
+using u32 = std::uint32_t;
+using u64 = std::uint64_t;
 
-using i8 = char;
-using i16 = short;
-using i32 = int;
-using i64 = long long;
+using i8 = std::int8_t;
+using i16 = std::int16_t;
+using i32 = std::int32_t;
+using i64 = std::int64_t;
 
 using f32 = float;
 using f64 = double;
@@ -57,14 +59,14 @@ using tchar = ansi;
     #define WTL(x) x##_s
 #endif // WE_OS_WINDOWS
 
-template <class T>
-class TType
+template <class Type>
+class CType
 {
 };
 
 #define DECLARE_TYPE(type, name, shortName)                                                                                                          \
     template <>                                                                                                                                      \
-    class TType<type>                                                                                                                                \
+    class CType<type>                                                                                                                                \
     {                                                                                                                                                \
       public:                                                                                                                                        \
         inline static const char *GetName()                                                                                                          \
@@ -82,6 +84,10 @@ class TType
         inline static usize GetAlign()                                                                                                               \
         {                                                                                                                                            \
             return alignof(type);                                                                                                                    \
+        }                                                                                                                                            \
+        inline friend u64 GetHash(type value)                                                                                                        \
+        {                                                                                                                                            \
+            return static_cast<u64>(value);                                                                                                          \
         }                                                                                                                                            \
     }
 
@@ -106,14 +112,14 @@ DECLARE_TYPE(utf32, "utf32", "utf32");
 DECLARE_TYPE(utf8, "utf8", "utf8");
 #endif // __cpp_char8_t
 
-#include <assert.h>
+#include <cassert>
 
 #ifndef we_assert
     #define we_assert(x) assert((x))
 #endif // !we_assert
 
-template <class T>
-constexpr void set_if_not_null(T *output, T value)
+template <class Type>
+constexpr void SetIfNotNull(Type *output, Type value)
 {
     if (output != nullptr)
     {
@@ -131,3 +137,9 @@ constexpr void set_if_not_null(T *output, T value)
 #endif
 
 #define NDISCARD [[nodiscard]]
+
+template <class KeyType, class ValueType>
+inline u64 GetHash(std::pair<KeyType, ValueType> pair)
+{
+    return GetHash(pair.first);
+}

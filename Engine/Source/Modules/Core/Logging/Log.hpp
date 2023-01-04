@@ -38,9 +38,9 @@ class CLogSystem
     void RemoveSink(ILogSink *pSink);
     void RemoveAllSinks();
 
-    template <class... Args>
+    template <class... ArgsType>
     inline void Log(const CLogEmitter *pEmitter, ELogLevel logLevel, const char *pFile, i32 nLine, const char *pFunction, const tchar *pFormat,
-                    Args &&...args)
+                    ArgsType &&...packedArgs)
     {
         if (pEmitter->ShouldLog(logLevel))
         {
@@ -50,7 +50,7 @@ class CLogSystem
             message.pFilename = pFile;
             message.nLine = nLine;
             message.pFunction = pFunction;
-            message.FormattedMessage = std::move(CString::Format(pFormat, std::forward<Args>(args)...));
+            message.FormattedMessage = std::move(CString::Format(pFormat, std::forward<ArgsType>(packedArgs)...));
 
             LogInternal(&message);
         }
@@ -61,12 +61,12 @@ class CLogSystem
   private:
     void LogInternal(const SLogMessage *pMessage);
 
-    TArray<TUniquePtr<ILogSink>> m_Sinks;
+    CArray<TUniquePtr<ILogSink>> mSinks;
 };
 
-#define DECLARE_EXTERN_LOG_EMITTER(emitter, logLevel) extern CLogEmitter _gLogEmitter##emitter(WT(#emitter), ELogLevel::logLevel)
+#define DECLARE_EXTERN_LOG_EMITTER(emitter, logLevel) extern CLogEmitter _gLogEmitter##emitter(WT(#emitter), ELogLevel::logLevel) // NOLINT
 
-#define DECLARE_STATIC_LOG_EMITTER(emitter, logLevel) static CLogEmitter _gLogEmitter##emitter(WT(#emitter), ELogLevel::logLevel)
+#define DECLARE_STATIC_LOG_EMITTER(emitter, logLevel) static CLogEmitter _gLogEmitter##emitter(WT(#emitter), ELogLevel::logLevel) // NOLINT
 
 #define WE_LOG(emitter, logLevel, pFormat, ...)                                                                                                      \
     CLogSystem::Get().Log(&_gLogEmitter##emitter, ELogLevel::logLevel, __FILE__, __LINE__, __FUNCTION__, pFormat, ##__VA_ARGS__)

@@ -22,13 +22,13 @@ SOFTWARE.
 #include "Concepts.hpp"
 #include "Containers/StringUtils.hpp"
 
-#include <math.h>
+#include <cmath>
 
 class CNumeric
 {
   public:
-    inline static i32 kDefaultPrecision = 6;
-    inline static i32 kDefaultExponentialPrecision = 3;
+    inline constexpr static i32 kDefaultPrecision = 6;
+    inline constexpr static i32 kDefaultExponentialPrecision = 3;
 
     inline static tchar kDecimalPoint = WT('.');
     inline static tchar kThousandsSeparator = WT(',');
@@ -44,13 +44,13 @@ class CNumeric
         kHexadecimal = 6
     };
 
-    template <WE::Concept::IsNumeric T>
-    inline static bool TryFormat(T value, tchar **pDest, const tchar *pFormat)
+    template <WE::Concept::IsNumeric Type>
+    inline static bool TryFormat(Type value, tchar **pDest, const tchar *pFormat)
     {
         EType eType = kInvalid;
         i32 nPrecision = 0;
         bool bIsUpperCase = true;
-        if (!ParseFormat<T>(pFormat, &eType, &nPrecision, &bIsUpperCase))
+        if (!ParseFormat<Type>(pFormat, &eType, &nPrecision, &bIsUpperCase))
         {
             return false;
         }
@@ -74,7 +74,7 @@ class CNumeric
     }
 
   private:
-    template <class T>
+    template <class Type>
     inline static bool ParseFormat(const tchar *pFormat, EType *pType, i32 *pPrecision, bool *pIsUpperCase)
     {
         i32 nDefaultPrecision = kDefaultPrecision;
@@ -109,13 +109,13 @@ class CNumeric
             *pType = kHexadecimal;
             break;
         default: {
-            if constexpr (std::is_integral_v<T>)
+            if constexpr (std::is_integral_v<Type>)
             {
                 *pType = kDecimal;
                 *pPrecision = 0;
                 return true;
             }
-            else if constexpr (std::is_floating_point_v<T>)
+            else if constexpr (std::is_floating_point_v<Type>)
             {
                 *pType = kFixedPoint;
             }
@@ -152,8 +152,8 @@ class CNumeric
         return false;
     }
 
-    template <class T>
-    inline static tchar *FormatUnsigned(T value, tchar *pDest, i32 *nWrittenCount)
+    template <class Type>
+    inline static tchar *FormatUnsigned(Type value, tchar *pDest, i32 *nWrittenCount)
     {
         tchar *pStart = pDest;
 
@@ -171,10 +171,10 @@ class CNumeric
         return pDest;
     }
 
-    template <class T>
-    inline static tchar *FormatSigned(T value, tchar *pDest, i32 *nWrittenCount)
+    template <class Type>
+    inline static tchar *FormatSigned(Type value, tchar *pDest, i32 *nWrittenCount)
     {
-        using TUnsigned = std::make_unsigned_t<T>;
+        using TUnsigned = std::make_unsigned_t<Type>;
         const TUnsigned nUnsignedValue = (TUnsigned)value;
 
         if (value < 0)
@@ -190,10 +190,10 @@ class CNumeric
         return pDest;
     }
 
-    template <class T>
-    inline static bool FormatDecimal(T value, tchar **pDest, i32 nPrecision)
+    template <class Type>
+    inline static bool FormatDecimal(Type value, tchar **pDest, i32 nPrecision)
     {
-        if constexpr (std::is_integral_v<T>)
+        if constexpr (std::is_integral_v<Type>)
         {
             i32 nWrittenCount = 0;
 
@@ -229,8 +229,8 @@ class CNumeric
         }
     }
 
-    template <class T>
-    inline static bool FormatScientific(T value, tchar **pDest, i32 nPrecision, bool bIsUpperCase)
+    template <class Type>
+    inline static bool FormatScientific(Type value, tchar **pDest, i32 nPrecision, bool bIsUpperCase)
     {
         i32 nExpCount = 0;
 
@@ -265,8 +265,8 @@ class CNumeric
         return false;
     }
 
-    template <class T>
-    inline static bool FormatFixedPoint(T value, tchar **pDest, i32 nPrecision)
+    template <class Type>
+    inline static bool FormatFixedPoint(Type value, tchar **pDest, i32 nPrecision)
     {
         f64 integerPart = 0;
         f64 decimalPart = modf((f64)value, &integerPart);
@@ -298,10 +298,10 @@ class CNumeric
         return true;
     }
 
-    template <class T>
-    inline static bool FormatNumber(T value, tchar **pDest, i32 nPrecision)
+    template <class Type>
+    inline static bool FormatNumber(Type value, tchar **pDest, i32 nPrecision)
     {
-        if constexpr (WE::Concept::IsNumeric<T>)
+        if constexpr (WE::Concept::IsNumeric<Type>)
         {
             f64 doubleValue = f64(value);
             f64 integerPart = 0;
@@ -349,8 +349,8 @@ class CNumeric
         }
     }
 
-    template <class T>
-    inline static bool FormatPercentage(T value, tchar **pDest, i32 nPrecision)
+    template <class Type>
+    inline static bool FormatPercentage(Type value, tchar **pDest, i32 nPrecision)
     {
         *--*pDest = WT('\045');
         return FormatNumber(value * 100.0, pDest, nPrecision);

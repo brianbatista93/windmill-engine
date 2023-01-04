@@ -38,33 +38,33 @@ class CFormatterArgument
         kFormattable = 3
     };
 
-    template <WE::Concept::IsFormattable T>
-    CFormatterArgument(const T &rValue) : m_eType(kFormattable)
+    template <WE::Concept::IsFormattable Type>
+    CFormatterArgument(const Type &rValue) : mType(kFormattable)
     {
-        m_pFormatter = [rValue](tchar **pDest, const tchar *pFormat) {
+        mFormatter = [this, rValue](tchar **pDest, const tchar *pFormat) {
             return TryFormat(rValue, pDest, pFormat);
         };
     }
 
-    template <WE::Concept::IsNumeric T>
-    CFormatterArgument(const T &rValue) : m_eType(kNumeric)
+    template <WE::Concept::IsNumeric Type>
+    CFormatterArgument(const Type &rValue) : mType(kNumeric)
     {
-        m_pFormatter = [rValue](tchar **pDest, const tchar *pFormat) {
-            return CNumeric::TryFormat<T>(rValue, pDest, pFormat);
+        mFormatter = [rValue](tchar **pDest, const tchar *pFormat) {
+            return CNumeric::TryFormat<Type>(rValue, pDest, pFormat);
         };
     }
 
     CFormatterArgument(const tchar *pValue);
-    CFormatterArgument(class CString value);
+    CFormatterArgument(const class CString &value);
 
     bool TryFormat(tchar **pDest, const tchar *pFormat) const;
 
-    inline EType GetType() const { return m_eType; }
+    NDISCARD inline EType GetType() const { return mType; }
 
-    inline const tchar *GetString() const { return m_pString; }
+    NDISCARD inline const tchar *GetString() const { return mString; }
 
   private:
-    FormatterFunction m_pFormatter{nullptr};
-    EType m_eType{kInvalid};
-    const tchar *m_pString;
+    FormatterFunction mFormatter{nullptr};
+    EType mType{kInvalid};
+    const tchar *mString;
 };

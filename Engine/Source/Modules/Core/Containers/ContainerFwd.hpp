@@ -22,10 +22,10 @@ SOFTWARE.
 #include "Allocator.hpp"
 #include "Types.hpp"
 
-using DefaultAllocator = TAllocator<i32>;
+using DefaultAllocator = CAllocator<i32>;
 
-template <class T, class Alloc = DefaultAllocator>
-class TArray;
+template <class Type, class AllocType = DefaultAllocator>
+class CArray;
 
-template <class T, class Alloc = DefaultAllocator>
-class TArrayView;
+template <class Type, class AllocType = DefaultAllocator>
+class CArrayView;

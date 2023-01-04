@@ -1,0 +1,20 @@
+{
+  "version": 5,
+  "configurePresets": [
+    {
+      "name": "windows-base",
+      "inherits": [ "output-base" ],
+      "hidden": true,
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [ "Windows" ],
+          "enableClangTidyCodeAnalysis": true,
+          "intelliSenseMode": "windows-msvc-x64"
+        },
+        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+          "sourceDir": "$env{USERPROFILE}/.vs/$ms{projectDirName}"
+        }
+      }
+    }
+  ]
+}
