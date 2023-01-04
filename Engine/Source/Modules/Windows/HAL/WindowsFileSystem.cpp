@@ -33,7 +33,7 @@ bool CWindowsFileSystem::CreateDirectory(const CPath &path) const
     const CPath parentPath = path.GetParentPath();
     if (!parentPath.IsEmpty() and !DirectoryExists(parentPath))
     {
-        CreateDirectory(parentPath);
+        return CreateDirectory(parentPath);
     }
 
     return ::CreateDirectoryW(*path, nullptr);
