@@ -26,8 +26,8 @@ class CWindowsFileSystem final : public IFileSystem
   public:
     NDISCARD bool FileExists(const CPath &path) const override;
     NDISCARD bool DirectoryExists(const CPath &path) const override;
-    bool CreateDirectory(const CPath &path) const override;
-    IFileNative *OpenRead(const CPath &filename, bool bCanWrite) override;
-    IFileNative *OpenWrite(const CPath &filename, bool bAppend, bool bCanRead) override;
+    NDISCARD bool CreateDirectory(const CPath &path) const override;
+    NDISCARD IFileNative *OpenRead(const CPath &filename, bool bCanWrite) override;
+    NDISCARD IFileNative *OpenWrite(const CPath &filename, bool bAppend, bool bCanRead) override;
     NDISCARD CArray<CPath> ListChildren(const CPath &path) const override;
 };

@@ -1,7 +1,9 @@
+#include <ctime>
 #include <sys/time.h>
-#include <time.h>
 
 #include "LinuxTimestamp.hpp"
+
+// NOLINGBEGIN(bugprone-narrowing-conversions)
 
 u64 CLinuxTimestamp::GetTicks()
 {
@@ -67,3 +69,5 @@ void CLinuxTimestamp::GetUTCTime(i32 &year, i32 &month, i32 &dayOfWeek, i32 &day
     sec = timeInfo.tm_sec;
     msec = time.tv_usec / 1000;
 }
+
+// NOLINGEND(bugprone-narrowing-conversions)
