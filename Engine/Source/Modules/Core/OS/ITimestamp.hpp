@@ -19,12 +19,9 @@ SOFTWARE.
 
 #pragma once
 
-#include <gtest/gtest.h>
+#include "Types.hpp"
 
-#include "HAL/Path.hpp"
-
-TEST(Path, EmptyInit)
+class ITimestamp
 {
-    CPath path;
-    EXPECT_TRUE(path.IsEmpty());
-}
+    ITimestamp() = default;
+};

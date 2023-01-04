@@ -19,15 +19,19 @@ SOFTWARE.
 
 #pragma once
 
-#include "HAL/Interfaces/IFileSystem.hpp"
+#include "OS/ITimestamp.hpp"
 
-class CLinuxFileSystem final : public IFileSystem
+class CLinuxTimestamp : public ITimestamp
 {
   public:
-    NDISCARD bool FileExists(const CPath &path) const override;
-    NDISCARD bool DirectoryExists(const CPath &path) const override;
-    NDISCARD bool CreateDirectory(const CPath &path) const override;
-    NDISCARD IFileNative *OpenRead(const CPath &filename, bool bCanWrite) override;
-    NDISCARD IFileNative *OpenWrite(const CPath &filename, bool bAppend, bool bCanRead) override;
-    NDISCARD CArray<CPath> ListChildren(const CPath &path) const override;
+    static u64 GetTicks();
+    static f64 GetSeconds();
+    static f64 GetMilliseconds();
+    static f64 GetMicroseconds();
+    static f64 GetNanoseconds();
+
+    static void GetSystemTime(i32 &year, i32 &month, i32 &dayOfWeek, i32 &day, i32 &hour, i32 &min, i32 &sec, i32 &msec);
+    static void GetUTCTime(i32 &year, i32 &month, i32 &dayOfWeek, i32 &day, i32 &hour, i32 &min, i32 &sec, i32 &msec);
 };
+
+using CTimestamp = CLinuxTimestamp;

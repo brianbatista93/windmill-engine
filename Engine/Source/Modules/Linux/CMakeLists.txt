@@ -6,5 +6,8 @@ add_we_module ("Linux"
   PRIVATE
     "OS/LinuxSC.cpp"
     "OS/LinuxOS.cpp"
+    "HAL/LinuxFileSystem.hpp"
     "HAL/LinuxFileSystem.cpp"
+    "HAL/LinuxTimestamp.hpp"
+    "HAL/LinuxTimestamp.cpp"
 )

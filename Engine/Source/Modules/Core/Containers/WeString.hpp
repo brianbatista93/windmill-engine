@@ -104,7 +104,7 @@ class CString
     }
 
     friend inline CString operator+(CString &&lhs, CString &&rhs) noexcept { return ConcatSS(std::move(lhs), std::move(rhs)); }
-    friend inline CString operator+(CString &lhs, const CString &&rhs) noexcept { return ConcatSS(std::move(lhs), rhs); }
+    friend inline CString operator+(CString &&lhs, const CString &rhs) noexcept { return ConcatSS(std::move(lhs), rhs); }
     friend inline CString operator+(const CString &lhs, CString &&rhs) noexcept { return ConcatSS(lhs, std::move(rhs)); }
     friend inline CString operator+(const CString &lhs, const CString &rhs) { return ConcatSS(lhs, rhs); }
 
