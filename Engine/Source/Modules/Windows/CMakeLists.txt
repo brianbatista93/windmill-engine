@@ -3,12 +3,13 @@ add_we_module ("Windows"
   DESCRIPTION "Engine module"
   DEPENDS
     "Core"
-  PUBLIC
+  PRIVATE
     "WindowsInclude.hpp"
+    "HAL/WindowsTimestamp.hpp"
     "HAL/WindowsFileSystem.hpp"
     "Logging/WindowsOutputLogSink.hpp"
-  PRIVATE
     "HAL/WindowsFileSystem.cpp"
+    "HAL/WindowsTimestamp.cpp"
     "OS/WindowsStringConvertion.cpp" 
     "OS/WindowsUtils.cpp" 
     "OS/WindowsOS.cpp" 
