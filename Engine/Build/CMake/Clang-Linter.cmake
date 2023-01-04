@@ -11,7 +11,7 @@ add_custom_target (LintProjects
 set_target_properties (LintProjects PROPERTIES FOLDER "Helpers")
 
 function (add_linter target_name)
-  set(lint_timestamp "${CMAKE_BINARY_DIR}/${target_name}/.lint-timestamp")
+  set(lint_timestamp "${CMAKE_BINARY_DIR}/${target_name}/__lint-timestamp__")
   message (STATUS ${lint_timestamp})
   if (CMAKE_COMPILER_IS_GNUCXX)
     set (COMPILER_OPTIONS --extra-arg="-fno-caret-diagnostics" --extra-arg="-Wno-unknown-warning-option")
