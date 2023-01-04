@@ -5,7 +5,7 @@
 
 DECLARE_STATIC_LOG_EMITTER(Scribe, eInfo);
 
-CPath gLicenseFile;
+CPath gLicenseFile; // NOLINT
 
 bool Parse(const CString &content, CStringBuilder &builder);
 
