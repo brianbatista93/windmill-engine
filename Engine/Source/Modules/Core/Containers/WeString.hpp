@@ -49,7 +49,7 @@ class CString
 
     CString(std::nullptr_t) = delete;
 
-    inline explicit CString(const tchar *pStr) : mData(i32(std::char_traits<tchar>::length(pStr)) + 1) { Init(pStr, mData.GetSize()); }
+    inline CString(const tchar *pStr) : mData(i32(std::char_traits<tchar>::length(pStr)) + 1) { Init(pStr, mData.GetSize()); }
 
     inline CString(const tchar *pStr, usize nLength) : mData(i32(nLength) + 1) { Init(pStr, mData.GetSize()); }
 
@@ -223,6 +223,8 @@ class CString
     NDISCARD auto rbegin() const { return std::reverse_iterator(mData.end()); }
     NDISCARD auto rend() { return std::reverse_iterator(begin()); }
     NDISCARD auto rend() const { return std::reverse_iterator(begin()); }
+
+    friend u64 GetHash(const CString &str) { return CStringUtils::GetHash(*str, str.GetLength()); }
 
   private:
     inline void Init(const tchar *pStr, usize nLength)

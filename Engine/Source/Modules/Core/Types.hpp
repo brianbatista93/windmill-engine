@@ -21,6 +21,7 @@ SOFTWARE.
 
 #include <cstddef>
 #include <cstdint>
+#include <utility>
 
 using u8 = std::uint8_t;
 using u16 = std::uint16_t;
@@ -84,6 +85,10 @@ class CType
         {                                                                                                                                            \
             return alignof(type);                                                                                                                    \
         }                                                                                                                                            \
+        inline friend u64 GetHash(type value)                                                                                                        \
+        {                                                                                                                                            \
+            return static_cast<u64>(value);                                                                                                          \
+        }                                                                                                                                            \
     }
 
 DECLARE_TYPE(u8, "uint8", "u8");
@@ -132,3 +137,9 @@ constexpr void SetIfNotNull(Type *output, Type value)
 #endif
 
 #define NDISCARD [[nodiscard]]
+
+template <class KeyType, class ValueType>
+inline u64 GetHash(std::pair<KeyType, ValueType> pair)
+{
+    return GetHash(pair.first);
+}

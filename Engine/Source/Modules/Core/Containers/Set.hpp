@@ -34,23 +34,23 @@ struct SSetEntry
 };
 
 template <class Type, class SizeType = usize, class ComparerType = std::equal_to<Type>>
-class CTSet
+class CSet
 {
   public:
     using ElementType = Type;
     using IndexType = std::make_signed_t<SizeType>;
-    using EntryType = SSetEntry<Type>;
+    using EntryType = SSetEntry<ElementType>;
 
-    inline CTSet() : mFreeIndex(-1), mCount(0), mFreeCount(0) {}
+    inline CSet() : mFreeIndex(-1), mCount(0), mFreeCount(0) {}
 
-    inline CTSet(SizeType nCapacity)
+    inline CSet(SizeType nCapacity)
     {
         we_assert(nCapacity > 0);
 
         Init(nCapacity);
     }
 
-    inline CTSet(std::initializer_list<ElementType> list)
+    inline CSet(std::initializer_list<ElementType> list)
     {
         Init(list.size());
 
@@ -64,8 +64,8 @@ class CTSet
 
     inline SizeType GetCount() const { return mCount - mFreeCount; }
 
-    inline bool Add(ElementType &&element) { return AddEntry(std::forward<ElementType>(element), nullptr); }
-    inline bool Add(const ElementType &element) { return AddEntry(element, nullptr); }
+    inline bool Add(ElementType &&element) { return AddEntry<ElementType &&>(std::forward<ElementType>(element), nullptr); }
+    inline bool Add(const ElementType &element) { return AddEntry<const ElementType>(element, nullptr); }
 
     inline bool Remove(const ElementType &element)
     {
@@ -80,7 +80,7 @@ class CTSet
             while (i >= 0)
             {
                 EntryType &entry = mEntries[i];
-                if (entry.Hash == hash and m_Comparer(entry.Value, element))
+                if (entry.Hash == hash and mComparer(entry.Value, element))
                 {
                     if (last < 0)
                     {
@@ -127,19 +127,19 @@ class CTSet
         mFreeCount = 0;
     }
 
-    inline const ElementType *Find(const Type &element) const
+    inline ElementType *Find(const ElementType &element)
     {
         if (!mBuckets.IsEmpty())
         {
             const u64 hash = GetHash(element);
             const i64 *bucket = mBuckets.begin() + (hash % mBuckets.GetSize());
             i64 i = *bucket - 1;
-            u64 collision_count_ = 0;
+            IndexType collision_count_ = 0;
 
             while (i >= 0)
             {
-                const EntryType *entry = (mEntries.GetData() + i);
-                if (entry->Hash == hash and m_Comparer(entry->Value, element))
+                EntryType *entry = (mEntries.GetData() + i);
+                if (entry->Hash == hash and mComparer(entry->Value, element))
                 {
                     return &entry->Value;
                 }
@@ -153,7 +153,9 @@ class CTSet
         return nullptr;
     }
 
-    inline bool Contains(const Type &element) const { return Find(element) != nullptr; }
+    inline const ElementType *Find(const ElementType &element) const { return const_cast<CSet *>(this)->Find(element); }
+
+    inline bool Contains(const ElementType &element) const { return Find(element) != nullptr; }
 
   private:
     inline void Init(SizeType nCapacity)
@@ -167,7 +169,9 @@ class CTSet
         mFreeCount = 0;
     }
 
-    inline void Resize(SizeType nNewSize)
+    inline void Resize() { Resize(mCount * 2); }
+
+    inline void Resize(IndexType nNewSize)
     {
         we_assert(nNewSize >= mEntries.GetSize());
 
@@ -187,14 +191,14 @@ class CTSet
     }
 
     template <class UType>
-    inline bool AddEntry(typename std::type_identity_t /*unused*/<UType> value, SizeType *oIndex)
+    inline bool AddEntry(typename std::type_identity_t<UType> value, SizeType *oIndex)
     {
         if (mBuckets.IsEmpty())
         {
             Init(1);
         }
 
-        u32 collision_count = 0;
+        u32 collisionCount = 0;
         const u64 hash = GetHash(value);
         i64 *bucket = mBuckets.begin() + (hash % mBuckets.GetSize());
         i64 i = *bucket - 1;
@@ -202,15 +206,15 @@ class CTSet
         while (i >= 0)
         {
             EntryType &entry = mEntries[i];
-            if (entry.Hash == hash and m_Comparer(entry.Value, value))
+            if (entry.Hash == hash and mComparer(entry.Value, value))
             {
-                SetIfNotNull(oIndex, i);
+                SetIfNotNull(oIndex, (SizeType)i);
                 return false;
             }
             i = entry.Next;
 
-            collision_count++;
-            we_assert(collision_count <= mEntries.GetSize());
+            collisionCount++;
+            we_assert(collisionCount <= mEntries.GetSize());
         }
 
         i64 index;
@@ -222,7 +226,7 @@ class CTSet
         }
         else
         {
-            size_t count = mCount;
+            IndexType count = mCount;
             if (count == mEntries.GetSize())
             {
                 Resize();

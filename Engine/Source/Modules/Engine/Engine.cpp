@@ -33,11 +33,17 @@ bool CEngine::Initialize(const CArrayView<tchar *> &arguments)
         return false;
     }
 
-    return false;
+    if (!mConfigFile.Load(WTL("../Config/Engine.ini")))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 void CEngine::Shutdown()
 {
+    mConfigFile.Save();
     OS::Shutdown();
     CLogSystem::Shutdown();
 }

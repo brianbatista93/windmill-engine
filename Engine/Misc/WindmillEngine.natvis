@@ -2,27 +2,34 @@
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
 	<Type Name="TArray&lt;*,*&gt;">
-		<DisplayString>{{ Size={m_nSize} }}</DisplayString>
+		<DisplayString>{{ Size={mSize} }}</DisplayString>
 		<Expand>
-			<Item Name="[Capacity]" ExcludeView="simple">m_nCapacity</Item>
-			<Item Name="[Allocator]" ExcludeView="simple">m_Allocator</Item>
+			<Item Name="[Capacity]" ExcludeView="simple">mCapacity</Item>
+			<Item Name="[Allocator]" ExcludeView="simple">mAllocator</Item>
 			<ArrayItems>
-				<Size>m_nSize</Size>
-				<ValuePointer>($T1*)m_Allocator.m_pData</ValuePointer>
+				<Size>mSize</Size>
+				<ValuePointer>($T1*)mAllocator.mData</ValuePointer>
 			</ArrayItems>
 		</Expand>
 	</Type>
 
 	<Type Name="CString">
-		<DisplayString Condition="m_Data.m_nSize == 0">[Empty]</DisplayString>
-		<DisplayString Condition="m_Data.m_nSize &lt; 0">[Invalid]</DisplayString>
-		<DisplayString Condition="m_Data.m_nCapacity &lt; m_Data.m_nSize">[Invalid]</DisplayString>
-		<DisplayString Condition="m_Data.m_nCapacity &gt;= m_Data.m_nSize">{m_Data.m_Allocator.m_pData,su}</DisplayString>
-		<StringView Condition="m_Data.m_nCapacity &gt;= m_Data.m_nSize">m_Data.m_Allocator.m_pData,su</StringView>
+		<DisplayString Condition="mData.mSize == 0">[Empty]</DisplayString>
+		<DisplayString Condition="mData.mSize &lt; 0">[Invalid]</DisplayString>
+		<DisplayString Condition="mData.mCapacity &lt; mData.mSize">[Invalid]</DisplayString>
+		<DisplayString Condition="mData.mCapacity &gt;= mData.mSize">{mData.mAllocator.mData,su}</DisplayString>
+		<StringView Condition="mData.mCapacity &gt;= mData.mSize">mData.mAllocator.mData,su</StringView>
+	</Type>
+
+	<Type Name="CStringView">
+		<DisplayString Condition="mBegin == mEnd">[Empty]</DisplayString>
+		<DisplayString Condition="mBegin &lt; 0">[Invalid]</DisplayString>
+		<DisplayString Condition="mBegin != mEnd">{mDataViewer,su}</DisplayString>
+		<StringView Condition="mBegin != mEnd">mDataViewer,su</StringView>
 	</Type>
 
 	<Type Name="CPath">
-		<DisplayString>{m_Text}</DisplayString>
+		<DisplayString>{mText}</DisplayString>
 	</Type>
 
 

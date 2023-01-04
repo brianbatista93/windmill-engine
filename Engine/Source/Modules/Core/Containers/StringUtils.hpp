@@ -37,8 +37,12 @@ class CStringUtils
         return Compare(pLhsStr, nLength, pRhsStr) == 0;
     }
 
+    static i32 Find(const tchar *__restrict pStr, tchar findChar, i32 nOffset = 0);
+    static i32 Find(const tchar *__restrict pStr, i32 nStrLength, tchar findChar, i32 nOffset = 0);
     static i32 Find(const tchar *__restrict pStr, const tchar *__restrict pFind, i32 nOffset = 0);
     static i32 Find(const tchar *__restrict pStr, i32 nStrLength, const tchar *__restrict pFind, i32 nFindLength, i32 nOffset = 0);
 
     static bool IsDigit(tchar chr);
+
+    static u64 GetHash(const tchar *pStr, i32 nLength);
 };

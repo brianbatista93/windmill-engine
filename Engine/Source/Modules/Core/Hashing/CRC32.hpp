@@ -19,26 +19,35 @@ SOFTWARE.
 
 #pragma once
 
-#include "Console/ConfigFile.hpp"
-#include "Containers/ContainerFwd.hpp"
+#include "Types.hpp"
+#include <array>
 
-class CEngine
+namespace WE::Internal
+{
+consteval std::array<u32, 256> CalculateTable(u32 polynomial)
+{
+    std::array<u32, 256> crcTable{};
+
+    for (i32 i = 0; i <= 0xFF; i++)
+    {
+        u32 crc = i;
+        for (i32 j = 0; j < 8; j++)
+        {
+            crc = (crc >> 1) ^ ((crc & 1) * polynomial);
+        }
+        crcTable[i] = crc;
+    }
+
+    return crcTable;
+}
+
+static constexpr auto kTable = CalculateTable(0xEDB88320);
+} // namespace WE::Internal
+
+class CRC32
 {
   public:
-    static CEngine &Get();
+    static u32 Calculate(const void *pBuffer, usize nBufferSize) noexcept;
 
-    bool Initialize(const CArrayView<tchar *> &arguments);
-
-    void Shutdown();
-
-    void Tick();
-
-  private:
-    bool ProcessArguments(const CArrayView<tchar *> &arguments);
-
-    CConfigFile mConfigFile;
+    static u32 Update(u32 crc, const void *pBuffer, usize nBufferSize) noexcept;
 };
-
-extern bool EngineInitialize(const CArrayView<tchar *> &arguments);
-extern void EngineShutdown();
-extern void EngineLoop();

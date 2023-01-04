@@ -1,5 +1,7 @@
-#include "StringUtils.hpp"
 #include <string>
+
+#include "Hashing/CRC32.hpp"
+#include "StringUtils.hpp"
 
 bool CStringUtils::StartsWith(const tchar *__restrict pStr, const tchar *__restrict pStart)
 {
@@ -86,6 +88,28 @@ i32 CStringUtils::Compare(const tchar *__restrict pLhsStr, i32 nLength, const tc
     return 0;
 }
 
+i32 CStringUtils::Find(const tchar *__restrict pStr, tchar findChar, i32 nOffset)
+{
+    const i32 length = i32(std::char_traits<tchar>::length(pStr));
+
+    return Find(pStr, length, findChar, nOffset);
+}
+
+i32 CStringUtils::Find(const tchar *__restrict pStr, i32 nStrLength, tchar findChar, i32 nOffset)
+{
+    pStr += nOffset;
+    i32 result = 0;
+    for (; pStr && *pStr && result < nStrLength; ++pStr, ++result)
+    {
+        if (*pStr == findChar)
+        {
+            return result;
+        }
+    }
+
+    return -1;
+}
+
 i32 CStringUtils::Find(const tchar *__restrict pStr, const tchar *__restrict pFind, i32 nOffset)
 {
     const i32 length = i32(std::char_traits<tchar>::length(pStr));
@@ -124,4 +148,9 @@ i32 CStringUtils::Find(const tchar *__restrict pStr, i32 nStrLength, const tchar
 bool CStringUtils::IsDigit(tchar chr)
 {
     return chr >= WT('0') && chr <= WT('9');
+}
+
+u64 CStringUtils::GetHash(const tchar *pStr, i32 nLength)
+{
+    return CRC32::Calculate(pStr, nLength * sizeof(tchar));
 }

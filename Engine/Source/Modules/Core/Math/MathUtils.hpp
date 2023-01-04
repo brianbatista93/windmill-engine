@@ -30,23 +30,23 @@ class CMath
     /**
      * @brief Checks if a number is a power of two
      */
-    static constexpr bool IsPowerOfTwo(auto value) { return (value & (value - 1)) == 0; }
+    inline static constexpr bool IsPowerOfTwo(auto value) { return (value & (value - 1)) == 0; }
 
     template <class Type>
-    static constexpr std::make_signed_t<Type> Abs(Type value)
+    inline static constexpr std::make_signed_t<Type> Abs(Type value)
     {
         const std::make_signed_t<Type> sign = value;
         return sign < 0 ? -sign : sign;
     }
 
     template <class Type>
-    static constexpr Type Min(Type a, Type b)
+    inline static constexpr Type Min(Type a, Type b)
     {
         return a < b ? a : b;
     }
 
     template <class Type>
-    static constexpr Type Max(Type a, Type b)
+    inline static constexpr Type Max(Type a, Type b)
     {
         return a > b ? a : b;
     }

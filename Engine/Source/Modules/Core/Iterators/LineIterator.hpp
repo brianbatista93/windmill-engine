@@ -19,26 +19,48 @@ SOFTWARE.
 
 #pragma once
 
-#include "Console/ConfigFile.hpp"
-#include "Containers/ContainerFwd.hpp"
+#include "Containers/StringView.hpp"
 
-class CEngine
+class CLineIterator
 {
   public:
-    static CEngine &Get();
+    CLineIterator(const CStringView &view) noexcept : mView(view) {}
 
-    bool Initialize(const CArrayView<tchar *> &arguments);
+    bool GetLine(CStringView &line)
+    {
+        if (mView.IsEmpty())
+        {
+            return false;
+        }
 
-    void Shutdown();
+        usize extraChars = 0;
+        tchar *oldBegin = mView.begin();
+        tchar *begin = mView.begin();
+        tchar *end = mView.end();
 
-    void Tick();
+        for (; begin != end; ++begin)
+        {
+            if (*begin == '\r')
+            {
+                ++extraChars;
+                continue;
+            }
+
+            if (*begin == '\n')
+            {
+                ++begin;
+                ++extraChars;
+                break;
+            }
+        }
+
+        mView = {begin, end};
+
+        line = {oldBegin, begin - extraChars};
+
+        return true;
+    }
 
   private:
-    bool ProcessArguments(const CArrayView<tchar *> &arguments);
-
-    CConfigFile mConfigFile;
+    CStringView mView;
 };
-
-extern bool EngineInitialize(const CArrayView<tchar *> &arguments);
-extern void EngineShutdown();
-extern void EngineLoop();

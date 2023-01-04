@@ -19,6 +19,98 @@ SOFTWARE.
 
 #pragma once
 
-class CConfigFile
+#include "Containers/Map.hpp"
+#include "Containers/StringView.hpp"
+#include "HAL/Path.hpp"
+#include "Text/NumericParser.hpp"
+
+class CSection : public CMap<CString, CString>
 {
+};
+
+class CConfigFile : public CMap<CString, CSection>
+{
+  public:
+    static constexpr tchar kCommentCharacter = ';';
+    static constexpr tchar kAssignmentCharacter = '=';
+    static constexpr tchar kBeginSectionCharacter = '[';
+    static constexpr tchar kEndSectionCharacter = ']';
+    static constexpr tchar kSectionKeySeparator = '.';
+    static constexpr const tchar *kGlobalSection = WT("$global");
+
+    CConfigFile() = default;
+
+    CConfigFile(CConfigFile &&) noexcept = default;
+
+    CConfigFile(const CConfigFile &) = default;
+
+    CConfigFile &operator=(CConfigFile &&) noexcept = default;
+
+    CConfigFile &operator=(const CConfigFile &) = default;
+
+    bool Load(const CPath &fileName);
+    bool Save() const;
+
+    // TODO: GetValueAs
+    const CSection *GetSection(const CString &section) const { return Find(section); }
+
+    template <class Type>
+    Type GetValueAs(const tchar *pSectionKey, Type defaultValue = {}) const
+    {
+        we_assert(pSectionKey && *pSectionKey);
+
+        CString section;
+        CString key;
+
+        i32 separator = CStringUtils::Find(pSectionKey, kSectionKeySeparator);
+        if (separator != -1)
+        {
+            section = CStringView{pSectionKey}.Substring(0, separator).ToString();
+            key = CStringView{pSectionKey}.Substring(separator + 1).ToString();
+        }
+        else if (!key.IsEmpty())
+        {
+            section = kGlobalSection;
+        }
+        else
+        {
+            return defaultValue;
+        }
+
+        return GetValueAs<Type>(*section, *key, defaultValue);
+    }
+
+    template <class Type>
+    Type GetValueAs(const tchar *pSection, const tchar *pKey, Type defaultValue = {}) const
+    {
+        we_assert(pKey && *pKey);
+
+        if (const auto *section = GetSection(pSection))
+        {
+            if (const auto *value = section->Find(pKey))
+            {
+                Type result{};
+                if (TryParse(**value, &result))
+                {
+                    return result;
+                }
+            }
+        }
+
+        return defaultValue;
+    }
+
+  private:
+    bool Parse(const CStringView &str);
+
+    static void RemoveComments(CStringView &line);
+    static void RemoveLeftWhiteTrails(CStringView &line);
+    static void RemoveRightWhiteTrails(CStringView &line);
+    static void RemoveWhiteTrails(CStringView &line);
+    static bool ParseSection(const CStringView &line, i32 nLine, CString &section);
+    static bool ParseKeyValue(const CStringView &line, i32 nLine, CString &key, CString &value);
+
+    bool AddSectionKeyValue(CString section, CString &&key, CString &&value);
+
+    CPath mPath;
 };

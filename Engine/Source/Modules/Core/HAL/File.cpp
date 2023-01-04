@@ -105,6 +105,11 @@ bool CFile::ReadString(CString &result, const CPath &filename)
     }
 
     usize size = fileNative->GetSize();
+    if (size == 0)
+    {
+        result = {};
+        return true;
+    }
 
     u8 *bufferMem = (u8 *)we_calloc(size, sizeof(u8));
     u8 *buffer = bufferMem;
