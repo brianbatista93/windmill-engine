@@ -71,10 +71,10 @@ class CLinuxFile : public IFileNative
     friend CLinuxFileSystem;
 
   public:
-    ~CLinuxFile() { Close(); }
+    ~CLinuxFile() override { Close(); }
 
-    bool IsValid() const override { return mHandle != -1; }
-    usize GetSize() const override { return mSize; }
+    NDISCARD bool IsValid() const override { return mHandle != -1; }
+    NDISCARD usize GetSize() const override { return mSize; }
     void Close() override
     {
         close(mHandle);
@@ -82,13 +82,13 @@ class CLinuxFile : public IFileNative
         mCanWrite = false;
     }
     void Flush() override { fsync(mHandle); }
-    bool CanRead() const override { return mCanRead; }
-    bool CanWrite() const override { return mCanWrite; }
+    NDISCARD bool CanRead() const override { return mCanRead; }
+    NDISCARD bool CanWrite() const override { return mCanWrite; }
     void Seek(usize nPosition, i32 nMode) override
     {
         we_assert(IsValid());
 
-        lseek(mHandle, nPosition, nMode);
+        lseek(mHandle, (off_t)nPosition, nMode);
     }
     usize Read(u8 *pBytes, usize nSize) override
     {
@@ -173,11 +173,11 @@ IFileNative *CLinuxFileSystem::OpenWrite(const CPath &filename, bool bAppend, bo
     i32 handle = open(*CStringCast<ansi, wide>(*filename, filename.GetLength()), flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
     if (handle == -1)
     {
-        printf("Error: %s\n", std::strerror(errno));
+        printf("Error: %s\n", std::strerror(errno)); // NOLINT
         return nullptr;
     }
 
-    auto result = we_new(CLinuxFile, handle, filename, bCanRead, true);
+    auto *result = we_new(CLinuxFile, handle, filename, bCanRead, true);
 
     if (bAppend)
     {
@@ -191,12 +191,12 @@ CArray<CPath> CLinuxFileSystem::ListChildren(const CPath &path) const
 {
     CArray<CPath> result;
 
-    DIR *dir = NULL;
+    DIR *dir = nullptr;
     struct dirent *ent = nullptr;
 
-    if ((dir = opendir(*CStringCast<ansi, wide>(*path, path.GetLength()))) != NULL)
+    if ((dir = opendir(*CStringCast<ansi, wide>(*path, path.GetLength()))) != nullptr)
     {
-        while ((ent = readdir(dir)) != NULL)
+        while ((ent = readdir(dir)) != nullptr) // NOLINT
         {
             if (ent->d_name[0] != '.' and ent->d_name[1] != '\0' and ent->d_name[1] != '.' and ent->d_name[2] != '\0')
             {
