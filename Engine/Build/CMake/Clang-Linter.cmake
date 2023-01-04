@@ -4,9 +4,7 @@ else()
   set(CLANG_LINTER_INCLUDED 1)
 endif()
 
-add_custom_target (LintProjects
-  EXCLUDE_FROM_ALL
-)
+add_custom_target (LintProjects)
 
 set_target_properties (LintProjects PROPERTIES FOLDER "Helpers")
 
