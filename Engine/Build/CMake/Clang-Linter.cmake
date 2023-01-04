@@ -11,7 +11,7 @@ add_custom_target (LintProjects
 set_target_properties (LintProjects PROPERTIES FOLDER "Helpers")
 
 function (add_linter target_name)
-  set(lint_timestamp "${CMAKE_BINARY_DIR}/${target_name}/__lint-timestamp__")
+  set(lint_timestamp "${CMAKE_BINARY_DIR}/${target_name}.__lint-timestamp__")
   message (STATUS ${lint_timestamp})
   if (CMAKE_COMPILER_IS_GNUCXX)
     set (COMPILER_OPTIONS --extra-arg="-fno-caret-diagnostics" --extra-arg="-Wno-unknown-warning-option")
@@ -27,7 +27,7 @@ function (add_linter target_name)
             -export-fixes="${CMAKE_BINARY_DIR}/${target_name}-clang-fixes.yaml"
             ${COMPILER_OPTIONS}
             ${SOURCE_FILES}
-    COMMAND "${CMAKE_COMMAND}" -E touch ${lint_timestamp}
+    COMMAND ${CMAKE_COMMAND} -E touch "${lint_timestamp}"
     COMMENT "Linting... ${target_name}"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   )
