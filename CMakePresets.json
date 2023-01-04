@@ -12,16 +12,16 @@
       }
     },
     {
-      "inherits": "windmill-base",
       "name": "windows-vs17-msvc",
       "displayName": "Windows (MSVC)",
+      "inherits": "windmill-base",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl",
-        "CMAKE_TOOLCHAIN_FILE": { 
-			"value": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-PC.cmake",
-			"type": "FILEPATH"
-		}
+        "CMAKE_TOOLCHAIN_FILE": {
+          "value": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-PC.cmake",
+          "type": "FILEPATH"
+        }
       },
       "generator": "Visual Studio 17 2022",
       "architecture": {
@@ -34,9 +34,9 @@
       }
     },
     {
-      "inherits": "windmill-base",
       "name": "windows-vs17-clang",
       "displayName": "Windows (Clang)",
+      "inherits": "windmill-base",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-PC.cmake",
         "CMAKE_C_COMPILER": "clang-cl",
@@ -55,6 +55,28 @@
           "enableClangTidyCodeAnalysis": true
         },
         "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": { "sourceDir": "$env{USERPROFILE}/.vs/$ms{projectDirName}" }
+      }
+    },
+    {
+      "name": "linux-gcc",
+      "displayName": "Linux (GCC)",
+      "inherits": "windmill-base",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Engine/Build/CMake/Toolchain/Linux-PC.cmake",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      },
+      "generator": "Ninja Multi-Config",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [ "Linux" ],
+          "intelliSenseMode": "linux-gcc-x64"
+        },
+        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": { "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}" }
       }
     }
   ]
