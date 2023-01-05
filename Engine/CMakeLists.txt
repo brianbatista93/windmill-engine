@@ -2,13 +2,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-if (ENABLE_WINDMILL_TESTS)
-    set (BUILD_GMOCK OFF)
-    set (INSTALL_GTEST OFF)
-    set (gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-	add_subdirectory ("Source/ThirdParty/googletest")
-endif()
-
 include ("Build/CMake/Engine-Flags.cmake")
 
 if (ENABLE_ASAN)
