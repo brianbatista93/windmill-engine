@@ -1,4 +1,5 @@
 /*
+/*
 Copyright (C) 2021-2022 Bull Technology, Ltd.
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,6 +20,8 @@ SOFTWARE.
 
 #pragma once
 
+#include "Containers/WeString.hpp"
+#include "HAL/Timestamp.hpp"
 #include "Types.hpp"
 
 class CULID
@@ -29,9 +32,26 @@ class CULID
 
     bool IsValid() const;
 
+    CString ToString() const;
+
+    inline const u8 *GetData() const { return mData; }
+
+    u64 GetTimestamp() const;
+
+    inline friend bool TryParse(const tchar *pStr, CULID *pOutResult) { return Unmarshal(pStr, pOutResult); }
+
+    inline friend bool operator==(const CULID &lhs, const CULID &rhs) { return Compare(lhs, rhs) == 0; }
+
+    inline friend bool operator<(const CULID &lhs, const CULID &rhs) { return Compare(lhs, rhs) == -1; }
+    inline friend bool operator>(const CULID &lhs, const CULID &rhs) { return Compare(lhs, rhs) == 1; }
+
+    static i32 Compare(const CULID &lhs, const CULID &rhs);
+
   private:
     void EncodeTimestamp(u64 nTimestamp);
     void EncodeRandom();
+
+    static bool Unmarshal(const tchar *pStr, CULID *pOutResult);
 
     u8 mData[16]{0};
 };
