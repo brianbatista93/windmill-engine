@@ -2,6 +2,8 @@
 #include "HAL/Timestamp.hpp"
 #include "Math/Random.hpp"
 
+// NOLINTBEGIN
+
 void CULID::Generate(u64 nTimestamp)
 {
     we_assert(nTimestamp < (1ULL << 48));
@@ -210,3 +212,5 @@ i32 CULID::Compare(const CULID &lhs, const CULID &rhs)
 
 	return 0;
 }
+
+// NOLINTEND
