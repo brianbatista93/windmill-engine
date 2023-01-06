@@ -29,8 +29,6 @@ class CULID
     void Generate(u64 nTimestamp);
     void Generate();
 
-    bool IsValid() const;
-
     CString ToString() const;
 
     inline const u8 *GetData() const { return mData; }

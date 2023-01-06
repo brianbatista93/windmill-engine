@@ -18,11 +18,6 @@ void CULID::Generate()
     Generate(timestamp);
 }
 
-bool CULID::IsValid() const
-{
-    return mData != 0;
-}
-
 static const char Encoding[33] = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 
 inline void ToMarshal(const CULID &ulid, tchar dst[26])
@@ -210,7 +205,7 @@ i32 CULID::Compare(const CULID &lhs, const CULID &rhs)
         }
     }
 
-	return 0;
+    return 0;
 }
 
 // NOLINTEND
