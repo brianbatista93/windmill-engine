@@ -207,4 +207,6 @@ i32 CULID::Compare(const CULID &lhs, const CULID &rhs)
             return (lhs.mData[i] < rhs.mData[i]) * -2 + 1;
         }
     }
+
+	return 0;
 }
