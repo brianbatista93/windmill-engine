@@ -26,3 +26,5 @@ class CWindowsOutputLogSink : public ILogSink
   public:
     void Log(const SLogMessage *pMessage) override;
 };
+
+using COSLogSink = CWindowsOutputLogSink;

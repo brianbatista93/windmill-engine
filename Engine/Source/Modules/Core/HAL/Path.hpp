@@ -108,3 +108,12 @@ class CPath
 
     CString mText;
 };
+
+class CPaths
+{
+  public:
+    static CPath GetWorkingDirectory();
+
+  private:
+    static CPath kCachedWorkingDirectory;
+};

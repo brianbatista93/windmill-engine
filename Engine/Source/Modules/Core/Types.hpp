@@ -143,3 +143,12 @@ inline u64 GetHash(std::pair<KeyType, ValueType> pair)
 {
     return GetHash(pair.first);
 }
+
+template <class Type, usize N>
+inline constexpr usize GetArrayCount(const Type (&)[N])
+{
+    return N;
+}
+
+#define UNLIKELY(x) ((x)) [[unlikely]]
+#define LIKELY(x) ((x)) [[likely]]

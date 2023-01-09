@@ -45,4 +45,7 @@ class CStringUtils
     static bool IsDigit(tchar chr);
 
     static u64 GetHash(const tchar *pStr, i32 nLength);
+
+    static void ToLower(tchar **ppDest, const tchar *__restrict pSrc, i32 nLength);
+    static void ToUpper(tchar **ppDest, const tchar *__restrict pSrc, i32 nLength);
 };

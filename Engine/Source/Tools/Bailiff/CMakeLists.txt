@@ -3,7 +3,11 @@ add_we_tool ("Bailiff"
   DESCRIPTION "Windmill Engine CLI"
   DEPENDS
     "Core"
+    "yaml-cpp"
   PUBLIC
   PRIVATE
+    "Project/BailiffProject.hpp"
+    "Project/BailiffProject.cpp"
+    "Exceptions/BailiffException.hpp"
     "Main.cpp"
 )

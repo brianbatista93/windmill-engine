@@ -2,89 +2,47 @@
 #include <iostream>
 
 #include "Containers/Array.hpp"
+#include "Exceptions/BailiffException.hpp"
 #include "HAL/File.hpp"
 #include "HAL/FileSystem.hpp"
 #include "Logging/Log.hpp"
 #include "Logging/LogFileSink.hpp"
+#include "Logging/OSLogSink.hpp"
 #include "Logging/StdLogSink.hpp"
 #include "OS/OSEntry.hpp"
-#include "ScribeExceptions.hpp"
+#include "Project/BailiffProject.hpp"
 
-DECLARE_STATIC_LOG_EMITTER(Scribe, eInfo);
-
-extern bool ProcessFile(const CPath &filePath, const CPath &output);
-extern CPath gLicenseFile;
-
-void InitScribe(i32 nArgC, tchar *ppArgV[])
-{
-    if (nArgC == 1)
-    {
-        throw CScribeException("No input file specified");
-    }
-
-    CPath outputDirectory = {};
-
-    for (i32 i = 1; i < nArgC; ++i)
-    {
-        if (ppArgV[i][0] == WT('-'))
-        {
-            if (ppArgV[i][1] == WT('o') and ppArgV[i][2] == 0)
-            {
-                outputDirectory = CString(ppArgV[++i]);
-            }
-            else if (ppArgV[i][1] == WT('l') and ppArgV[i][2] == 0)
-            {
-                gLicenseFile = CString(ppArgV[++i]);
-            }
-        }
-    }
-
-    if (outputDirectory.IsEmpty())
-    {
-        throw CScribeException("No output directory specified");
-    }
-
-    const CPath filePath{ppArgV[1]};
-
-    CArray<CPath> files = {};
-
-    if (filePath.IsDirectory())
-    {
-        const CArray<CPath> headerFiles{filePath.GetAllFiles(WT("*.hpp"), true)};
-        for (const auto &file : headerFiles)
-        {
-            files.Add(file);
-        }
-    }
-    else if (filePath.IsFile())
-    {
-        files.Add(filePath);
-    }
-
-    for (auto &file : files)
-    {
-        if (!ProcessFile(file, outputDirectory))
-        {
-            throw CScribeException("Failed to process file");
-        }
-    }
-}
+DECLARE_STATIC_LOG_EMITTER(Bailiff, eAll);
 
 MAIN_ENTRY_BEGIN
 {
     class CLogRAII
     {
       public:
+        CLogRAII() { CLogSystem::Initialize(); }
         ~CLogRAII() { CLogSystem::Shutdown(); }
-    };
+    } logRAII;
 
-    if (!CLogSystem::Initialize())
+    if (!CLogSystem::Get().AddSinks(we_new(CStdLogSink)))
     {
-        return ENOTTY;
+        return -1;
     }
 
-    if (!CLogSystem::Get().AddSink(we_new(CLogFileSink, CPath(WT("./Bailiff.log")))) or !CLogSystem::Get().AddSink(we_new(CStdLogSink)))
+    try
     {
+        if (CStringUtils::Compare(ppArgV[1], WT("project")) == 0)
+        {
+            CBailiffProject::Create(ppArgV, nArgC);
+        }
+    }
+    catch (const CBailiffException &exc)
+    {
+        WE_ERROR(Bailiff, WT("{0}"), exc.GetWhat());
+        return -1;
+    }
+    catch (const std::exception &exc)
+    {
+        WE_ERROR(Bailiff, WT("{0}"), exc.what());
         return -1;
     }
 

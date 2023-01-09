@@ -56,6 +56,12 @@ class CLogSystem
         }
     }
 
+    template <class... ArgsType>
+    inline bool AddSinks(ArgsType &&...packedArgs)
+    {
+        return (bool(AddSink(std::forward<ArgsType>(packedArgs))), ...);
+    }
+
     static CLogSystem &Get();
 
   private:

@@ -22,6 +22,7 @@ SOFTWARE.
 #include <functional>
 
 #include "Concepts.hpp"
+#include "Text/CommonFormatters.hpp"
 #include "Text/NumericFormatter.hpp"
 #include "Types.hpp"
 
@@ -51,6 +52,13 @@ class CFormatterArgument
     {
         mFormatter = [rValue](tchar **pDest, const tchar *pFormat) {
             return CNumeric::TryFormat<Type>(rValue, pDest, pFormat);
+        };
+    }
+
+    CFormatterArgument(const char *pValue) : mType(kFormattable)
+    {
+        mFormatter = [pValue](tchar **pDest, const tchar *pFormat) {
+            return ::TryFormat(pValue, pDest, pFormat);
         };
     }
 

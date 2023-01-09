@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 4,
   "configurePresets": [
     {
       "name": "windmill-base",
@@ -18,15 +18,16 @@
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl",
+        "ENABLE_WINDMILL_TESTS": true,
         "CMAKE_TOOLCHAIN_FILE": {
           "value": "${sourceDir}/Engine/Build/CMake/Toolchain/Windows-PC.cmake",
           "type": "FILEPATH"
         }
       },
-      "generator": "Visual Studio 17 2022",
+      "generator": "Ninja Multi-Config",
       "architecture": {
         "value": "x64",
-        "strategy": "set"
+        "strategy": "external"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": { "hostOS": [ "Windows" ] },

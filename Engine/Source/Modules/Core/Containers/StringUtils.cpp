@@ -98,7 +98,7 @@ i32 CStringUtils::Find(const tchar *__restrict pStr, tchar findChar, i32 nOffset
 i32 CStringUtils::Find(const tchar *__restrict pStr, i32 nStrLength, tchar findChar, i32 nOffset)
 {
     pStr += nOffset;
-    i32 result = 0;
+    i32 result = nOffset;
     for (; pStr && *pStr && result < nStrLength; ++pStr, ++result)
     {
         if (*pStr == findChar)
@@ -153,4 +153,20 @@ bool CStringUtils::IsDigit(tchar chr)
 u64 CStringUtils::GetHash(const tchar *pStr, i32 nLength)
 {
     return CRC32::Calculate(pStr, nLength * sizeof(tchar));
+}
+
+void CStringUtils::ToLower(tchar **ppDest, const tchar *__restrict pSrc, i32 nLength)
+{
+    for (i32 i = 0; i < nLength; ++i)
+    {
+        *ppDest[i] = (tchar)std::tolower((i32)pSrc[i]);
+    }
+}
+
+void CStringUtils::ToUpper(tchar **ppDest, const tchar *__restrict pSrc, i32 nLength)
+{
+    for (i32 i = 0; i < nLength; ++i)
+    {
+        *ppDest[i] = (tchar)std::toupper((i32)pSrc[i]);
+    }
 }

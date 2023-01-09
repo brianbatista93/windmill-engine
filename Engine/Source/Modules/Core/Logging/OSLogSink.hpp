@@ -19,18 +19,6 @@ SOFTWARE.
 
 #pragma once
 
-#include "Containers/WeString.hpp"
-#include "LogLevel.hpp"
-
-class CLogEmitter
-{
-  public:
-    CLogEmitter(const tchar *pName, ELogLevel logLevel) : m_Name(pName), m_eLogLevel(logLevel) {}
-
-    NDISCARD inline CString GetName() const { return m_Name; }
-    NDISCARD inline bool ShouldLog(ELogLevel logLevel) const { return logLevel <= m_eLogLevel; }
-
-  private:
-    CString m_Name;
-    ELogLevel m_eLogLevel;
-};
+#ifdef WE_OS_WINDOWS
+    #include "Logging/WindowsOutputLogSink.hpp"
+#endif // WE_OS_WINDOWS

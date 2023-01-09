@@ -4,6 +4,7 @@ else()
   set(BUILDER_HELPER_INCLUDED 1)
 endif()
 
+include (GNUInstallDirs)
 include ("Build/CMake/Clang-Linter.cmake")
 
 set (GENERATED_FILES_DIR "${CMAKE_BINARY_DIR}/Generated")
@@ -62,9 +63,10 @@ macro (_add_project project_name is_tool)
   )
   
   target_include_directories (${project_name}
-	PUBLIC
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-      $<INSTALL_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+	INTERFACE
+      $<INSTALL_INTERFACE:include>
   )
 
   if (${_WE_IS_SCRIBE_PROJECT})
@@ -87,6 +89,25 @@ macro (_add_project project_name is_tool)
   set (SOURCE_FILES ${_WE_PRIVATE})
 
   add_linter (${project_name})
+
+  if (NOT ${is_tool})
+    install (TARGETS ${project_name}
+             EXPORT ${project_name}Targets
+             DESTINATION lib
+    )
+
+    install (EXPORT ${project_name}Targets
+             FILE ${project_name}-config.cmake
+             NAMESPACE we::
+             DESTINATION lib/cmake
+    )
+    install (DIRECTORY ${PROJECT_SOURCE_DIR} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "*.hpp")
+  else ()
+    install (TARGETS ${project_name}
+             EXPORT ${project_name}Targets
+             DESTINATION bin
+    )
+  endif ()
   
   if (_WE_VERSION)
     message (STATUS "${FOLDER_NAME} \"${project_name}-v${PROJECT_VERSION}\" added to build.")

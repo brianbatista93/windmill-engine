@@ -36,6 +36,8 @@ class CString
     using CharType = tchar;
     using ArrayType = CArray<CharType, DefaultAllocator>;
 
+    static CString kEmpty;
+
     enum
     {
         INVALID_INDEX = -1
@@ -48,6 +50,8 @@ class CString
     CString &operator=(const CString &) = default;
 
     CString(std::nullptr_t) = delete;
+
+    explicit CString(std::string &&stlString) noexcept;
 
     inline CString(const tchar *pStr) : mData(i32(std::char_traits<tchar>::length(pStr)) + 1) { Init(pStr, mData.GetSize()); }
 
@@ -149,6 +153,8 @@ class CString
 
     NDISCARD CArray<CString> Split(tchar chr) const;
     CArray<CString> Split(const tchar *pStr) const;
+
+    CString Replace(i32 nBegin, i32 nEnd, const CString &replacement) const;
 
     template <WE::Concept::IsContainer TContainerType>
     inline static CString Join(tchar separator, const TContainerType &container)

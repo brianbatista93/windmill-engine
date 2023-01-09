@@ -16,7 +16,7 @@ void CStdLogSink::Log(const SLogMessage *pMessage)
 {
     CStringBuilder builder;
     builder.AppendFormat(WT("{0} [{1}] --- "), *pMessage->pEmitter->GetName(), ToString(pMessage->LogLevel));
-    builder.AppendLine(pMessage->FormattedMessage);
+    builder.Append(pMessage->FormattedMessage);
 
     const CString message = builder.ToString();
 

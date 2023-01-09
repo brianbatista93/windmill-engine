@@ -2,6 +2,9 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
+set ("YAML_BUILD_SHARED_LIBS=OFF")
+add_subdirectory ("Source/ThirdParty/yaml-cpp")
+
 include ("Build/CMake/Engine-Flags.cmake")
 
 if (ENABLE_ASAN)
@@ -44,6 +47,7 @@ add_subdirectory ("Source/Modules/${PLATFORM_NAME}")
 option (BUILD_TOOLS "Build tools" ON)
 if (BUILD_TOOLS)
 	add_subdirectory ("Source/Tools/Scribe")
+	add_subdirectory ("Source/Tools/Bailiff")
 endif ()
 
 add_subdirectory ("Source/Modules/Engine")

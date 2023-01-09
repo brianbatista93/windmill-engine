@@ -1,4 +1,5 @@
 #include "Encoding/IEncoder.hpp"
+#include "Encoding/UTF8Encoder.hpp"
 #include "WeString.hpp"
 
 namespace WE::Internal
@@ -73,6 +74,8 @@ inline CString ConcatCStringToStrings(const tchar *pLhs, RhsType &&rhs) noexcept
     return ConcatCStringRange(pLhs, i32(std::char_traits<tchar>::length(pLhs)), std::forward<RhsType>(rhs));
 }
 } // namespace WE::Internal
+
+CString CString::kEmpty;
 
 CString CString::ConcatSS(CString &&lhs, CString &&rhs) noexcept
 {
@@ -164,4 +167,22 @@ CArray<CString> CString::Split(const tchar *pStr) const
     }
 
     return result;
+}
+
+CString::CString(std::string &&stlString) noexcept
+{
+    if (!stlString.empty())
+    {
+        mData.AddSlots(i32(stlString.size() + 1));
+        CUTF8Encoder::Decode(mData.GetData(), (const u8 *)stlString.data(), i32(stlString.size()));
+
+        stlString = {};
+    }
+}
+
+CString CString::Replace(i32 nBegin, i32 nEnd, const CString &replacement) const
+{
+    // TODO: Make it right
+    std::basic_string<tchar> stlString{this->begin()};
+    return {stlString.replace(nBegin, nEnd - nBegin, *replacement).c_str()};
 }

@@ -20,17 +20,25 @@ SOFTWARE.
 #pragma once
 
 #include "Containers/WeString.hpp"
-#include "LogLevel.hpp"
+#include <exception>
 
-class CLogEmitter
+class CBailiffException : public std::exception
 {
   public:
-    CLogEmitter(const tchar *pName, ELogLevel logLevel) : m_Name(pName), m_eLogLevel(logLevel) {}
+    CBailiffException() = default;
+    CBailiffException(const CBailiffException &) = default;
+    CBailiffException(CBailiffException &&) noexcept = default;
+    ~CBailiffException() override = default;
+    CBailiffException &operator=(const CBailiffException &) = default;
+    CBailiffException &operator=(CBailiffException &&) noexcept = default;
 
-    NDISCARD inline CString GetName() const { return m_Name; }
-    NDISCARD inline bool ShouldLog(ELogLevel logLevel) const { return logLevel <= m_eLogLevel; }
+    template <class... ArgsType>
+    explicit CBailiffException(const tchar *pMessage, ArgsType &&...vArgs) : mMessage(CString::Format(pMessage, std::forward<ArgsType>(vArgs)...))
+    {
+    }
+
+    [[nodiscard]] const tchar *GetWhat() const noexcept { return *mMessage; }
 
   private:
-    CString m_Name;
-    ELogLevel m_eLogLevel;
+    CString mMessage;
 };
