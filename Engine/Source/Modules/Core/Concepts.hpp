@@ -44,7 +44,7 @@ concept IsFormattable = requires(Type value)
 };
 
 template <class Type>
-concept IsNumeric = std::is_arithmetic_v<Type>;
+concept IsNumeric = (std::integral <Type> || std::floating_point <Type>) && !std::same_as <Type, bool>;
 } // namespace WE::Concept
 
 // NOLINTEND

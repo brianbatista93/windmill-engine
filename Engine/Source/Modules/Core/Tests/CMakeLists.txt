@@ -7,12 +7,14 @@ add_executable (${PROJECT_NAME}
   "HAL/PathBenchmark.cc"
   "HAL/TimestampTest.cc"
   "Misc/ULIDTest.cc"
+  "Serialization/ArchiveTest.cc"
 )
 
 target_link_libraries (${PROJECT_NAME}
   PRIVATE
 	  Core
       gtest_main
+      gmock_main
 )
 
 target_include_directories (${PROJECT_NAME}

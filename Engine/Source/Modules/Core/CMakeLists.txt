@@ -48,6 +48,7 @@ add_we_module ("Core"
     "Hashing/CRC32.hpp"
     "Containers/Map.hpp"
     "Misc/ULID.hpp"
+    "Serialization/Archive.hpp"
   PRIVATE
      "Hashing/CRC32.cpp"
      "Containers/String.cpp"
@@ -68,6 +69,7 @@ add_we_module ("Core"
      "Console/ConfigFile.cpp"
      "Math/Random.cpp"
      "Misc/ULID.cpp"
+     "Serialization/Archive.cpp"
 )
 
 target_include_directories ("Core"
