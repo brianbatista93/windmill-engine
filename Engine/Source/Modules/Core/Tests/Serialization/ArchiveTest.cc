@@ -27,7 +27,7 @@ TEST(Serialization, BasicTypes)
     wide wideValue = 0;
     bool boolValue = false;
 
-    EXPECT_CALL(archive, Serialize).Times(10);
+    EXPECT_CALL(archive, Serialize).Times(13);
 
     archive << u8Value;
     archive << u16Value;

@@ -30,8 +30,9 @@ target_compile_options (${PROJECT_NAME}
     $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-parameter>
 )
 
-add_test (NAME ${PROJECT_NAME}_gtests COMMAND ${PROJECT_NAME})
-
 set_target_properties (${PROJECT_NAME} PROPERTIES
   FOLDER "Tests"
 )
+
+include(GoogleTest)
+gtest_add_tests (${PROJECT_NAME} "" AUTO)
