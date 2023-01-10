@@ -2,7 +2,7 @@
 
 #include "Archive.hpp"
 
-CArchive::~CArchive()
+CArchive::CArchive() : mPackageVersion(1), mEngineVersion(1), mNetworkVersion(1)
 {
 }
 

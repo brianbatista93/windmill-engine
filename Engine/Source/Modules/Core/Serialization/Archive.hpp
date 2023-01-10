@@ -27,7 +27,9 @@ class CString;
 class CArchive
 {
   public:
-    virtual ~CArchive();
+    CArchive();
+
+    virtual ~CArchive() = default;
 
     virtual void Serialize(void * /*pData*/, usize /*nSize*/) {}
 
@@ -53,13 +55,13 @@ class CArchive
 
     friend CArchive &operator<<(CArchive &archive, CString &value);
 
-    inline NDISCARD bool IsReading() const { return mIsReading; }
+    NDISCARD inline bool IsReading() const { return mIsReading; }
 
-    inline NDISCARD bool IsWriting() const { return mIsWriting; }
+    NDISCARD inline bool IsWriting() const { return mIsWriting; }
 
-    inline NDISCARD bool IsPersistent() const { return mIsPersistent; }
+    NDISCARD inline bool IsPersistent() const { return mIsPersistent; }
 
-    inline NDISCARD bool IsByteSwapping() const
+    NDISCARD inline bool IsByteSwapping() const
     {
         if constexpr (std::endian::native == std::endian::little)
         {
@@ -71,13 +73,13 @@ class CArchive
         }
     }
 
-    inline NDISCARD u32 GetPackageVersion() const { return mPackageVersion; }
+    NDISCARD inline u32 GetPackageVersion() const { return mPackageVersion; }
 
-    inline NDISCARD u32 GetEngineVersion() const { return mEngineVersion; }
+    NDISCARD inline u32 GetEngineVersion() const { return mEngineVersion; }
 
-    inline NDISCARD u32 GetNetworkVersion() const { return mNetworkVersion; }
+    NDISCARD inline u32 GetNetworkVersion() const { return mNetworkVersion; }
 
-    inline NDISCARD bool HasErrors() const { return mHasErrors; }
+    NDISCARD inline bool HasErrors() const { return mHasErrors; }
 
     void ClearErrors();
 
@@ -90,7 +92,7 @@ class CArchive
     /** Whether this archive is writing data. */
     bool mIsWriting{false};
 
-    /** Wheter this archive persists data. */
+    /** Whether this archive persists data. */
     bool mIsPersistent{false};
 
     /** Whether we should forcefully swap bytes. */
@@ -102,5 +104,5 @@ class CArchive
 
   private:
     /** Whether this archive has errors. */
-    bool mHasErrors;
+    bool mHasErrors{false};
 };
