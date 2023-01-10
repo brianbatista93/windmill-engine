@@ -19,8 +19,6 @@ CStringBuilder &CStringBuilder::Append(tchar chr)
 
 CStringBuilder &CStringBuilder::Append(tchar chr, i32 nCount)
 {
-    we_assert(nCount != 0);
-
     for (i32 i = 0; i < nCount; ++i)
     {
         Append(chr);

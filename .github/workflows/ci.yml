@@ -158,17 +158,20 @@ jobs:
         -DCMAKE_CONFIGURATION_TYPES="Debug;Profile;Release"
         -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/install_test/
 
+    - name: Get number of CPU cores
+      uses: SimenB/github-actions-cpu-cores@v1
+
     - name: Build (Debug)
       if: ${{ matrix.os != 'macos-latest' }}
       run: >-
-        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug
+        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Debug --parallel ${{ steps.cpu-cores.outputs.count }}
 
     - name: Build (Profile)
       if: ${{ matrix.os != 'macos-latest' }}
       run: >-
-        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Profile
+        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Profile --parallel ${{ steps.cpu-cores.outputs.count }}
 
     - name: Build (Release)
       if: ${{ matrix.os != 'macos-latest' }}
       run: >-
-        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Release
+        cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Release --parallel ${{ steps.cpu-cores.outputs.count }}
