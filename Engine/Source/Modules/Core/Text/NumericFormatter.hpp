@@ -84,6 +84,7 @@ class CNumeric
         case WT('d'):
         case WT('D'):
             *pType = kDecimal;
+            nDefaultPrecision = 0;
             break;
         case WT('e'):
         case WT('E'):

@@ -102,3 +102,34 @@ endfunction ()
 function (add_we_tool tool_name)
   _add_project (${tool_name} TRUE ${ARGN})
 endfunction ()
+
+include(GoogleTest)
+function (add_we_test test_name filename deps)
+  add_executable (${test_name} ${filename})
+
+  target_link_libraries (${test_name}
+  PRIVATE
+	  ${deps}
+      gtest_main
+      gmock_main
+  )
+
+  target_include_directories (${test_name}
+  PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  )
+
+  target_compile_options (${test_name}
+  PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/wd6326>
+    $<$<CXX_COMPILER_ID:GNU>:-Wno-unused-parameter>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-parameter>
+  )
+  
+  set_target_properties (${test_name} PROPERTIES
+    FOLDER "Tests"
+  )
+
+  gtest_discover_tests (${test_name})
+endfunction ()
