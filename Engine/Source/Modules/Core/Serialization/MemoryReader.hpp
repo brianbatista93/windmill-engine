@@ -23,26 +23,24 @@ SOFTWARE.
 #include "Containers/Array.hpp"
 #include "Containers/ContainerFwd.hpp"
 
-class CMemoryWriter final : public IBinaryArchive
+class CMemoryReader final : public IBinaryArchive
 {
   public:
-    CMemoryWriter(i32 nInitialSize) : mBuffer(nInitialSize) {}
+    CMemoryReader(CArray<u8> &buffer) : mBuffer(buffer) {}
 
     const tchar *GetArchiveName() const final { return WT("MemoryWriter"); }
 
-    bool IsReading() const final { return false; }
+    bool IsReading() const final { return true; }
 
-    bool IsWriting() const final { return true; }
+    bool IsWriting() const final { return false; }
 
     bool ForceByteSwapping() const final { return false; }
 
     void Serialize(void *pData, usize nSize) final;
 
-    NDISCARD inline i32 GetSize() const { return mOffset; }
-
-    NDISCARD inline auto &ToArray() { return mBuffer; }
+    NDISCARD inline i32 GetSize() const { return mBuffer.GetSize(); }
 
   private:
-    CArray<u8> mBuffer;
+    CArray<u8> &mBuffer;
     i32 mOffset{0};
 };

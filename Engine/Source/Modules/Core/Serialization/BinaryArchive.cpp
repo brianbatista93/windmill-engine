@@ -44,6 +44,15 @@ IBinaryArchive &operator<<(IBinaryArchive &archive, CString &value)
 {
     if (archive.IsReading())
     {
+        i32 length = 0;
+        archive << length;
+        if (length)
+        {
+            auto& arry = value.GetArray();
+            arry.Resize(length + 1);
+
+            archive.Serialize(arry.GetData(), length * sizeof(tchar));
+        }
     }
     else // Is Writting
     {
