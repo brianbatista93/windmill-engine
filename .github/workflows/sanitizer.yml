@@ -88,4 +88,4 @@ jobs:
       shell: bash
       run: |
         cd "${{ env.CMAKE_BUILD_DIR }}"
-        ctest
+        ctest . --output-on-failure

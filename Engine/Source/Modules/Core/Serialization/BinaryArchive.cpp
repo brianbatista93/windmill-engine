@@ -1,15 +1,5 @@
-#include <memory>
-
-#include "Archive.hpp"
-
-CArchive::CArchive() : mPackageVersion(1), mEngineVersion(1), mNetworkVersion(1)
-{
-}
-
-void CArchive::ClearErrors()
-{
-    mHasErrors = false;
-}
+#include "BinaryArchive.hpp"
+#include "Containers/WeString.hpp"
 
 u8 *SwapBytes(void *pValue, usize nSize)
 {
@@ -24,7 +14,7 @@ u8 *SwapBytes(void *pValue, usize nSize)
     return pBytes;
 }
 
-void SerializeSwapped(CArchive &archive, void *pValue, usize nSize)
+void SerializeSwapped(IBinaryArchive &archive, void *pValue, usize nSize)
 {
     if (archive.IsReading())
     {
@@ -38,7 +28,7 @@ void SerializeSwapped(CArchive &archive, void *pValue, usize nSize)
     }
 }
 
-void CArchive::EndianSerialize(void *pData, usize nSize)
+void IBinaryArchive::EndianSerialize(void *pData, usize nSize)
 {
     if /* UNLIKELY */ (IsByteSwapping())
     {
@@ -48,4 +38,23 @@ void CArchive::EndianSerialize(void *pData, usize nSize)
     {
         Serialize(pData, nSize);
     }
+}
+
+IBinaryArchive &operator<<(IBinaryArchive &archive, CString &value)
+{
+    if (archive.IsReading())
+    {
+    }
+    else // Is Writting
+    {
+        i32 length = value.GetLength();
+        archive.Serialize(&length, sizeof(length));
+
+        if (length)
+        {
+            archive.Serialize((void *)*value, length * sizeof(tchar));
+        }
+    }
+
+    return archive;
 }
