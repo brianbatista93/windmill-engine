@@ -142,6 +142,8 @@ constexpr void SetIfNotNull(Type *output, Type value)
 #endif
 
 #define NDISCARD [[nodiscard]]
+#define UNLIKELY(x) ((x)) [[unlikely]]
+#define LIKELY(x) ((x)) [[likely]]
 
 template <class KeyType, class ValueType>
 inline u64 GetHash(std::pair<KeyType, ValueType> pair)

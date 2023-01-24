@@ -150,7 +150,7 @@ class CString
     NDISCARD CArray<CString> Split(tchar chr) const;
     CArray<CString> Split(const tchar *pStr) const;
 
-    template <WE::Concept::IsContainer TContainerType>
+    template <we::concepts::IsContainer TContainerType>
     inline static CString Join(tchar separator, const TContainerType &container)
     {
         CStringBuilder builder;
@@ -169,7 +169,7 @@ class CString
         return builder.ToString();
     }
 
-    template <WE::Concept::IsContainer TContainerType>
+    template <we::concepts::IsContainer TContainerType>
     inline static CString Join(const tchar *separator, const TContainerType &container)
     {
         CStringBuilder builder;

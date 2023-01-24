@@ -19,52 +19,10 @@ SOFTWARE.
 
 #pragma once
 
-#include "IArchive.hpp"
+#include "Archive.hpp"
 
-class IBinaryArchive : public IArchive
+class CBinaryArchive
 {
   public:
-    virtual ~IBinaryArchive() = default;
-
-    virtual bool ForceByteSwapping() const = 0;
-    virtual void Serialize(void *pData, usize nSize) = 0;
-
-    NDISCARD bool IsPersistent() const override { return false; }
-
-    NDISCARD bool IsByteSwapping() const
-    {
-        if constexpr (std::endian::native == std::endian::little)
-        {
-            return ForceByteSwapping();
-        }
-        else
-        {
-            return IsPersistent();
-        }
-    }
-
-    inline friend IBinaryArchive &operator<<(IBinaryArchive &archive, WE::Concept::IsNumeric auto &value)
-    {
-        if constexpr (sizeof(value) > 1)
-        {
-            archive.EndianSerialize(&value, sizeof(value));
-        }
-        else
-        {
-            archive.Serialize(&value, sizeof(value));
-        }
-
-        return archive;
-    }
-
-    inline friend IBinaryArchive &operator<<(IBinaryArchive &archive, bool &value)
-    {
-        archive.Serialize(&value, 1);
-        return archive;
-    }
-
-    friend IBinaryArchive &operator<<(IBinaryArchive &archive, CString &value);
-
-  protected:
-    void EndianSerialize(void *pData, usize nSize);
+    static void SerializeString(CArchive &archive, class CString &value);
 };

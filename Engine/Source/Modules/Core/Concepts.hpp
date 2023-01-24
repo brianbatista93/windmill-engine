@@ -26,7 +26,7 @@ SOFTWARE.
 // clang-format off
 // NOLINTBEGIN
 
-namespace WE::Concept
+namespace we::concepts
 {
 template <class Type>
 concept IsContainer = requires(Type lhs, const Type& rhs)
@@ -45,7 +45,7 @@ concept IsFormattable = requires(Type value)
 
 template <class Type>
 concept IsNumeric = (std::integral <Type> || std::floating_point <Type>) && !std::same_as <Type, bool>;
-} // namespace WE::Concept
+} // namespace we::concepts
 
 // NOLINTEND
 // clang-format on

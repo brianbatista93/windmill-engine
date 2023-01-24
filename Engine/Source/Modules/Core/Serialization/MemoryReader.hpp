@@ -19,11 +19,12 @@ SOFTWARE.
 
 #pragma once
 
-#include "BinaryArchive.hpp"
+#include "Archive.hpp"
 #include "Containers/Array.hpp"
 #include "Containers/ContainerFwd.hpp"
+#include "Serialization/BinaryArchive.hpp"
 
-class CMemoryReader final : public IBinaryArchive
+class CMemoryReader final : public CArchive
 {
   public:
     CMemoryReader(CArray<u8> &buffer) : mBuffer(buffer) {}
@@ -36,9 +37,11 @@ class CMemoryReader final : public IBinaryArchive
 
     bool ForceByteSwapping() const final { return false; }
 
-    void Serialize(void *pData, usize nSize) final;
+    void Serialize(void *pData, usize nSize, const tchar *) final;
 
     NDISCARD inline i32 GetSize() const { return mBuffer.GetSize(); }
+
+    void SerializeString(CString &str, const tchar * /*pName*/) final { CBinaryArchive::SerializeString(*this, str); }
 
   private:
     CArray<u8> &mBuffer;

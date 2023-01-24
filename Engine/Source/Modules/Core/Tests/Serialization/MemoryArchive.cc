@@ -25,22 +25,22 @@ TEST(Serialization, BasicTypes)
         wide wideValue = 11;
         bool boolValue = true;
 
-        writer << u8Value;
-        writer << u16Value;
-        writer << u32Value;
-        writer << u64Value;
-        writer << i8Value;
-        writer << i16Value;
-        writer << i32Value;
-        writer << i64Value;
-        writer << f32Value;
-        writer << f64Value;
-        writer << ansiValue;
-        writer << wideValue;
-        writer << boolValue;
+        writer(u8Value);
+        writer(u16Value);
+        writer(u32Value);
+        writer(u64Value);
+        writer(i8Value);
+        writer(i16Value);
+        writer(i32Value);
+        writer(i64Value);
+        writer(f32Value);
+        writer(f64Value);
+        writer(ansiValue);
+        writer(wideValue);
+        writer(boolValue);
 
         CString text = WTL("The brown fox jumps over the lazy dog.");
-        writer << text;
+        writer(text);
 
         buffer = writer.ToArray();
     }
@@ -63,20 +63,20 @@ TEST(Serialization, BasicTypes)
 
         CMemoryReader reader(buffer);
 
-        reader << u8Value;
-        reader << u16Value;
-        reader << u32Value;
-        reader << u64Value;
-        reader << i8Value;
-        reader << i16Value;
-        reader << i32Value;
-        reader << i64Value;
-        reader << f32Value;
-        reader << f64Value;
-        reader << ansiValue;
-        reader << wideValue;
-        reader << boolValue;
-        reader << text;
+        reader(u8Value);
+        reader(u16Value);
+        reader(u32Value);
+        reader(u64Value);
+        reader(i8Value);
+        reader(i16Value);
+        reader(i32Value);
+        reader(i64Value);
+        reader(f32Value);
+        reader(f64Value);
+        reader(ansiValue);
+        reader(wideValue);
+        reader(boolValue);
+        reader(text);
 
         EXPECT_EQ(u8Value, 0);
         EXPECT_EQ(u16Value, 1);
