@@ -44,7 +44,7 @@ class CNumeric
         kHexadecimal = 6
     };
 
-    template <WE::Concept::IsNumeric Type>
+    template <we::concepts::IsNumeric Type>
     inline static bool TryFormat(Type value, tchar **pDest, const tchar *pFormat)
     {
         EType eType = kInvalid;
@@ -84,6 +84,7 @@ class CNumeric
         case WT('d'):
         case WT('D'):
             *pType = kDecimal;
+            nDefaultPrecision = 0;
             break;
         case WT('e'):
         case WT('E'):
@@ -301,7 +302,7 @@ class CNumeric
     template <class Type>
     inline static bool FormatNumber(Type value, tchar **pDest, i32 nPrecision)
     {
-        if constexpr (WE::Concept::IsNumeric<Type>)
+        if constexpr (we::concepts::IsNumeric<Type>)
         {
             f64 doubleValue = f64(value);
             f64 integerPart = 0;

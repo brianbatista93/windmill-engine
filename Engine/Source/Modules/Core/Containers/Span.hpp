@@ -19,33 +19,36 @@ SOFTWARE.
 
 #pragma once
 
-#include <concepts>
+#include <span>
 
-#include "Types.hpp"
+static constexpr usize DynamicExtent = usize{~0u};
 
-// clang-format off
-// NOLINTBEGIN
-
-namespace we::concepts
+template <class Type, usize Extent = DynamicExtent>
+class CSpan
 {
-template <class Type>
-concept IsContainer = requires(Type lhs, const Type& rhs)
-{
-    { lhs.begin() } -> std::same_as<typename Type::iterator>;
-    { lhs.end() } -> std::same_as<typename Type::iterator>;
-    { rhs.begin() } -> std::same_as<typename Type::const_iterator>;
-    { rhs.end() } -> std::same_as<typename Type::const_iterator>;
+  public:
+    CSpan() noexcept { static_assert(Extent == DynamicExtent || Extent == 0, "Extent must be 0 for default constructor"); }
+
+    CSpan(Type *pBegin, usize nCount) : mData{pBegin}, mSize{nCount} { we_assert(Extent == DynamicExtent || Extent == nCount); }
+
+    CSpan(Type *pBegin, Type *pEnd) : mData{pBegin}, mSize{static_cast<usize>(pEnd - pBegin)} {}
+
+    template <typename UType, usize N>
+        requires((Extent == DynamicExtent || Extent == N) && std::convertible_to<UType (*)[], Type (*)[]>)
+    CSpan(const CSpan<UType, N> &other) noexcept : CSpan{other.mData, other.mSize}
+    {
+    }
+
+    ~CSpan() noexcept = default;
+    CSpan(const CSpan &) noexcept = default;
+    CSpan &operator=(const CSpan &) noexcept = default;
+
+  private:
+    Type *mData{nullptr};
+    usize mSize{0};
 };
 
-template <class Type>
-concept IsFormattable = requires(Type value)
-{
-    { value.TryFormat(value, nullptr, nullptr) } -> std::same_as<bool>;
-};
-
-template <class Type>
-concept IsNumeric = (std::integral <Type> || std::floating_point <Type>) && !std::same_as <Type, bool>;
-} // namespace we::concepts
-
-// NOLINTEND
-// clang-format on
+#ifdef __cpp_deduction_guides
+template <class Type, size_t N>
+CSpan(Type (&)[N]) -> CSpan<Type, N>;
+#endif

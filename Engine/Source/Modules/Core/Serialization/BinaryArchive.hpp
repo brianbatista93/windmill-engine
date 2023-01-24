@@ -19,33 +19,10 @@ SOFTWARE.
 
 #pragma once
 
-#include <concepts>
+#include "Archive.hpp"
 
-#include "Types.hpp"
-
-// clang-format off
-// NOLINTBEGIN
-
-namespace we::concepts
+class CBinaryArchive
 {
-template <class Type>
-concept IsContainer = requires(Type lhs, const Type& rhs)
-{
-    { lhs.begin() } -> std::same_as<typename Type::iterator>;
-    { lhs.end() } -> std::same_as<typename Type::iterator>;
-    { rhs.begin() } -> std::same_as<typename Type::const_iterator>;
-    { rhs.end() } -> std::same_as<typename Type::const_iterator>;
+  public:
+    static void SerializeString(CArchive &archive, class CString &value);
 };
-
-template <class Type>
-concept IsFormattable = requires(Type value)
-{
-    { value.TryFormat(value, nullptr, nullptr) } -> std::same_as<bool>;
-};
-
-template <class Type>
-concept IsNumeric = (std::integral <Type> || std::floating_point <Type>) && !std::same_as <Type, bool>;
-} // namespace we::concepts
-
-// NOLINTEND
-// clang-format on

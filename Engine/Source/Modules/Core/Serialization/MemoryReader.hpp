@@ -19,33 +19,31 @@ SOFTWARE.
 
 #pragma once
 
-#include <concepts>
+#include "Archive.hpp"
+#include "Containers/Array.hpp"
+#include "Containers/ContainerFwd.hpp"
+#include "Serialization/BinaryArchive.hpp"
 
-#include "Types.hpp"
-
-// clang-format off
-// NOLINTBEGIN
-
-namespace we::concepts
+class CMemoryReader final : public CArchive
 {
-template <class Type>
-concept IsContainer = requires(Type lhs, const Type& rhs)
-{
-    { lhs.begin() } -> std::same_as<typename Type::iterator>;
-    { lhs.end() } -> std::same_as<typename Type::iterator>;
-    { rhs.begin() } -> std::same_as<typename Type::const_iterator>;
-    { rhs.end() } -> std::same_as<typename Type::const_iterator>;
+  public:
+    CMemoryReader(CArray<u8> &buffer) : mBuffer(buffer) {}
+
+    const tchar *GetArchiveName() const final { return WT("MemoryWriter"); }
+
+    bool IsReading() const final { return true; }
+
+    bool IsWriting() const final { return false; }
+
+    bool ForceByteSwapping() const final { return false; }
+
+    void Serialize(void *pData, usize nSize, const tchar *) final;
+
+    NDISCARD inline i32 GetSize() const { return mBuffer.GetSize(); }
+
+    void SerializeString(CString &str, const tchar * /*pName*/) final { CBinaryArchive::SerializeString(*this, str); }
+
+  private:
+    CArray<u8> &mBuffer;
+    i32 mOffset{0};
 };
-
-template <class Type>
-concept IsFormattable = requires(Type value)
-{
-    { value.TryFormat(value, nullptr, nullptr) } -> std::same_as<bool>;
-};
-
-template <class Type>
-concept IsNumeric = (std::integral <Type> || std::floating_point <Type>) && !std::same_as <Type, bool>;
-} // namespace we::concepts
-
-// NOLINTEND
-// clang-format on

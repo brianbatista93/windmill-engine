@@ -23,6 +23,11 @@ SOFTWARE.
 #include <cstdint>
 #include <utility>
 
+namespace we
+{
+using byte = std::byte;
+}
+
 using u8 = std::uint8_t;
 using u16 = std::uint16_t;
 using u32 = std::uint32_t;
@@ -137,6 +142,8 @@ constexpr void SetIfNotNull(Type *output, Type value)
 #endif
 
 #define NDISCARD [[nodiscard]]
+#define UNLIKELY(x) ((x)) [[unlikely]]
+#define LIKELY(x) ((x)) [[likely]]
 
 template <class KeyType, class ValueType>
 inline u64 GetHash(std::pair<KeyType, ValueType> pair)

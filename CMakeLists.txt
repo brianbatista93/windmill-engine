@@ -10,7 +10,7 @@ if (ENABLE_WINDMILL_TESTS)
 	include(CTest)
 	enable_testing()
     
-    set (BUILD_GMOCK OFF)
+    set (BUILD_GMOCK ON)
     set (INSTALL_GTEST OFF)
     set (gtest_force_shared_crt OFF CACHE BOOL "" FORCE)
 	add_subdirectory ("Engine/Source/ThirdParty/googletest")

@@ -39,7 +39,7 @@ class CFile
 
     static bool WriteBytes(const CArray<u8> &bytes, const CPath &filename);
     static bool WriteString(const CString &str, const CPath &filename, EEncoding encoding = EEncoding::eAuto);
-    static bool WriteString(IFileNative *pFile, const CString &str, EEncoding encoding = EEncoding::eAuto);
+    static bool WriteString(IFileNative *pFile, const CString &str, EEncoding encoding = EEncoding::eAuto, bool bAppend = false);
 
     static bool ReadBytes(CArray<u8> &bytes, const CPath &filename);
     static bool ReadString(CString &result, const CPath &filename);

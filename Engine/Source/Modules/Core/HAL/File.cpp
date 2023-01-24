@@ -36,14 +36,19 @@ bool CFile::WriteString(const CString &str, const CPath &filename, EEncoding enc
     TUniquePtr<IFileNative> fileNative;
     fileNative.reset(CFileSystem::OpenWrite(filename));
 
-    return WriteString(fileNative.get(), str, encoding);
+    return WriteString(fileNative.get(), str, encoding, false);
 }
 
-bool CFile::WriteString(IFileNative *pFile, const CString &str, EEncoding encoding)
+bool CFile::WriteString(IFileNative *pFile, const CString &str, EEncoding encoding, bool bAppend)
 {
     if (str.IsEmpty() or !IsValid(pFile) or !pFile->CanWrite())
     {
         return false;
+    }
+
+    if (bAppend)
+    {
+        pFile->Seek(0, SEEK_END);
     }
 
     const bool forceUnicode = encoding == EEncoding::eUnicode or (encoding == EEncoding::eAuto and !IsAnsi(*str));

@@ -38,7 +38,7 @@ class CFormatterArgument
         kFormattable = 3
     };
 
-    template <WE::Concept::IsFormattable Type>
+    template <we::concepts::IsFormattable Type>
     CFormatterArgument(const Type &rValue) : mType(kFormattable)
     {
         mFormatter = [this, rValue](tchar **pDest, const tchar *pFormat) {
@@ -46,7 +46,7 @@ class CFormatterArgument
         };
     }
 
-    template <WE::Concept::IsNumeric Type>
+    template <we::concepts::IsNumeric Type>
     CFormatterArgument(const Type &rValue) : mType(kNumeric)
     {
         mFormatter = [rValue](tchar **pDest, const tchar *pFormat) {
